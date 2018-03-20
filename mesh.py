@@ -3,9 +3,8 @@ import scipy.io as sio
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-
 mu_ 		= .65
-p_ 			= np.array([[ 1,  1,  1,  1,  0,  0,  0,  0], 	# octante 8
+p_ 			= np.array([[ 1,  1,  1,  1,  0,  0,  0,  0], 	# octant 8
        					[-1,  0,  0, -1, -1,  0,  0, -1],   # x > 0, y < 0, z < 0
        					[-1, -1,  0,  0, -1, -1,  0,  0]])
 
@@ -31,7 +30,7 @@ def n_faces_macrotetra (lev):
 	Nel = n_elem_macrotetra(lev)['number_of_elements']
 	return 2*lev**2+lev*(lev+1)+Nel-lev**2+2*(lev-1)**2+(lev-1)*lev*(lev+1)/6
 
-def octant (o, points): # mas corta esta funcion ??
+def octant (o, points): # shorter version?
 	## takes a fixed octant and affine--transforms it to the other six.
 	if   o == 2: q = points*np.array([-1,-1,-1]).reshape((3,1))
 	elif o == 3: q = points*np.array([-1, 1,-1]).reshape((3,1))
@@ -55,9 +54,8 @@ def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
 	"""	
 		return value: Nel == nmbr of elmts
 
-		TODO:  las cuentas tipo lambda_[0,i,j,k]*P0 tambien se pueden hacer 
-		juntas al ppio y llamar.
-
+		TODO:  calculations of the form lambda_[0,i,j,k]*P0 could be done
+		a priori and then call.
 	"""
 	P0 = np.array(P0).reshape((1,3))
 	P1 = np.array(P1).reshape((1,3))
@@ -68,9 +66,7 @@ def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
 
 	points  = np.zeros((1,3))
 
-
-
-## hacer esto:falta acomodar los indices
+## todo: fix the order of the indices
 
 	Nel 	= 0
 	for k in range(n+1):
@@ -181,9 +177,8 @@ def plot_mesh (obj, elev = 30, azim = 45, colors = ['darkgreen']+['black']+['fuc
 	ax 	= fig.add_subplot(1,1,1, projection='3d')
 	ax.axis('equal')
 	ax.view_init(elev, azim)
-	#corregir esto!!
-	## plt.title(str(n) + ' niveles.')
-	###
+	#  fix this!!
+	## plt.title(str(n) + ' levels.')
 	colors = iter(colors)
 	for tetra in obj:
 		col = next(colors)#for te in tetra:
@@ -192,7 +187,7 @@ def plot_mesh (obj, elev = 30, azim = 45, colors = ['darkgreen']+['black']+['fuc
 	plt.show()
 	return fig
 
-def cube_mesh_2 (n, mu, p, tetrahedra):
+def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,2,3]):
 	""" here we calculate the mesh of the whole fichera	
 		n == levels
 		mu == grading param
@@ -201,18 +196,18 @@ def cube_mesh_2 (n, mu, p, tetrahedra):
 	"""
 	mu_vec = [1, mu, mu, mu]            # first one is not graded!
 	dict_save = {}
-	for o in xrange(2,9):
+	for o in octants:
 		q = octant(o, p)
-		for t in xrange(4):
+		for t in macro_elems:
 			point0 = q[:,tetrahedra[t,0]]
 			point1 = q[:,tetrahedra[t,1]]
 			point2 = q[:,tetrahedra[t,2]]
 			e3 	   = q[:,tetrahedra[t,3]]
-			points = np.zeros((n+1, n+1, 3, n+1))  # nivel, i, coordenada, j
+			points = np.zeros((n+1, n+1, 3, n+1))  # level, i, coord, j
 			for k in xrange(n+1):
 				for i in xrange(n-k+1):
 					for j in xrange(n-k-i+1):
-						lambda_1 = lambda1 (i,j,0,n,mu_vec[t]); # se puede con muchas menos llamadas a estos lambda
+						lambda_1 = lambda1 (i,j,0,n,mu_vec[t]); # it can be done with much lesser calls to these lambda
 						lambda_2 = lambda2 (i,j,0,n,mu_vec[t]);
 						# the mesh are just the following two lines
 						points[k,i,:,j] = lambda_1*(point1-point0) + lambda_2*(point2-point0)
@@ -229,10 +224,10 @@ def cube_mesh_2 (n, mu, p, tetrahedra):
 
 	return dict_save
 
-def cube_drawing (coord, oct_range = range(2,9)):
+def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
 	drawing = [[],[],[],[]]
 	for o in oct_range:
-		for t in [0,1,2,3]:
+		for t in macro_elems:
 			points = coord['points_T'+str(t)+'_C'+str(o)] # np.zeros((n+1,n+1,3,n+1))  # nivel, i, coordenada, j
 			n = points.shape[0] - 1
 			for k in range (n+1):
@@ -249,27 +244,27 @@ def cube_drawing (coord, oct_range = range(2,9)):
 						x[i] = points[k,i,0,c-i]
 						y[i] = points[k,i,1,c-i]
 						z[i] = points[k,i,2,c-i]
-					drawing[t].append([x,y,z])  #  transversales
+					drawing[t].append([x,y,z])  #  transversals
 			for i in range (n):
 				for j in range (n-i):
 					stop = n - (i + j) + 1
 					x = points[0:stop,i,0,j]
 					y = points[0:stop,i,1,j]
 					z = points[0:stop,i,2,j]
-					drawing[t].append([x,y,z])  #  verticales
+					drawing[t].append([x,y,z])  #  verticals
 				x, y, z = np.zeros(n-i+1), np.zeros(n-i+1), np.zeros(n-i+1)
 				for k in range (n-i+1):
 					x[k] = points[k,i,0,n-k-i]
 					y[k] = points[k,i,1,n-k-i]
 					z[k] = points[k,i,2,n-k-i]
-				drawing[t].append([x,y,z])  #  piramidales
-			# ahora simplemente intercambio los papeles de i y j
+				drawing[t].append([x,y,z])  #  pyramidals
+			# simply interchange the roles of i and j
 				x, y, z = np.zeros(n-i+1), np.zeros(n-i+1), np.zeros(n-i+1)
 				for k in range (n-i+1):
 					x[k] = points[k,n-k-i,0,i]
 					y[k] = points[k,n-k-i,1,i]
 					z[k] = points[k,n-k-i,2,i]
-				drawing[t].append([x,y,z])	#  piramidales
+				drawing[t].append([x,y,z])	#  pyramidals
 	return np.array(drawing)
 
 #########################################################################################################
