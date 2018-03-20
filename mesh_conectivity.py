@@ -67,7 +67,7 @@ def write_elements_by_vertices_T4 (n_vert_T4, init, f_name_write):
 		mesh.macroel_sing_vrtx()
 	"""
 	arr_out = np.array(range(init + 1, init + n_vert_T4 + 1)).reshape((n_vert_T4/4, 4))
-	arr_out	= np.concatenate((4*np.ones((n_vert_T4/4, 1)), arr_out), axis=1)
+	arr_out	= np.concatenate((4*np.ones((n_vert_T4/4, 1),dtype=int), arr_out), axis=1)
 	with open (f_name_write, 'a') as tgt:
 		np.savetxt(tgt, arr_out, fmt='%d')
 	return
@@ -190,7 +190,7 @@ def traverse (obj):
 def face_enumeration (file_name):
 	"""
 	input:  elements_by_vertices.txt
-	writes: faces_global.txt   
+	writes: faces_repeated.txt   
 			faces_local_to_global.txt  
 	"""
 	face_index = 1
@@ -247,7 +247,7 @@ def face_enumeration (file_name):
 			local_to_global_string += str(face_index) + '\n'
 			face_index += 1
 		else: print('something went wrong')
-	with open ('faces_global.txt', 'w') as out_global:
+	with open ('faces_repeated.txt', 'w') as out_global:
 		out_global.write(global_string)
 	with open ('faces_local_to_global.txt', 'w') as out_loc_to_global:
 		out_loc_to_global.write(local_to_global_string)
@@ -291,7 +291,10 @@ def kill_repeated_faces (faces_file_name):
 		face_dict[f+1] = np.array([c for c in faces[f].rstrip().split(' ')],dtype=int)	
 
 	d_out = {}
-	for f in range(1, n_faces+1):
+	
+	indices = range(1, n_faces+1)
+
+	for f in indices:
 		for g in range(f + 1, n_faces+1):
 			if (face_dict[f][0] == face_dict[g][0]):
 				cmp1 = np.sort(face_dict[f][1:])
@@ -299,4 +302,26 @@ def kill_repeated_faces (faces_file_name):
 				if np.all(np.equal(cmp1, cmp2)):
 					d_out[f] = d_out.get(f, [])
 					d_out[f].append(g)
-	return d_out
+
+	duplicates = []
+	for ff in d_out:
+		duplicates += d_out[ff]
+
+	duplicates = np.unique(duplicates)
+	duplicates = np.fliplr([duplicates])[0]
+
+	for i in duplicates:
+		del faces[i-1]
+		if i in indices:
+			indices.remove(i)
+
+	with open ('faces.txt', 'w') as face_list:
+		for x in range(len(faces)):
+			face_list.write(faces[x])
+
+	with open('arch_indices.txt', 'w') as idx_file:
+		idx_file.write(str(indices))
+
+	num_faces = len(faces)
+
+	return d_out, indices, num_faces
