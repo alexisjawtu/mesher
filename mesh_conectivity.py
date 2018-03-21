@@ -12,7 +12,7 @@ def vertex_global_index (n, l, i, j):
 	"""
 	#return ((n+1)**2)*level + (n+1)*i + j 
 
-	## TAREA: esto tiene una formula cerrada corta. Hacerla.
+	## TODO: CLOSED FORMULA
 	return sum([(n-r+1)*(n-r+2)/2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
 
 def write_elements_by_vertices (f_name, n, lang, initial):
@@ -137,7 +137,7 @@ def faces (f_name, n_elem, lang):
 	por ahora testeado en un macro--elemento tetra con \bv y \be.
 	anda bien registrando las caras interelementales internas a Lambda_ell
 
-	returns faces.txt as:
+	returns shared_faces.txt as:
 	--------------------------------------------------
 	el | el | v | v | v | (v)
 	1    4    2   4   8    9
@@ -171,9 +171,6 @@ def faces (f_name, n_elem, lang):
 			elif count == 4: 
 				face_type = ' share rect'
 				s += str(m) + ' ' + str(n) + ' ' + ' '.join(face_vertices) + '\n'
-			if n==13 and m==2: 
-				print('count')
-				print(count)
 	with open ('shared_faces.txt','w') as f:
 		f.write(s)
 	return d
@@ -263,11 +260,13 @@ def kill_repeated (vertices_file_name):
 		obs:            now we don't delete the entries on vertices.txt. We simply
 						don't request them.
 	""" 
+	counter = 1
 	vertices = np.loadtxt(vertices_file_name)
 	d_out 	 = {}
 	Nv 		 = vertices.shape[0]
-
 	for v in range(Nv):
+		print 'progress: {0}/{1}\r'.format(counter,Nv),
+		counter += 1
 		for w in range(v + 1, Nv):
 			if np.all(np.equal(vertices[v], vertices[w])):
 				d_out[v] = d_out.get(v,[])
@@ -278,6 +277,7 @@ def kill_repeated (vertices_file_name):
 	# vertices_unique = np.delete(vertices, remove_indices, axis = 0)
 	# with open ('vertices_unique.txt', 'w') as out_file:
 	#     np.savetxt(out_file, vertices_unique, fmt = '%8.5f')
+	print '\r'
 	return d_out
 
 def kill_repeated_faces (faces_file_name):
@@ -294,19 +294,22 @@ def kill_repeated_faces (faces_file_name):
 	
 	indices = range(1, n_faces+1)
 
+	counter = 1
 	for f in indices:
+		print 'progress: {0}/{1}\r'.format(counter,n_faces),
+		counter += 1
 		for g in range(f + 1, n_faces+1):
-			if (face_dict[f][0] == face_dict[g][0]):
-				cmp1 = np.sort(face_dict[f][1:])
-				cmp2 = np.sort(face_dict[g][1:])
-				if np.all(np.equal(cmp1, cmp2)):
+			if (face_dict[f][0] == face_dict[g][0]):	
+				if set(face_dict[f][1:]) == set(face_dict[g][1:]):
 					d_out[f] = d_out.get(f, [])
 					d_out[f].append(g)
+	print '\r'
 
 	duplicates = []
 	for ff in d_out:
 		duplicates += d_out[ff]
 
+	#duplicates = sorted(duplicates, reverse=True)
 	duplicates = np.unique(duplicates)
 	duplicates = np.fliplr([duplicates])[0]
 

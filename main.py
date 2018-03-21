@@ -1,38 +1,44 @@
 """
 searching repeated vertices:
- take from second column in file elem_by_vert.txt
- (because 6,5 y 4 are not things to repĺace)
-
-the analogue for faces repetitions
-
+take from second column in file elem_by_vert.txt because 6,5 y 4 are not 
+things to replace. the analogue for faces repetitions
 another option is to put -3 -2 y -1 etc ...
 
-Obs: write_elements_by_vertices_T4() has 4*ones etc...
-has to be changed to: "-np.ones( ? ,dtype=int)" etc
+Obs: write_elements_by_vertices_T4() has 4*ones 
+has to be changed to: -np.ones( whatever , dtype=int) etc
 """
 
 import mesh
 import mesh_write
 import mesh_conectivity
+import time
 
+#print (time.time())
 ## macro_elements type 1: prisms, pyrs and tetra
 ## macro_elements type 2: prisms
 ## macro_elements type 3: tetra
 
-levels = 2
+tTot 	= time.time()
+levels 	= 6
+n_vert_prism = 6
+print('levels: %s\r' % levels)
 
 ## dictionary with the fichera mesh.
+print 'mesh.cube_mesh_2()'
+t0 = time.time()
 coords_ = mesh.cube_mesh_2(levels, mesh.mu_, mesh.p_, mesh.macro_el) 
+print time.time() - t0
+print '\r'
 
 # indices only for type I macro--el. writes file: elements.txt 
 mesh_write.write_element_indices('elements.txt', levels)
 
 init 	= 0
 
-for oc in xrange(2,9):    # integers 2, 3, 4 ,5 ,6, 7, 8 represent octants
+for oc in xrange(2,9):    # integers 2, 3, 4, 5, 6, 7, 8
 	for t in xrange(4):
 		coords 	= coords_['points_T' + str(t) + '_C' + str(oc)] 
-		mesh_conectivity.write_elements_by_vertices('elements.txt',2,'Octave',init) # writes elements_by_vertices_repeated.txt: GLOBAL INDICES per element
+		mesh_conectivity.write_elements_by_vertices('elements.txt', levels, 'Octave', init) # writes elements_by_vertices_repeated.txt: GLOBAL INDICES per element
 		init   += mesh_write.vertices(coords)	# writes 'vertices.txt' global list of vertices
 	## Type II macro--element
 	n_vertT4 = mesh.np.shape(coords_['points_T4_C' + str(oc)])[0]
@@ -51,23 +57,32 @@ with open('elements_by_vertices_repeated.txt','r') as inp:
 
 n_elem = len(things)
 
-elem_vert_repeated = mesh.np.zeros((n_elem,7),dtype=int)
+elem_vert_repeated = mesh.np.zeros((n_elem,n_vert_prism+1),dtype=int)
 for k in range(len(things)):
 	ele 					= mesh.np.fromstring(things[k],dtype=int,sep=' ')
-	elem_vert_repeated[k] 	= mesh.np.concatenate((ele,mesh.np.zeros((7-len(ele)),dtype=int)))
+	elem_vert_repeated[k] 	= mesh.np.concatenate((ele,mesh.np.zeros((n_vert_prism+1-len(ele)),dtype=int)))
 
-replace_verts = mesh_conectivity.kill_repeated('vertices.txt')  ## reads repetitions in vertices.txt and leaves a dictionary
+print 'mesh_conectivity.kill_repeated()'
+t0 = time.time()
+replace_verts = mesh_conectivity.kill_repeated('vertices.txt')  ## repetitions in vertices.txt leave a dictionary
+print time.time() - t0
+print '\n'
 
-source = mesh.np.copy(elem_vert_repeated).reshape(n_elem*7)
-elem_vert_dscnt_indcs = mesh.np.copy(source)
+print 'vertices replacement loop version 2'
+t0 		= time.time()
+counter = 1
+elem_vert_dscnt_indcs = mesh.np.copy(elem_vert_repeated).reshape(n_elem*7)
 for key in replace_verts:
+	print 'progress: {0}/{1}\r'.format(counter,len(replace_verts)),
+	counter += 1
 	for r in replace_verts[key]:
-		for l in range(len(elem_vert_dscnt_indcs)):
-			if (elem_vert_dscnt_indcs[l] == r+1): elem_vert_dscnt_indcs[l] = key +1
+		elem_vert_dscnt_indcs[elem_vert_dscnt_indcs == r+1] = (key +1)
+print '\r'
+print time.time() - t0
+print '\n'
 
 elem_vert_dscnt_indcs = elem_vert_dscnt_indcs.reshape((n_elem,7))
 
-del source
 del elem_vert_repeated
 
 ## <--- whithout repetitions
@@ -75,18 +90,36 @@ with open('elements_by_vertices.txt','w') as out:
 	for e in elem_vert_dscnt_indcs:
 		mesh.np.savetxt(out, e[0:e[0]+1].reshape((1,e[0]+1)), fmt='%d')
 
+"""
+##############################################################################
 # at this point the program is already general:
 # this 'inverts' the table of elements_by_vertices.txt
 # writes on disc: vertices_by_elements.txt
 mesh_conectivity.vertices_by_elements('elements_by_vertices.txt', 'Octave')
+##############################################################################
+"""
 
+"""
+##############################################################################
 # general function. 
 # takes output of mesh_conectivity.vertices_by_elements()
 # writes on disc: shared_faces.txt
+####### SLOW (not used for now)
+print('mesh_conectivity.faces()')
+print(time.time())
 d = mesh_conectivity.faces('vertices_by_elements.txt', n_elem, 'Octave')
+print(time.time())
+print('\n')
+##############################################################################
+"""
+
 # writes files: faces_repeated.txt 			----> with repetitions
 #               faces_local_to_global.txt   ----> for macro--element of type 1
+print 'mesh_conectivity.face_enumeration'
+t0 = time.time()
 mesh_conectivity.face_enumeration('elements_by_vertices.txt')
+print time.time() - t0
+print '\r'
 
 with open('faces_local_to_global.txt', 'r') as ent:
 	stuff = ent.readlines()
@@ -98,36 +131,49 @@ for elem in range(len(stuff)):
 
 ## reads repetitions in faces_repeated.txt and leaves a dictionary
 ## writes file: faces.txt                  -----> global unique enumeration of faces
+print 'mesh_conectivity.kill_repeated_faces'
+t0 = time.time()
 replace_faces, indices, num_faces = mesh_conectivity.kill_repeated_faces('faces_repeated.txt')  
+print time.time() - t0
+print '\r'
 
 with open ('num_faces.txt','w') as n_of_faces:
 	n_of_faces.write(str(num_faces))
 
-## uniquifying faces:
-source = mesh.np.copy(elem_faces_repeated).reshape(n_elem*6)
-elem_faces_discnt_index = mesh.np.copy(source)
+#### uniquifying faces:
+print 'faces replacement loop version 2'
+t0 = time.time()
+elem_faces_discnt_index = mesh.np.copy(elem_faces_repeated).reshape(n_elem*6)
+counter = 1
 for key in replace_faces:
+	print 'progress: {0}/{1}\r'.format(counter,len(replace_faces)),
+	counter += 1
 	for r in replace_faces[key]:
-		for l in range(len(elem_faces_discnt_index)):
-			if (elem_faces_discnt_index[l] == r):  elem_faces_discnt_index[l] = key
+		elem_faces_discnt_index[elem_faces_discnt_index==r] = key
+print '\r'
+print time.time() - t0
+print '\r'
 
-elem_faces_discnt_index = elem_faces_discnt_index.reshape((n_elem,6))
+#elem_faces_discnt_index = elem_faces_discnt_index.reshape((n_elem,6))
 
 del elem_faces_repeated
-del source
 
 ## bijection indices ----> [1,...,n_faces]
 ## unique, continuous indices with filling zeros
-source = mesh.np.copy(elem_faces_discnt_index).reshape(n_elem*6)
-elem_faces = mesh.np.copy(source)
-
+print 'loop for indexing faces with {1 ... n_faces}'
+t0 = time.time()
+elem_faces = mesh.np.copy(elem_faces_discnt_index)
 for i in range(len(indices)):
-	elem_faces[source==indices[i]] = i+1
+	elem_faces[elem_faces_discnt_index==indices[i]] = i+1
+print time.time() - t0
+print '\r'
 
 elem_faces = mesh.np.copy(elem_faces).reshape((n_elem,6))
 del elem_faces_discnt_index
-del source
 
 with open('elements_by_faces.txt','a') as ex:
 	for elem in elem_faces:
 		mesh.np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
+
+print 'Total time'
+print(time.time() - tTot)
