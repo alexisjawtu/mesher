@@ -30,16 +30,13 @@ def n_faces_macrotetra (lev):
 	Nel = n_elem_macrotetra(lev)['number_of_elements']
 	return 2*lev**2+lev*(lev+1)+Nel-lev**2+2*(lev-1)**2+(lev-1)*lev*(lev+1)/6
 
-def octant (o, points): # shorter version?
-	## takes a fixed octant and affine--transforms it to the other six.
-	if   o == 2: q = points*np.array([-1,-1,-1]).reshape((3,1))
-	elif o == 3: q = points*np.array([-1, 1,-1]).reshape((3,1))
-	elif o == 4: q = points*np.array([ 1, 1,-1]).reshape((3,1))
-	elif o == 5: q = points*np.array([ 1,-1, 1]).reshape((3,1))
-	elif o == 6: q = points*np.array([-1,-1, 1]).reshape((3,1))
-	elif o == 7: q = points*np.array([-1, 1, 1]).reshape((3,1))
-	else:		 q = points
-	return q
+def octant (o, points):
+	""" takes a fixed octant [points] and affine--transforms it to the other six.
+		the last one is ones(3,1) to leave it unchanged	"""
+	trans = np.array([[ 0,  0, -1, -1,  1,  1, -1, -1,  1],
+					  [ 0,  0, -1,  1,  1, -1, -1,  1,  1],
+					  [ 0,  0, -1, -1, -1,  1,  1,  1,  1]])
+	return points*trans[:,o].reshape((3,1))
 
 def lambda1 (i, j, k, n, mu):
 	return float(i)/n * (float(i+j+k)/n)**((1/float(mu))-1)
@@ -55,7 +52,14 @@ def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
 		return value: Nel == nmbr of elmts
 
 		TODO:  calculations of the form lambda_[0,i,j,k]*P0 could be done
-		a priori and then call.
+		a priori and then call in the following manner:
+
+			initialize an (4 x I x J x K x 3)-D array Lambda_ with
+
+					Lambda_[l,i,j,k,:] <--- lambda_[l,i,j,k]*P_l
+
+			and then call it. Make sure the dimension is the most comfortable.
+
 	"""
 	P0 = np.array(P0).reshape((1,3))
 	P1 = np.array(P1).reshape((1,3))
