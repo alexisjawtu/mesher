@@ -180,80 +180,48 @@ def face_enumeration (file_name):
 	writes: faces_repeated.txt   
 			faces_local_to_global.txt  
 	"""
-	def str_prism ():
-		pass
-	def str_pyram ():
-		pass
-	def str_tetra ():
-		pass
+	def str_prism (vertices):
+		ret  = '3 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[3] + '\n'
+		ret += '3 ' + vertices[4] + ' ' + vertices[5] + ' ' + vertices[6] + '\n'
+		ret += '4 ' + vertices[2] + ' ' + vertices[1] + ' ' + vertices[5] + ' ' + vertices[4] + '\n'
+		ret += '4 ' + vertices[1] + ' ' + vertices[3] + ' ' + vertices[4] + ' ' + vertices[6] + '\n'
+		ret += '4 ' + vertices[3] + ' ' + vertices[2] + ' ' + vertices[6] + ' ' + vertices[5] + '\n'
+		return ret
 
-	writers = {'6' : str_prism, '5' : str_pyram, '4' : str_tetra}
+	def str_pyram (vertices):
+		ret  = '3 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[5] + ' ' + '\n'
+		ret += '3 ' + vertices[4] + ' ' + vertices[1] + ' ' + vertices[5] + ' ' + '\n'
+		ret += '3 ' + vertices[3] + ' ' + vertices[4] + ' ' + vertices[5] + ' ' + '\n'
+		ret += '3 ' + vertices[2] + ' ' + vertices[3] + ' ' + vertices[5] + ' ' + '\n'
+		ret += '4 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[4] + ' ' + vertices[3] + '\n'
+		return ret
 
-	face_index = 1
-	global_string = ''
-	local_to_global_string = ''
+	def str_tetra (vertices):
+		ret  = '3 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[3] + ' ' + '\n'
+		ret += '3 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[4] + ' ' + '\n'
+		ret += '3 ' + vertices[1] + ' ' + vertices[3] + ' ' + vertices[4] + ' ' + '\n'
+		ret += '3 ' + vertices[2] + ' ' + vertices[3] + ' ' + vertices[4] + ' ' + '\n'
+		return ret
+
+	writers 	= {'6' : str_prism, '5' : str_pyram, '4' : str_tetra}
+	nr_faces 	= {6 : 5, 5 : 5, 4 : 4}
+	face_index 	= 1
+	
+	global_string 			= ''
+	local_to_global_string 	= ''
+
 	with open (file_name, 'r') as data:
 		elem_by_vert = data.readlines()
 	n_el = len(elem_by_vert)
+	
 	for el in range(n_el):
 		vertices = elem_by_vert[el].rstrip().split(' ')
+		nr_vert  = int(vertices[0])
+		nr_face  = nr_faces[nr_vert]
+		local_to_global_string	+= str(nr_vert - 4) + ' ' + ' '.join([str(face_index + m) for m in range(nr_face)]) + '\n'
+		global_string 			+= writers[vertices[0]](vertices)
+		face_index 				+= nr_face
 
-			#########
-			# global_string 			+= writers[vertices[0]](...vertices?...) 
-			# local_to_global_string 	+= writers[vertices[0]](...args...) 
-			#########
-
-### CONTINUE HERE !!
-
-		if vertices[0] == '6':
-			
-			global_string += '3 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[3] + '\n'
-			global_string += '3 ' + vertices[4] + ' ' + vertices[5] + ' ' + vertices[6] + '\n'
-			global_string += '4 ' + vertices[2] + ' ' + vertices[1] + ' ' + vertices[5] + ' ' + vertices[4] + '\n'
-			global_string += '4 ' + vertices[1] + ' ' + vertices[3] + ' ' + vertices[4] + ' ' + vertices[6] + '\n'
-			global_string += '4 ' + vertices[3] + ' ' + vertices[2] + ' ' + vertices[6] + ' ' + vertices[5] + '\n'
-
-			local_to_global_string += '2 ' + str(face_index) + ' ' 
-			face_index += 1
-			local_to_global_string += str(face_index) + ' '
-			face_index += 1
-			local_to_global_string += str(face_index) + ' '
-			face_index += 1
-			local_to_global_string += str(face_index) + ' '
-			face_index += 1
-			local_to_global_string += str(face_index) + '\n'
-			face_index += 1
-
-		elif vertices[0] == '5':
-			global_string += '3 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[5] + ' ' + '\n'
-			local_to_global_string += '1 ' + str(face_index) + ' ' 
-			face_index += 1
-			global_string += '3 ' + vertices[4] + ' ' + vertices[1] + ' ' + vertices[5] + ' ' + '\n'
-			local_to_global_string += str(face_index) + ' ' 
-			face_index += 1
-			global_string += '3 ' + vertices[3] + ' ' + vertices[4] + ' ' + vertices[5] + ' ' + '\n'
-			local_to_global_string += str(face_index) + ' ' 
-			face_index += 1
-			global_string += '3 ' + vertices[2] + ' ' + vertices[3] + ' ' + vertices[5] + ' ' + '\n'
-			local_to_global_string += str(face_index) + ' ' 
-			face_index += 1
-			global_string += '4 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[4] + ' ' + vertices[3] + '\n'
-			local_to_global_string += str(face_index) + '\n'
-			face_index += 1
-		elif vertices[0] == '4':
-			global_string += '3 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[3] + ' ' + '\n'
-			local_to_global_string += '0 ' + str(face_index) + ' ' 
-			face_index += 1
-			global_string += '3 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[4] + ' ' + '\n'
-			local_to_global_string += str(face_index) + ' ' 
-			face_index += 1
-			global_string += '3 ' + vertices[1] + ' ' + vertices[3] + ' ' + vertices[4] + ' ' + '\n'
-			local_to_global_string += str(face_index) + ' ' 
-			face_index += 1
-			global_string += '3 ' + vertices[2] + ' ' + vertices[3] + ' ' + vertices[4] + ' ' + '\n'
-			local_to_global_string += str(face_index) + '\n'
-			face_index += 1
-		else: print('something went wrong')
 	with open ('faces_repeated.txt', 'w') as out_global:
 		out_global.write(global_string)
 	with open ('faces_local_to_global.txt', 'w') as out_loc_to_global:
