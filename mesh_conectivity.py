@@ -180,6 +180,15 @@ def face_enumeration (file_name):
 	writes: faces_repeated.txt   
 			faces_local_to_global.txt  
 	"""
+	def str_prism ():
+		pass
+	def str_pyram ():
+		pass
+	def str_tetra ():
+		pass
+
+	writers = {'6' : str_prism, '5' : str_pyram, '4' : str_tetra}
+
 	face_index = 1
 	global_string = ''
 	local_to_global_string = ''
@@ -188,22 +197,33 @@ def face_enumeration (file_name):
 	n_el = len(elem_by_vert)
 	for el in range(n_el):
 		vertices = elem_by_vert[el].rstrip().split(' ')
+
+			#########
+			# global_string 			+= writers[vertices[0]](...vertices?...) 
+			# local_to_global_string 	+= writers[vertices[0]](...args...) 
+			#########
+
+### CONTINUE HERE !!
+
 		if vertices[0] == '6':
+			
 			global_string += '3 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[3] + '\n'
+			global_string += '3 ' + vertices[4] + ' ' + vertices[5] + ' ' + vertices[6] + '\n'
+			global_string += '4 ' + vertices[2] + ' ' + vertices[1] + ' ' + vertices[5] + ' ' + vertices[4] + '\n'
+			global_string += '4 ' + vertices[1] + ' ' + vertices[3] + ' ' + vertices[4] + ' ' + vertices[6] + '\n'
+			global_string += '4 ' + vertices[3] + ' ' + vertices[2] + ' ' + vertices[6] + ' ' + vertices[5] + '\n'
+
 			local_to_global_string += '2 ' + str(face_index) + ' ' 
 			face_index += 1
-			global_string += '3 ' + vertices[4] + ' ' + vertices[5] + ' ' + vertices[6] + '\n'
 			local_to_global_string += str(face_index) + ' '
 			face_index += 1
-			global_string += '4 ' + vertices[2] + ' ' + vertices[1] + ' ' + vertices[5] + ' ' + vertices[4] + '\n'
 			local_to_global_string += str(face_index) + ' '
 			face_index += 1
-			global_string += '4 ' + vertices[1] + ' ' + vertices[3] + ' ' + vertices[4] + ' ' + vertices[6] + '\n'
 			local_to_global_string += str(face_index) + ' '
 			face_index += 1
-			global_string += '4 ' + vertices[3] + ' ' + vertices[2] + ' ' + vertices[6] + ' ' + vertices[5] + '\n'
 			local_to_global_string += str(face_index) + '\n'
 			face_index += 1
+
 		elif vertices[0] == '5':
 			global_string += '3 ' + vertices[1] + ' ' + vertices[2] + ' ' + vertices[5] + ' ' + '\n'
 			local_to_global_string += '1 ' + str(face_index) + ' ' 
