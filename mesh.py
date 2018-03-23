@@ -3,7 +3,7 @@ import scipy.io as sio
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-mu_ 		= .65
+mu_ 		= .35
 p_ 			= np.array([[ 1,  1,  1,  1,  0,  0,  0,  0], 	# octant 8
        					[-1,  0,  0, -1, -1,  0,  0, -1],   # x > 0, y < 0, z < 0
        					[-1, -1,  0,  0, -1, -1,  0,  0]])

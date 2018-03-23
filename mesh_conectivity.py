@@ -1,4 +1,4 @@
-# hacer unas formulas
+# TODO formulas
 import numpy as np
 #from boltons.iterutils import remap
 
@@ -134,8 +134,7 @@ def faces (f_name, n_elem, lang):
 	First we make a dictionary with the table:  v | el1 el2 ... elk_v,
 	that is, from the input f_name == vertices_by_elements.txt
 
-	por ahora testeado en un macro--elemento tetra con \bv y \be.
-	anda bien registrando las caras interelementales internas a Lambda_ell
+	For now: tested against macroelement with both singularities
 
 	returns shared_faces.txt as:
 	--------------------------------------------------
@@ -154,7 +153,7 @@ def faces (f_name, n_elem, lang):
 	for r in range(n_lines):
 		chars = lines[r].rstrip().split(' ')
 		d[chars[0]]  = dict(zip(range(len(chars)-1), [int(c) for c in chars[1:]]))
-	## ver si se puede hacer mas lindo esto sin usar la lista values()
+	## TODO: see if this can be done without the list values()
 	
 	s = ''
 	for n in range(language[lang], n_elem + language[lang]):
@@ -174,15 +173,6 @@ def faces (f_name, n_elem, lang):
 	with open ('shared_faces.txt','w') as f:
 		f.write(s)
 	return d
-
-def traverse (obj):
-	""" This is something like a deep copy. """
-	if isinstance(obj, dict):
-		return {k: traverse(v) for k,v in obj.iteritems()}
-	elif isinstance(obj, list):
-		return [traverse(r) for r in obj]
-	else:
-		return obj
 
 def face_enumeration (file_name):
 	"""
