@@ -12,7 +12,7 @@ def vertex_global_index (n, l, i, j):
 	"""
 	#return ((n+1)**2)*level + (n+1)*i + j 
 
-	## TODO: CLOSED FORMULA
+	## TODO: CLOSED FORMULA. Do benchmark
 	return sum([(n-r+1)*(n-r+2)/2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
 
 def write_elements_by_vertices (f_name, n, lang, initial):
