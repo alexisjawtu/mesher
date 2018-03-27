@@ -15,9 +15,7 @@ macro_el 	= np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
 def n_elem_macrotetra (lev):
 	""" sum([sum([(2*j+1) for j in range(l)]) for l in range(1,a+1)]) 
 
-	this works just for the macro_element with both singularities
-
-	"""
+	this works just for the macro_element with both singularities """
 	dic = {}
 	dic['number_of_elements'] 	= lev*(lev+1)*(2*lev+1)/6
 	dic['number_of_prisms']		= lev*(lev*(2*lev-3)+1)/6
