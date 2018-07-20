@@ -1,10 +1,10 @@
 from mesh import *
 import random
 
-macro_elems = [1]  # 0,1,2 or 3 in each cube
-angle_steps = range(2,4)
+macro_elems = [0,1,2,3]  # 0,1,2 or 3 in each cube
+angle_steps = range(2,5)
 refinements = [4]
-octants     = [2,3] # any sublist in range(2,9)
+octants     = range(2,9) # any sublist in range(2,9)
 
 for n in refinements:
     coords  = cube_mesh_2(n,mu_,p_,macro_el,octants,macro_elems)
@@ -23,9 +23,9 @@ for n in refinements:
         c   = 0
         ax  = fig.add_subplot(1,1,1, projection='3d')
         # ax.axis('equal')
-        ax.set_xlim3d(0.1,-1.1)
-        ax.set_ylim3d(-1.0,1.0)
-        ax.set_zlim3d(-0.2,1.2)
+    	# ax.set_xlim3d(0.1,-1.1)
+    	# ax.set_ylim3d(-1.0,1.0)
+    	# ax.set_zlim3d(-0.2,1.2)
         angle = 49 + 30*(azim-1)
         ax.view_init(elev, angle)
         print(drawing.shape)
