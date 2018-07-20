@@ -19,7 +19,7 @@ import time
 ## macro_elements type 3: tetra
 
 tTot 		 = time.time()
-levels 		 = 2
+levels 		 = 1
 n_vert_prism = 6
 print('levels: %s\r' % levels)
 
