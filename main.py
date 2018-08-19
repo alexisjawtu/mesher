@@ -1,4 +1,6 @@
 """
+1st: set levels (if levels == 1, then only macro--tetrahedra)
+
 searching repeated vertices:
 take from second column in file elem_by_vert.txt because 6,5 y 4 are not 
 things to replace. the analogue for faces repetitions
@@ -19,7 +21,7 @@ import time
 ## macro_elements type 3: tetra
 
 tTot 		 = time.time()
-levels 		 = 1
+levels 		 = 3
 n_vert_prism = 6
 print('levels: %s\r' % levels)
 
