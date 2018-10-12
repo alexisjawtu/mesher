@@ -2,9 +2,9 @@ from mesh import *
 import random
 
 mu          = .65
-macro_elems = [0,1,3]  # 0,1,2 or 3 in each cube
-angle_steps = range(8,9)
-refinements = [4,5,6,7]
+macro_elems = [0,1,2,3]  # 0,1,2 or 3 in each cube
+angle_steps = range(8,12)
+refinements = [1,2,3]
 octants     = range(5,6) # any sublist in range(2,9)
 
 for n in refinements:
@@ -40,8 +40,5 @@ for n in refinements:
 
         ax.plot([],[],[],label = "mu = " + str(mu) + str(macro_elems) + str(octants))
         legend = ax.legend()
-        fig.savefig('conform' + str(azim) + '-' + str(n) + '.png')
-        #fig.savefig('test' + str(n) + '.png')
-        #fig.savefig('cube' + str(n) + '.png')
-        #fig.savefig('refine_anim'+str(azim)+'.png')
+        fig.savefig('mesh' + str(azim) + '-' + str(n) + '.png')
 
