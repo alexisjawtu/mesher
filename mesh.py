@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 #mu_ 		= .35
-#p_ 			= np.array([[ 1,  1,  1,  1,  0,  0,  0,  0], 	# octant 8
-#       					[-1,  0,  0, -1, -1,  0,  0, -1],   # x > 0, y < 0, z < 0
-#       					[-1, -1,  0,  0, -1, -1,  0,  0]])
-#
+p_ 			= np.array([[ 1,  1,  1,  1,  0,  0,  0,  0], 	# octant 8
+       					[-1,  0,  0, -1, -1,  0,  0, -1],   # x > 0, y < 0, z < 0
+       					[-1, -1,  0,  0, -1, -1,  0,  0]])
+
 ### organization of the 5 tetrahedra resolving a cube: 
 ### the vertices of the macro--cube are: 0 ... 7.
-#macro_el 	= np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
+macro_el 	= np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
 
 def n_elem_macrotetra (lev):
 	""" sum([sum([(2*j+1) for j in range(l)]) for l in range(1,a+1)]) 
@@ -174,21 +174,6 @@ def cube2mat (obj, file_name = 'data.mat'):
 
 colours = ['lightgreen']*4
 
-def plot_mesh (obj, elev = 30, azim = 45, colors = ['darkgreen']+['black']+['fuchsia']+['blue']):
-	fig = plt.figure()
-	ax 	= fig.add_subplot(1,1,1, projection='3d')
-	ax.axis('equal')
-	ax.view_init(elev, azim)
-	#  fix this!!
-	## plt.title(str(n) + ' levels.')
-	colors = iter(colors)
-	for tetra in obj:
-		col = next(colors)#for te in tetra:
-		for dr in tetra:
-			ax.plot(dr[0],dr[1],dr[2],color = col)
-	plt.show()
-	return fig
-
 def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,2,3]):
 	""" here we calculate the mesh of the whole fichera	
 		n == levels
@@ -268,3 +253,25 @@ def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
 					z[k] = points[k,n-k-i,2,i]
 				drawing[t].append([x,y,z])	#  pyramidals
 	return np.array(drawing)
+
+
+################################################################################
+################################################################################
+### not likely to be used again:
+
+#def plot_mesh (obj, elev = 30, azim = 45, colors = ['darkgreen']+['black']+['fuchsia']+['blue']):
+#	fig = plt.figure()
+#	ax 	= fig.add_subplot(1,1,1, projection='3d')
+#	ax.axis('equal')
+#	ax.view_init(elev, azim)
+#	#  fix this!!
+#	## plt.title(str(n) + ' levels.')
+#	colors = iter(colors)
+#	for tetra in obj:
+#		col = next(colors)#for te in tetra:
+#		for dr in tetra:
+#			ax.plot(dr[0],dr[1],dr[2],color = col)
+#	plt.show()
+#	return fig
+################################################################################
+################################################################################
