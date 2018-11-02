@@ -3,14 +3,14 @@ import scipy.io as sio
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-mu_ 		= .35
-p_ 			= np.array([[ 1,  1,  1,  1,  0,  0,  0,  0], 	# octant 8
-       					[-1,  0,  0, -1, -1,  0,  0, -1],   # x > 0, y < 0, z < 0
-       					[-1, -1,  0,  0, -1, -1,  0,  0]])
-
-## organization of the 5 tetrahedra resolving a cube: 
-## the vertices of the macro--cube are: 0 ... 7.
-macro_el 	= np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
+#mu_ 		= .35
+#p_ 			= np.array([[ 1,  1,  1,  1,  0,  0,  0,  0], 	# octant 8
+#       					[-1,  0,  0, -1, -1,  0,  0, -1],   # x > 0, y < 0, z < 0
+#       					[-1, -1,  0,  0, -1, -1,  0,  0]])
+#
+### organization of the 5 tetrahedra resolving a cube: 
+### the vertices of the macro--cube are: 0 ... 7.
+#macro_el 	= np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
 
 def n_elem_macrotetra (lev):
 	""" sum([sum([(2*j+1) for j in range(l)]) for l in range(1,a+1)]) 
@@ -268,12 +268,3 @@ def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
 					z[k] = points[k,n-k-i,2,i]
 				drawing[t].append([x,y,z])	#  pyramidals
 	return np.array(drawing)
-
-#########################################################################################################
-## Drawing test
-##
-## n = 3
-## coords 	= cube_mesh_2(n,mu_,p_,macro_el)
-## drawing = cube_drawing(coords)
-## fig 	= plot_mesh(drawing, elev = 30, azim = 45)
-## fig.savefig('refine' + str(n) + '.png')
