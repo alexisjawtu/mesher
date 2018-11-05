@@ -166,9 +166,12 @@ def fichera (levels = 3, n_vert_prism = 6, mu_ = .35):
 
 	filter_repeated_faces(filter_repeated_vertices())
 
-def bBrick ():
-	mesh.cube_mesh_2()
-	pass
+def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
+	"""
+	TODO: CONTINUE HERE.
+	"""
+	hybrid_submesh_coords = mesh.cube_mesh_2(levels, mu_, mesh.p_, mesh.macro_el, [6,7,8], [3])
+	return
 
 
 

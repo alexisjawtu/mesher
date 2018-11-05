@@ -174,7 +174,7 @@ def cube2mat (obj, file_name = 'data.mat'):
 
 colours = ['lightgreen']*4
 
-def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,2,3]):
+def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,2,3,4]):
 	""" here we calculate the mesh of the whole fichera	
 		n == levels
 		mu == grading param
@@ -185,7 +185,7 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
 	dict_save = {}
 	for o in octants:
 		q = octant(o, p)
-		for t in macro_elems:
+		for t in [t for t in macro_elems and t < 4]:
 			point0 = q[:,tetrahedra[t,0]]
 			point1 = q[:,tetrahedra[t,1]]
 			point2 = q[:,tetrahedra[t,2]]
@@ -201,20 +201,21 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
 						points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu_vec[t]))*(e3-point0) + point0
 			dict_save['points_T'+str(t)+'_C'+str(o)] = points.copy()
 
-		# CALCULATION FOR t = 4 (T5)
-		P0 	  = q[:,tetrahedra[4,0]]
-		P1 	  = q[:,tetrahedra[4,1]]
-		P2 	  = q[:,tetrahedra[4,2]]
-		P3 	  = q[:,tetrahedra[4,3]]
-		points = macroel_sing_vrtx(P0, P1, P2, P3, mu, n)
-		dict_save['points_T4_C' + str(o)] = points.copy()
+		for t in [t for t in macro_elems and t == 4]:
+			# CALCULATION FOR t = 4 (T5)
+			P0 	  = q[:,tetrahedra[4,0]]
+			P1 	  = q[:,tetrahedra[4,1]]
+			P2 	  = q[:,tetrahedra[4,2]]
+			P3 	  = q[:,tetrahedra[4,3]]
+			points = macroel_sing_vrtx(P0, P1, P2, P3, mu, n)
+			dict_save['points_T4_C' + str(o)] = points.copy()
 
 	return dict_save
 
 def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
 	drawing = [[],[],[],[]]
 	for o in oct_range:
-		for t in macro_elems:
+		for t in [t for t in macro_elems and t < 4]:
 			points = coord['points_T'+str(t)+'_C'+str(o)] # np.zeros((n+1,n+1,3,n+1))  # nivel, i, coordenada, j
 			n = points.shape[0] - 1
 			for k in range (n+1):
@@ -252,7 +253,11 @@ def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
 					y[k] = points[k,n-k-i,1,i]
 					z[k] = points[k,n-k-i,2,i]
 				drawing[t].append([x,y,z])	#  pyramidals
+
+		### ACA EL TETRA REGULAR CON SUBMESH TETRA
+	
 	return np.array(drawing)
+
 
 
 ################################################################################
