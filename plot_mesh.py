@@ -1,14 +1,14 @@
 from mesh import *
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 import random
 
 def plot_bbrick():
 	mu          = .65
 	macro_elems = [3]  # 0,1,2 or 3 in each cube
-	angle_steps = range(8,12)
-	refinements = [1,2]
-	octants     = range(6,9) # any sublist in range(2,9)
-
-	
+	angle_steps = [8] #range(8,12)
+	refinements = [3]
+	octants     = [6] # range(6,9) # any sublist in range(2,9)
 
 	for n in refinements:
 	    coords  = cube_mesh_2(n,mu,p_,macro_el,octants,macro_elems)
@@ -32,22 +32,25 @@ def plot_bbrick():
 	    	# ax.set_zlim3d(-0.2,1.2)
 	        angle = 49 + 15*(azim-1)
 	        ax.view_init(elev, angle)
-	        print(drawing.shape)
 	        for tetra in drawing:
 	            col_interval = int(len(tetra)/len(octants))
 	            for o in range(len(octants)):
 	                col = colors[c]
 	                c   = c + 1
 	                for dr in range(col_interval*o, col_interval*(1+o)):
+	                	## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
+	                	## and not one by one as is now
 	                    ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = col)
-	        for oc in octants
+	        for oc in octants:
 	        	q 		= octant(oc, p_)
 	        	P0 	  	= q[:,macro_el[4,0]]
 	        	P1 	  	= q[:,macro_el[4,1]]
 	        	P2 	  	= q[:,macro_el[4,2]]
 	        	P3 	  	= q[:,macro_el[4,3]]
 	        	points_T5 = macroel_sing_vrtx(P0, P1, P2, P3, mu, n)
-				print (points_T5)  
+	        	print (points_T5)
+	        	print (points_T5.shape)
+#	        	ax.plot(x,y,z,color='yellow')
 
 	        ax.plot([],[],[],label = "mu = " + str(mu) + str(macro_elems) + str(octants))
 	        legend = ax.legend()
@@ -85,7 +88,6 @@ def plot_fichera():
 	    	# ax.set_zlim3d(-0.2,1.2)
 	        angle = 49 + 15*(azim-1)
 	        ax.view_init(elev, angle)
-	        print(drawing.shape)
 	        for tetra in drawing:
 	            col_interval = int(len(tetra)/len(octants))
 	            for o in range(len(octants)):

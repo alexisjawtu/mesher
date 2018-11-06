@@ -1,7 +1,7 @@
 import numpy as np                              
 import scipy.io as sio
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+# import matplotlib.pyplot as plt
+# from mpl_toolkits.mplot3d import Axes3D
 
 #mu_ 		= .35
 p_ 			= np.array([[ 1,  1,  1,  1,  0,  0,  0,  0], 	# octant 8
@@ -185,23 +185,24 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
 	dict_save = {}
 	for o in octants:
 		q = octant(o, p)
-		for t in [t for t in macro_elems and t < 4]:
-			point0 = q[:,tetrahedra[t,0]]
-			point1 = q[:,tetrahedra[t,1]]
-			point2 = q[:,tetrahedra[t,2]]
-			e3 	   = q[:,tetrahedra[t,3]]
+		for m in [z for z in macro_elems if z < 4]:
+			print m
+			point0 = q[:,tetrahedra[m,0]]
+			point1 = q[:,tetrahedra[m,1]]
+			point2 = q[:,tetrahedra[m,2]]
+			e3 	   = q[:,tetrahedra[m,3]]
 			points = np.zeros((n+1, n+1, 3, n+1))  # level, i, coord, j
 			for k in xrange(n+1):
 				for i in xrange(n-k+1):
 					for j in xrange(n-k-i+1):
-						lambda_1 = lambda1 (i,j,0,n,mu_vec[t]); # it can be done with much lesser calls to these lambda
-						lambda_2 = lambda2 (i,j,0,n,mu_vec[t]);
+						lambda_1 = lambda1 (i,j,0,n,mu_vec[m]); # it can be done with much lesser calls to these lambda
+						lambda_2 = lambda2 (i,j,0,n,mu_vec[m]);
 						# the mesh are just the following two lines
 						points[k,i,:,j] = lambda_1*(point1-point0) + lambda_2*(point2-point0)
-						points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu_vec[t]))*(e3-point0) + point0
-			dict_save['points_T'+str(t)+'_C'+str(o)] = points.copy()
+						points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu_vec[m]))*(e3-point0) + point0
+			dict_save['points_T'+str(m)+'_C'+str(o)] = points.copy()
 
-		for t in [t for t in macro_elems and t == 4]:
+		for m in [z for z in macro_elems if z == 4]:
 			# CALCULATION FOR t = 4 (T5)
 			P0 	  = q[:,tetrahedra[4,0]]
 			P1 	  = q[:,tetrahedra[4,1]]
@@ -215,7 +216,7 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
 def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
 	drawing = [[],[],[],[]]
 	for o in oct_range:
-		for t in [t for t in macro_elems and t < 4]:
+		for t in [z for z in macro_elems if z < 4]:
 			points = coord['points_T'+str(t)+'_C'+str(o)] # np.zeros((n+1,n+1,3,n+1))  # nivel, i, coordenada, j
 			n = points.shape[0] - 1
 			for k in range (n+1):
@@ -254,7 +255,7 @@ def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
 					z[k] = points[k,n-k-i,2,i]
 				drawing[t].append([x,y,z])	#  pyramidals
 
-		### ACA EL TETRA REGULAR CON SUBMESH TETRA
+		### TODO: ACA EL TETRA REGULAR CON SUBMESH TETRA
 	
 	return np.array(drawing)
 
