@@ -59,6 +59,8 @@ def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
 			and then call it. Make sure the dimension is the most comfortable.
 
 	"""
+	print "antes de hacer el zeros n ya vino retocada: ", n
+
 	P0 = np.array(P0).reshape((1,3))
 	P1 = np.array(P1).reshape((1,3))
 	P2 = np.array(P2).reshape((1,3))
@@ -89,6 +91,7 @@ def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
 				q3 = lambda_[0,i,j,k+1]*P0 + lambda_[1,i,j,k+1]*P1 + lambda_[2,i,j,k+1]*P2 + lambda_[3,i,j,k+1]*P3
 
 				points = np.concatenate((points,q0,q1,q2,q3))
+				del(q0,q1,q2,q3)
 				Nel += 1
 
 	for k in range(n-1):
