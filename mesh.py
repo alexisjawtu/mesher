@@ -63,8 +63,6 @@ def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
 			and then call it. Make sure the dimension is the most comfortable.
 
 	"""
-	print "antes de hacer el zeros n ya vino retocada: ", n
-
 	P0 = np.array(P0).reshape((1,3))
 	P1 = np.array(P1).reshape((1,3))
 	P2 = np.array(P2).reshape((1,3))
@@ -193,7 +191,6 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
 	for o in octants:
 		q = octant(o, p)
 		for m in [z for z in macro_elems if z < 4]:
-			print m
 			point0 = q[:,tetrahedra[m,0]]
 			point1 = q[:,tetrahedra[m,1]]
 			point2 = q[:,tetrahedra[m,2]]

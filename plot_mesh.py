@@ -14,6 +14,7 @@ def plot_bbrick():
 	refinements = [2]
 	octants     = [6] # range(6,9) # any sublist in range(2,9)
 
+	permutation_of_vertices = np.array([[0,1,2,3],[3,1,2,0],[3,1,2,0],[0,1,2,3],[0,1,2,3]])
 	for n in refinements:
 		# here macro_elems is 3, just one hybrid
 		coords  = cube_mesh_2(n,mu[3],p_,macro_el,octants,macro_elems)
@@ -47,16 +48,12 @@ def plot_bbrick():
 						ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = col)
 			# now cubic macro-els nr 0,1,2 and 4 with tetrahedra
 	        for oc in octants:
-	        	for m in [4]:
+	        	for m in [0,1,2,4]:
 					q 		= octant(oc, p_)
-					P0 	  	= q[:,macro_el[m,0]]
-					P1 	  	= q[:,macro_el[m,1]]
-					P2 	  	= q[:,macro_el[m,2]]
-					P3 	  	= q[:,macro_el[m,3]]
-					print "0",  P0
-					print "1", P1
-					print "2", P2
-					print "3", P3
+					P0 	  	= q[:,macro_el[m,permutation_of_vertices[m,0]]]
+					P1 	  	= q[:,macro_el[m,permutation_of_vertices[m,1]]]
+					P2 	  	= q[:,macro_el[m,permutation_of_vertices[m,2]]]
+					P3 	  	= q[:,macro_el[m,permutation_of_vertices[m,3]]]
 					points_T5 = macroel_sing_vrtx(P0, P1, P2, P3, mu[m], n)
 					for i in [4*nn for nn in range(points_T5.shape[0]/4)]:
 						a = np.array([0,1,2,3]+[0,2,3,1])+i*np.ones(8,dtype=int)
