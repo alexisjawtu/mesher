@@ -48,7 +48,11 @@ def lambda3 (i, j, k, n, mu):
 def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
 	"""	
 		return value: Nel == nmbr of elmts
-
+		
+		OBS: the graduation is, by default, towards 'P0',
+		so we have to put the corresponding permutation of vertices when 
+		calling the function.
+		
 		TODO:  calculations of the form lambda_[0,i,j,k]*P0 could be done
 		a priori and then call in the following manner:
 

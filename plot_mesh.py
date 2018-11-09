@@ -8,22 +8,18 @@ def plot_bbrick():
 	TODO: heavily hardcoded just for pyconar. refactor everything
 	economizing code
 	"""
-	mu          = [1,1,1,.3,1]
+	mu          = [1,.3,.3,.3,.3]
 	macro_elems = [3]  # 0,1,2 or 3 in each cube
 	angle_steps = [8,9,10] #range(8,12)
-	refinements = [3]
+	refinements = [2]
 	octants     = [6] # range(6,9) # any sublist in range(2,9)
 
 	for n in refinements:
-		print "1, ", n
 		# here macro_elems is 3, just one hybrid
 		coords  = cube_mesh_2(n,mu[3],p_,macro_el,octants,macro_elems)
-		print "2, ", n
 		drawing = cube_drawing(coords,octants,macro_elems)
-		print "3, ", n
 	    # drawing = cube_drawing(coords)
 		del(coords)
-		print "4, ", n
 		fig = plt.figure()
 		ax  = fig.add_subplot(1,1,1, projection='3d')
 		
@@ -33,7 +29,6 @@ def plot_bbrick():
 		colors  = ['brown','darkgreen','red','black','fuchsia','blue']*7
 		#random.shuffle(colors)
 		for azim in angle_steps:
-			print "5, ", n
 			c   = 0
 			# ax.axis('equal')
 			# ax.set_xlim3d(0.1,-1.1)
@@ -47,21 +42,22 @@ def plot_bbrick():
 					col = colors[c]
 					c   = c + 1
 					for dr in range(col_interval*o, col_interval*(1+o)):
-						print "6, ", n
 						## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
 						## and not one by one as is now
 						ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = col)
 			# now cubic macro-els nr 0,1,2 and 4 with tetrahedra
 	        for oc in octants:
-	        	for m in [0,1,2,4]:
+	        	for m in [4]:
 					q 		= octant(oc, p_)
 					P0 	  	= q[:,macro_el[m,0]]
 					P1 	  	= q[:,macro_el[m,1]]
 					P2 	  	= q[:,macro_el[m,2]]
 					P3 	  	= q[:,macro_el[m,3]]
-					print "7, ", n
+					print "0",  P0
+					print "1", P1
+					print "2", P2
+					print "3", P3
 					points_T5 = macroel_sing_vrtx(P0, P1, P2, P3, mu[m], n)
-					print "8, ", n
 					for i in [4*nn for nn in range(points_T5.shape[0]/4)]:
 						a = np.array([0,1,2,3]+[0,2,3,1])+i*np.ones(8,dtype=int)
 					
