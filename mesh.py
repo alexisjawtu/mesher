@@ -145,6 +145,10 @@ def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
 	points = np.delete(points, 0, 0)
 	return points
 
+def macroel_sing_edge(P0,P1,P2,P3,P4,P5,grading_param):
+	## TODO
+	pass
+
 def line (x, y, z):
 	""" (x[0], y[0], z[0]) -- ... -- (x[n-1], y[n-1], z[n-1]) """
 	s = '\n\t\\draw '

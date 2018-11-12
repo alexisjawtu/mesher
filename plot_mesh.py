@@ -68,6 +68,8 @@ def plot_bbrick():
 						x = points_T5[a,b]
 						ax.plot(x, y, z)
 					del(points_T5)
+			# now prismatic macroels
+			# TODO
 			ax.plot([],[],[],label = "mu[3] = " + str(mu[3]) + str(macro_elems) + str(octants))
 			legend = ax.legend()
 			ax.set_xlabel(' X ')
