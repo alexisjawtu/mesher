@@ -11,7 +11,7 @@ def plot_bbrick():
 	mu          = [1,1,1,1,1]#[1,.4,.4,.4,.4]
 	macro_elems = [3]  # 0,1,2 or 3 in each cube
 	angle_steps = [8,9,10] #range(8,12)
-	refinements = [1,2,3,4]
+	refinements = range(5,21)
 	octants     = [6] # range(6,9) # any sublist in range(2,9)
 
 	permutation_of_vertices = np.array([[0,1,2,3],[3,1,2,0],[3,1,2,0],[0,1,2,3],[0,1,2,3]])
@@ -35,8 +35,7 @@ def plot_bbrick():
 			# ax.set_xlim3d(0.1,-1.1)
 			# ax.set_ylim3d(-1.0,1.0)
 			# ax.set_zlim3d(-0.2,1.2)
-			angle = 49 + 15*(azim-1)
-			ax.view_init(elev, angle)
+			ax.view_init(elev, 49 + 15*(azim-1))
 			#for tetra in drawing:
 			#	col_interval = int(len(tetra)/len(octants))
 			#	for o in range(len(octants)):
@@ -75,16 +74,17 @@ def plot_bbrick():
 			ax.set_xlabel(' X ')
 			ax.set_ylabel(' Y ')
 			ax.set_zlabel(' Z ')
-			plt.show()
+			#plt.show()
+			print "azim ", azim
 			fig.savefig('bbrick' + str(azim) + '-' + str(n) + '.png')
 	return
 
 def plot_fichera():
-	mu          = .65
-	macro_elems = [0,1,2,3]  # 0,1,2 or 3 in each cube
-	angle_steps = range(8,12)
-	refinements = [1,2]
-	octants     = range(5,6) # any sublist in range(2,9)
+	mu          = 1
+	macro_elems = [1]  # 0,1,2 or 3 in each cube
+	angle_steps = range(23,24)
+	refinements = range(19,20)
+	octants     = range(2,3) # any sublist in range(2,9)
 	
 	for n in refinements:
 	    coords  = cube_mesh_2(n,mu,p_,macro_el,octants,macro_elems)
@@ -98,6 +98,7 @@ def plot_fichera():
     	
 	    #for azim in [49, 79,109,139]:
 	    colors  = ['brown','darkgreen','red','black','fuchsia','blue']*7
+	    #colors  = ['brown','darkgreen','red','black','fuchsia','blue']*7
 	    #random.shuffle(colors)
 	    for azim in angle_steps:
 	        c   = 0
@@ -118,4 +119,5 @@ def plot_fichera():
 	
 	        ax.plot([],[],[],label = "mu = " + str(mu) + str(macro_elems) + str(octants))
 	        legend = ax.legend()
-	        fig.savefig('mesh' + str(azim) + '-' + str(n) + '.png')
+	        fig.savefig('single_hybrid_graded' + str(azim) + '-' + str(n) + '.png')
+	    plt.close(fig)
