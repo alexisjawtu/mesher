@@ -8,10 +8,10 @@ def plot_bbrick():
 	TODO: heavily hardcoded just for pyconar. refactor everything
 	economizing code
 	"""
-	mu          = [1,.3,.3,.3,.3]
+	mu          = [1,1,1,1,1]#[1,.4,.4,.4,.4]
 	macro_elems = [3]  # 0,1,2 or 3 in each cube
 	angle_steps = [8,9,10] #range(8,12)
-	refinements = [2]
+	refinements = [1,2,3,4]
 	octants     = [6] # range(6,9) # any sublist in range(2,9)
 
 	permutation_of_vertices = np.array([[0,1,2,3],[3,1,2,0],[3,1,2,0],[0,1,2,3],[0,1,2,3]])
@@ -37,18 +37,18 @@ def plot_bbrick():
 			# ax.set_zlim3d(-0.2,1.2)
 			angle = 49 + 15*(azim-1)
 			ax.view_init(elev, angle)
-			for tetra in drawing:
-				col_interval = int(len(tetra)/len(octants))
-				for o in range(len(octants)):
-					col = colors[c]
-					c   = c + 1
-					for dr in range(col_interval*o, col_interval*(1+o)):
-						## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
-						## and not one by one as is now
-						ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = col)
+			#for tetra in drawing:
+			#	col_interval = int(len(tetra)/len(octants))
+			#	for o in range(len(octants)):
+			#		col = colors[c]
+			#		c   = c + 1
+			#		for dr in range(col_interval*o, col_interval*(1+o)):
+			#			## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
+			#			## and not one by one as is now
+			#			ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = col)
 			# now cubic macro-els nr 0,1,2 and 4 with tetrahedra
 	        for oc in octants:
-	        	for m in [0,1,2,4]:
+	        	for m in [4]:
 					q 		= octant(oc, p_)
 					P0 	  	= q[:,macro_el[m,permutation_of_vertices[m,0]]]
 					P1 	  	= q[:,macro_el[m,permutation_of_vertices[m,1]]]
@@ -70,7 +70,7 @@ def plot_bbrick():
 					del(points_T5)
 			# now prismatic macroels
 			# TODO
-			ax.plot([],[],[],label = "mu[3] = " + str(mu[3]) + str(macro_elems) + str(octants))
+			ax.plot([],[],[],label = "mu[3] = " + str(mu[3]) + " " + str(macro_elems) + " " + str(octants))
 			legend = ax.legend()
 			ax.set_xlabel(' X ')
 			ax.set_ylabel(' Y ')
