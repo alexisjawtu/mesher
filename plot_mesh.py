@@ -22,6 +22,7 @@ def plot_bbrick():
 	    # drawing = cube_drawing(coords)
 		del(coords)
 		fig = plt.figure()
+		plt.tight_layout()
 		ax  = fig.add_subplot(1,1,1, projection='3d')
 		
 		elev = 30
@@ -83,7 +84,7 @@ def plot_fichera():
 	mu          = 1
 	macro_elems = [1]  # 0,1,2 or 3 in each cube
 	angle_steps = range(23,24)
-	refinements = range(19,20)
+	refinements = range(1,23)
 	octants     = range(2,3) # any sublist in range(2,9)
 	
 	for n in refinements:
@@ -93,7 +94,6 @@ def plot_fichera():
 	    # drawing = cube_drawing(coords)
     	
 	    fig = plt.figure()
-    	
 	    elev = 30
     	
 	    #for azim in [49, 79,109,139]:
@@ -103,6 +103,7 @@ def plot_fichera():
 	    for azim in angle_steps:
 	        c   = 0
 	        ax  = fig.add_subplot(1,1,1, projection='3d')
+	        plt.tight_layout()
 	        # ax.axis('equal')
 	    	# ax.set_xlim3d(0.1,-1.1)
 	    	# ax.set_ylim3d(-1.0,1.0)
@@ -119,5 +120,5 @@ def plot_fichera():
 	
 	        ax.plot([],[],[],label = "mu = " + str(mu) + str(macro_elems) + str(octants))
 	        legend = ax.legend()
-	        fig.savefig('single_hybrid_graded' + str(azim) + '-' + str(n) + '.png')
+	        fig.savefig('single_hybrid_uniform' + str(azim) + '-' + str(n) + '.png')
 	    plt.close(fig)
