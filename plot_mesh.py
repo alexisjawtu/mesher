@@ -81,10 +81,10 @@ def plot_bbrick():
 	return
 
 def plot_fichera():
-	mu          = 1
+	mu          = .5
 	macro_elems = [1]  # 0,1,2 or 3 in each cube
 	angle_steps = range(23,24)
-	refinements = range(1,23)
+	refinements = range(1,6)
 	octants     = range(2,3) # any sublist in range(2,9)
 	
 	for n in refinements:
@@ -120,5 +120,5 @@ def plot_fichera():
 	
 	        ax.plot([],[],[],label = "mu = " + str(mu) + str(macro_elems) + str(octants))
 	        legend = ax.legend()
-	        fig.savefig('single_hybrid_uniform' + str(azim) + '-' + str(n) + '.png')
+	        fig.savefig('single_hybrid_graded' + str(azim) + '-' + str(n) + '.png')
 	    plt.close(fig)
