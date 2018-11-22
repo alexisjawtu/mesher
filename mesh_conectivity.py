@@ -249,12 +249,6 @@ def kill_repeated (vertices_file_name):
 			if np.all(np.equal(vertices[v], vertices[w])):
 				d_out[v] = d_out.get(v,[])
 				d_out[v].append(w)
-	# remove_indices = []
-	# for key in d_out:
-	# 	remove_indices += d_out[key]
-	# vertices_unique = np.delete(vertices, remove_indices, axis = 0)
-	# with open ('vertices_unique.txt', 'w') as out_file:
-	#     np.savetxt(out_file, vertices_unique, fmt = '%8.5f')
 	print '\r'
 	return d_out
 
