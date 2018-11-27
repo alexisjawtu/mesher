@@ -1,6 +1,6 @@
 ### TODO FIRST: mesh.cube_mesh_2() should have an indep func called
 ### macroel_sing_vrtx_and_edge(), as mesh.macroel_sing_vrtx() and not a "cube_mesh_2"
-
+###	TODO: refactor everything economizing code
 
 from mesh import *
 from mpl_toolkits.mplot3d import Axes3D
@@ -10,8 +10,6 @@ import random
 def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [8,9,10], refinements = range(5,6)):
 	"""
 	mu == [1,.4,.4,.4,.4] example for the graded case
-	TODO: heavily hardcoded just for pyconar. refactor everything
-	economizing code
 	"""
 	macro_elems = [3]  # 0,1,2 or 3 in each cube
 	octants     = [6] # range(6,9) # any sublist in range(2,9)
@@ -20,7 +18,6 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [8,9,10], refinements = range(5,
 		# here macro_elems is 3, just one hybrid
 		coords  = cube_mesh_2(n,mu[3],p_,macro_el,octants,macro_elems)
 		drawing = cube_drawing(coords,octants,macro_elems)
-	    # drawing = cube_drawing(coords)
 		del(coords)
 		fig = plt.figure()
 		plt.tight_layout()
@@ -70,6 +67,7 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [8,9,10], refinements = range(5,
 						ax.plot(x, y, z)
 					del(points_T5)
 			# now prismatic macroels
+			# >>>>>>>>>     points_on_edge = macroel_sing_edge(three_times_six_points_matrix, grading, n)
 			# TODO
 			ax.plot([],[],[],label = "mu[3] = " + str(mu[3]) + " " + str(macro_elems) + " " + str(octants))
 			legend = ax.legend()

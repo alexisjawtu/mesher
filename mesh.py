@@ -145,7 +145,7 @@ def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
 	points = np.delete(points, 0, 0)
 	return points
 
-def macroel_sing_edge(P0,P1,P2,P3,P4,P5,grading_param):
+def macroel_sing_edge(three_times_six_points_matrix, grading, n):
 	## TODO
 	pass
 
