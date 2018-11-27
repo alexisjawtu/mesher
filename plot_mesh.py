@@ -1,19 +1,20 @@
+### TODO FIRST: mesh.cube_mesh_2() should have an indep func called
+### macroel_sing_vrtx_and_edge(), as mesh.macroel_sing_vrtx() and not a "cube_mesh_2"
+
+
 from mesh import *
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import random
 
-def plot_bbrick():
+def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [8,9,10], refinements = range(5,6)):
 	"""
+	mu == [1,.4,.4,.4,.4] example for the graded case
 	TODO: heavily hardcoded just for pyconar. refactor everything
 	economizing code
 	"""
-	mu          = [1,1,1,1,1]#[1,.4,.4,.4,.4]
 	macro_elems = [3]  # 0,1,2 or 3 in each cube
-	angle_steps = [8,9,10] #range(8,12)
-	refinements = range(5,21)
 	octants     = [6] # range(6,9) # any sublist in range(2,9)
-
 	permutation_of_vertices = np.array([[0,1,2,3],[3,1,2,0],[3,1,2,0],[0,1,2,3],[0,1,2,3]])
 	for n in refinements:
 		# here macro_elems is 3, just one hybrid
