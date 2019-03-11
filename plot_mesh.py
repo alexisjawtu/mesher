@@ -18,7 +18,6 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [8,9,10], refinements = range(5,
 		drawing = cube_drawing(coords,octants,macro_elems)
 		del(coords)
 		fig = plt.figure()
-		plt.tight_layout()
 		ax  = fig.add_subplot(1,1,1, projection='3d')
 		
 		elev = 30
@@ -65,8 +64,12 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [8,9,10], refinements = range(5,
 						ax.plot(x, y, z)
 					del(points_T5)
 			# now prismatic macroels
-			# >>>>>>>>>     points_on_edge = macroel_sing_edge(three_times_six_points_matrix, grading, n)
-			# TODO
+			trans = np.array([0,0,3])
+			prism = np.array([P0,P2,P3,P0-trans,P2-trans,P3-trans]).reshape((3,6))
+			points_on_edge = macroel_sing_edge(prism, mu[m], n)
+			# CONTINUE HERE: plot with prisms
+			# figure out how to put universally the points in 'prism' for
+			# macroel_sing_edge()
 			ax.plot([],[],[],label = "mu[3] = " + str(mu[3]) + " " + str(macro_elems) + " " + str(octants))
 			legend = ax.legend()
 			ax.set_xlabel(' X ')
@@ -74,7 +77,7 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [8,9,10], refinements = range(5,
 			ax.set_zlabel(' Z ')
 			#plt.show()
 			print "azim ", azim
-			fig.savefig('bbrick' + str(azim) + '-' + str(n) + '.png')
+			fig.savefig('test-bbrick' + str(azim) + '-' + str(n) + '.png')
 	return
 
 def plot_fichera():
