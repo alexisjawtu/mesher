@@ -67,17 +67,17 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [9], refinements = [3]):
             prism = np.array([P0,P2,P3,P0-trans,P2-trans,P3-trans]).reshape((3,6))
             
 
+            # CONTINUE HERE: plot with prisms
             points_prisms = poner a mano viendo el dibujo (0,0,-1)
                                                           ( , ,-1)
                                                           ( , ,-1)
+            # figure out how to put universally the points in 'prism' for
+            # macroel_sing_edge()
 
             for j in range(n+1):
                 for k in xrange(n+1):
                     ax.plot(points_prisms[j,k,0,0:n+1-k], points_prisms[j,k,1,0:n+1-k], points_prisms[j,k,2,0:n+1-k], color="red")
             
-            # CONTINUE HERE: plot with prisms
-            # figure out how to put universally the points in 'prism' for
-            # macroel_sing_edge()
             
             ax.plot([],[],[],label = "mu[3] = " + str(mu[3]) + " " + str(macro_elems) + " " + str(octants))
             legend = ax.legend()
