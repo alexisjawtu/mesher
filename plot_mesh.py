@@ -40,11 +40,7 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [9], refinements = [3]):
                         pass
                         ## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
                         ## and not one by one as is now
-                        
-                        #>>>>>>>>>>><
-                        #ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = "green")
-                        #<<<<<<<<<<<<
-
+                        ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = "green")
 
             # now cubic macro-els nr 0,1,2 and 4 with tetrahedra
             for oc in octants:
@@ -68,28 +64,25 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [9], refinements = [3]):
                         x = points_T5[a,b]
                         ax.plot(x, y, z)
                     del(points_T5)
+            
+            # CONTINUE HERE:
+            # figure out how to put universally the points in 'prism' for macroel_sing_edge()
+            
             # now prismatic macroels
             trans = np.array([0,0,3])
-            prism = np.array([P0,P2,P3,P0-trans,P2-trans,P3-trans]).reshape((3,6))
-            
-
-            # CONTINUE HERE: plot with prisms
-            # figure out how to put universally the points in 'prism' for macroel_sing_edge()
             points_prisms = np.array([(0,0,-1),(0,1,-1),(-1,0,-1)])
             points_prisms = np.concatenate((points_prisms,points_prisms - trans)).transpose()
             points_prisms = macroel_sing_edge(points_prisms, mu[m], n)
-
-
             for j in range(n+1):
                 for k in xrange(n+1):
                     ax.plot(points_prisms[j,k,0,0:n+1-k], points_prisms[j,k,1,0:n+1-k], points_prisms[j,k,2,0:n+1-k], color="red")
                     ax.plot(points_prisms[j,0:n+1-k,0,k], points_prisms[j,0:n+1-k,1,k], points_prisms[j,0:n+1-k,2,k], color="green")
                     x = np.array([points_prisms[j,l,:,n-l-k] for l in range(n-k,-1,-1)])
-                    
-                    #for i in xrange(n-k,0,-1):  ##   i de n a 0
-                    #    x = np.array([points_prisms[j,l,:,n-l] for l in range(i,-1,-1)])
-                    
                     ax.plot(x[:,0],x[:,1],x[:,2], color="black")
+                for i in xrange(n+1-j):
+                    ax.plot(points_prisms[:,j,0,i],points_prisms[:,j,1,i],points_prisms[:,j,2,i], color="blue")
+
+
             
             ax.plot([],[],[],label = "mu[3] = " + str(mu[3]) + " " + str(macro_elems) + " " + str(octants))
             legend = ax.legend()
