@@ -54,7 +54,7 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [9], refinements = [3]):
                         
                         b = np.array([2]*8)
                         z = points_T5[a,b]
-                        
+                        	
                         b = np.array([1]*8)
                         y = points_T5[a,b]
                         
@@ -68,16 +68,21 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [9], refinements = [3]):
             
 
             # CONTINUE HERE: plot with prisms
-            points_prisms = poner a mano viendo el dibujo (0,0,-1)
-                                                          ( , ,-1)
-                                                          ( , ,-1)
-            # figure out how to put universally the points in 'prism' for
-            # macroel_sing_edge()
+            # figure out how to put universally the points in 'prism' for macroel_sing_edge()
+            points_prisms = np.array([(0,0,-1),(0,1,-1),(-1,0,-1)])
+            points_prisms = np.concatenate((points_prisms,points_prisms - trans)).transpose()
+            points_prisms = macroel_sing_edge (points_prisms, mu[m], n)
+            print points_prisms
+
 
             for j in range(n+1):
                 for k in xrange(n+1):
                     ax.plot(points_prisms[j,k,0,0:n+1-k], points_prisms[j,k,1,0:n+1-k], points_prisms[j,k,2,0:n+1-k], color="red")
-            
+                    ax.plot(points_prisms[j,0:n+1-k,0,k], points_prisms[j,0:n+1-k,1,k], points_prisms[j,0:n+1-k,2,k], color="green")
+                    n+1-k
+                    ax.plot(points_prisms[j,n-k,*,*], points_prisms[j, ???], points_prisms[j, ???], color="black")
+
+
             
             ax.plot([],[],[],label = "mu[3] = " + str(mu[3]) + " " + str(macro_elems) + " " + str(octants))
             legend = ax.legend()
