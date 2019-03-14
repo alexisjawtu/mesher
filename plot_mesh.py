@@ -1,10 +1,10 @@
-###	TODO: refactor everything economizing code
+    ###	TODO: refactor everything economizing code
 from mesh import *
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import random
 
-def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [9], refinements = [3]):
+def plot_bbrick(mu = [1,1,1,1,.65], angle_steps = [9], refinements = [3]):
     """
     mu == [1,.4,.4,.4,.4] example for the graded case
     """
@@ -40,7 +40,7 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [9], refinements = [3]):
                         pass
                         ## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
                         ## and not one by one as is now
-                        ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = "green")
+                        # >>>> ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = "green")
 
             # now cubic macro-els nr 0,1,2 and 4 with tetrahedra
             for oc in octants:
@@ -62,28 +62,25 @@ def plot_bbrick(mu = [1,1,1,1,1], angle_steps = [9], refinements = [3]):
                         
                         b = np.array([0]*8)
                         x = points_T5[a,b]
-                        ax.plot(x, y, z)
+                        # >>>> ax.plot(x, y, z)
                     del(points_T5)
             
             # CONTINUE HERE:
             # figure out how to put universally the points in 'prism' for macroel_sing_edge()
             
             # now prismatic macroels
-            trans = np.array([0,0,3])
-            points_prisms = np.array([(0,0,-1),(0,1,-1),(-1,0,-1)])
+            trans           = np.array([0,0,3])
+            Q0              = np.array([0,0,-1])
+            Q1              = np.array([0,1,-1])
+            Q2              = np.array([-1,0,-1])
+            points_prisms   = np.array([Q0,Q1,Q2])
+            points_prisms   = np.concatenate((points_prisms,points_prisms - trans)).transpose()
+            plot_prism_macroel(ax, points_prisms, n, mu[m])  
+            R0    = Q1 - Q0 + Q2
+            points_prisms = np.array([R0,Q1,Q2])
             points_prisms = np.concatenate((points_prisms,points_prisms - trans)).transpose()
-            points_prisms = macroel_sing_edge(points_prisms, mu[m], n)
-            for j in range(n+1):
-                for k in xrange(n+1):
-                    ax.plot(points_prisms[j,k,0,0:n+1-k], points_prisms[j,k,1,0:n+1-k], points_prisms[j,k,2,0:n+1-k], color="red")
-                    ax.plot(points_prisms[j,0:n+1-k,0,k], points_prisms[j,0:n+1-k,1,k], points_prisms[j,0:n+1-k,2,k], color="green")
-                    x = np.array([points_prisms[j,l,:,n-l-k] for l in range(n-k,-1,-1)])
-                    ax.plot(x[:,0],x[:,1],x[:,2], color="black")
-                for i in xrange(n+1-j):
-                    ax.plot(points_prisms[:,j,0,i],points_prisms[:,j,1,i],points_prisms[:,j,2,i], color="blue")
+            plot_prism_macroel(ax, points_prisms, n, 1)  
 
-
-            
             ax.plot([],[],[],label = "mu[3] = " + str(mu[3]) + " " + str(macro_elems) + " " + str(octants))
             legend = ax.legend()
             ax.set_xlabel(' X ')
@@ -136,3 +133,15 @@ def plot_fichera():
             fig.savefig('fichera-' + str(azim) + '-' + str(n) + str(mu) + '.png')
             plt.show()
         plt.close(fig)
+
+def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1):
+    local_grid_points = macroel_sing_edge(vertices, local_mu, n)
+    for j in range(n+1):
+        for k in xrange(n+1):
+            plt_axes.plot(local_grid_points[j,k,0,0:n+1-k], local_grid_points[j,k,1,0:n+1-k], local_grid_points[j,k,2,0:n+1-k], color="red")
+            plt_axes.plot(local_grid_points[j,0:n+1-k,0,k], local_grid_points[j,0:n+1-k,1,k], local_grid_points[j,0:n+1-k,2,k], color="green")
+            x = np.array([local_grid_points[j,l,:,n-l-k] for l in range(n-k,-1,-1)])
+            plt_axes.plot(x[:,0],x[:,1],x[:,2], color="black")
+        for i in xrange(n+1-j):
+            plt_axes.plot(local_grid_points[:,j,0,i],local_grid_points[:,j,1,i],local_grid_points[:,j,2,i], color="blue")
+    return
