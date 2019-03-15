@@ -36,19 +36,16 @@ def plot_bbrick(mu = [1,1,1,1,.65], angle_steps = [9], refinements = [3]):
     macro_elems = [0,1,2,3]  # 0,1,2 or 3 in each cube
     octants     = [6] # range(6,9) # any sublist in range(2,9)
     permutation_of_vertices = np.array([[0,1,2,3],[3,1,2,0],[3,1,2,0],[0,1,2,3],[0,1,2,3]])
+    elev = 30
+    colors  = ['brown','darkgreen','red','black','fuchsia','blue']*7
+    
     for n in refinements:
-        # here macro_elems is 3, just one hybrid
+        fig = plt.figure()
+        ax  = fig.add_subplot(1,1,1, projection='3d')
+    
         coords  = cube_mesh_2(n,mu[3],p_,macro_el,octants,macro_elems)
         drawing = cube_drawing(coords,octants,macro_elems)
         del(coords)
-        fig = plt.figure()
-        ax  = fig.add_subplot(1,1,1, projection='3d')
-        
-        elev = 30
-        
-        #for azim in [49, 79,109,139]:
-        colors  = ['brown','darkgreen','red','black','fuchsia','blue']*7
-        #random.shuffle(colors)
         for azim in angle_steps:
             c   = 0
             # ax.axis('equal')
