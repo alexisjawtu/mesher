@@ -4,11 +4,36 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import random
 
+def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1):
+    pass
+
+def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1):
+    local_grid_points = macroel_sing_edge(vertices, local_mu, n)
+    for j in range(n+1):
+        for k in xrange(n+1):
+            plt_axes.plot(local_grid_points[j,k,0,0:n+1-k], local_grid_points[j,k,1,0:n+1-k], local_grid_points[j,k,2,0:n+1-k], color="red")
+            plt_axes.plot(local_grid_points[j,0:n+1-k,0,k], local_grid_points[j,0:n+1-k,1,k], local_grid_points[j,0:n+1-k,2,k], color="green")
+            x = np.array([local_grid_points[j,l,:,n-l-k] for l in range(n-k,-1,-1)])
+            plt_axes.plot(x[:,0],x[:,1],x[:,2], color="black")
+        for i in xrange(n+1-j):
+            plt_axes.plot(local_grid_points[:,j,0,i],local_grid_points[:,j,1,i],local_grid_points[:,j,2,i], color="blue")
+    return
+
+def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1):
+    points_T5 = macroel_sing_vrtx(vertices[:,0], vertices[:,1], vertices[:,2], vertices[:,3], local_mu, n)
+    for i in [4*nn for nn in range(points_T5.shape[0]/4)]:
+        a = np.array([0,1,2,3]+[0,2,3,1])+i*np.ones(8,dtype=int)
+        z = points_T5[a,np.array([2]*8)]
+        y = points_T5[a,np.array([1]*8)]
+        x = points_T5[a,np.array([0]*8)]
+        plt_axes.plot(x, y, z)
+    return
+
 def plot_bbrick(mu = [1,1,1,1,.65], angle_steps = [9], refinements = [3]):
     """
     mu == [1,.4,.4,.4,.4] example for the graded case
     """
-    macro_elems = [3]  # 0,1,2 or 3 in each cube
+    macro_elems = [0,1,2,3]  # 0,1,2 or 3 in each cube
     octants     = [6] # range(6,9) # any sublist in range(2,9)
     permutation_of_vertices = np.array([[0,1,2,3],[3,1,2,0],[3,1,2,0],[0,1,2,3],[0,1,2,3]])
     for n in refinements:
@@ -40,30 +65,14 @@ def plot_bbrick(mu = [1,1,1,1,.65], angle_steps = [9], refinements = [3]):
                         pass
                         ## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
                         ## and not one by one as is now
-                        # >>>> ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = "green")
+                        ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = "green")
 
             # now cubic macro-els nr 0,1,2 and 4 with tetrahedra
             for oc in octants:
                 for m in [4]:
                     q       = octant(oc, p_)
-                    P0      = q[:,macro_el[m,permutation_of_vertices[m,0]]]
-                    P1      = q[:,macro_el[m,permutation_of_vertices[m,1]]]
-                    P2 	  	= q[:,macro_el[m,permutation_of_vertices[m,2]]]
-                    P3 	  	= q[:,macro_el[m,permutation_of_vertices[m,3]]]
-                    points_T5 = macroel_sing_vrtx(P0, P1, P2, P3, mu[m], n)
-                    for i in [4*nn for nn in range(points_T5.shape[0]/4)]:
-                        a = np.array([0,1,2,3]+[0,2,3,1])+i*np.ones(8,dtype=int)
-                        
-                        b = np.array([2]*8)
-                        z = points_T5[a,b]
-                        	
-                        b = np.array([1]*8)
-                        y = points_T5[a,b]
-                        
-                        b = np.array([0]*8)
-                        x = points_T5[a,b]
-                        # >>>> ax.plot(x, y, z)
-                    del(points_T5)
+                    vertices = q[:,macro_el[m,permutation_of_vertices[m,:]]]
+                    plot_tetra_macroel(ax,vertices,n,mu[m])
             
             # CONTINUE HERE:
             # figure out how to put universally the points in 'prism' for macroel_sing_edge()
@@ -133,15 +142,3 @@ def plot_fichera():
             fig.savefig('fichera-' + str(azim) + '-' + str(n) + str(mu) + '.png')
             plt.show()
         plt.close(fig)
-
-def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1):
-    local_grid_points = macroel_sing_edge(vertices, local_mu, n)
-    for j in range(n+1):
-        for k in xrange(n+1):
-            plt_axes.plot(local_grid_points[j,k,0,0:n+1-k], local_grid_points[j,k,1,0:n+1-k], local_grid_points[j,k,2,0:n+1-k], color="red")
-            plt_axes.plot(local_grid_points[j,0:n+1-k,0,k], local_grid_points[j,0:n+1-k,1,k], local_grid_points[j,0:n+1-k,2,k], color="green")
-            x = np.array([local_grid_points[j,l,:,n-l-k] for l in range(n-k,-1,-1)])
-            plt_axes.plot(x[:,0],x[:,1],x[:,2], color="black")
-        for i in xrange(n+1-j):
-            plt_axes.plot(local_grid_points[:,j,0,i],local_grid_points[:,j,1,i],local_grid_points[:,j,2,i], color="blue")
-    return
