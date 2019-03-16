@@ -255,6 +255,7 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
     return dict_save
 
 def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
+    ## TODO: this function goes in module plot_mesh.py
     drawing = [[],[],[],[]]
     for o in oct_range:
         for t in [z for z in macro_elems if z < 4]:
