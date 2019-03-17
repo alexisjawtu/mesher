@@ -70,18 +70,24 @@ def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1):
         plt_axes.plot(x, y, z)
     return
 
-def plot_bbrick(mu = [.65,1,1,1,.65], angle_steps = [9], refinements = [3]):
+def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3]):
     """ mu == [1,.4,.4,.4,.4] example for the graded case """
     permutation_of_vertices = np.array([[0,1,2,3],[3,1,2,0],[3,1,2,0],[0,1,2,3],[0,1,2,3]])
     elev = 30
     colors  = ['brown','darkgreen','red','black','fuchsia','blue']*7
-    trans   = np.array([0,0,3])
+    trans   = np.array([0,0,1])
     A0 = np.zeros(3)
     Q0 = np.array([0,0,-1])
     Q1 = np.array([0,1,-1])
     Q2 = np.array([-1,0,-1])
     R0 = Q1 - Q0 + Q2
+    P1_hybrid_4 = Q2+Q1-2*Q0+A0
+
     vertices_hybrid_1   = np.array([Q0,Q2,Q1,A0])
+    vertices_hybrid_2   = np.array([Q2-Q0+A0,P1_hybrid_4,Q2,A0]) 
+    vertices_hybrid_3   = np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0])
+    vertices_hybrid_4   = np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1]) # -----> oposite to a singular vertex
+
     q                   = octant(6, p_)
     vertices_tetra_1    = q[:,macro_el[4,permutation_of_vertices[4,:]]]
 
@@ -96,14 +102,23 @@ def plot_bbrick(mu = [.65,1,1,1,.65], angle_steps = [9], refinements = [3]):
         ax  = fig.add_subplot(1,1,1, projection='3d')
         for azim in angle_steps:
             ax.view_init(elev, 49 + 15*(azim-1))
-            plot_hybrid_macroel (ax, vertices_hybrid_1, n, mu[0])
-            plot_tetra_macroel(ax,vertices_tetra_1,n,mu[4])
-            # figure out how to put universally the points in 'prism' for macroel_sing_edge()
-            # now prismatic macroels
-            plot_prism_macroel(ax, points_prisms_1, n, mu[4])  
+            
+            plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu)
+            plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu)
+            plot_hybrid_macroel(ax, vertices_hybrid_3, n, mu)
+            plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1)
+            
+            plot_tetra_macroel(ax, vertices_tetra_1, n, mu)
+            
+            plot_prism_macroel(ax, points_prisms_1, n, mu)  
             plot_prism_macroel(ax, points_prisms_2, n, 1)  
 
-            ax.plot([],[],[],label = "mu[3] = " + str(mu[3]))
+            ax.scatter(Q2[0],Q2[1],Q2[2],color="black")
+            ax.scatter(Q1[0],Q1[1],Q1[2],color="red")
+            ax.scatter(P1_hybrid_4[0],P1_hybrid_4[1],P1_hybrid_4[2],color="blue")
+            ax.scatter((Q1+A0-Q0)[0],(Q1+A0-Q0)[1],(Q1+A0-Q0)[2],color="violet")
+
+            ax.plot([],[],[],label = " ")
             legend = ax.legend()
             ax.set_xlabel(' X ')
             ax.set_ylabel(' Y ')
