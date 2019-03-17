@@ -6,50 +6,50 @@ import random
 
 def plot_hybrid_macroel(vertices, n, local_mu = 1):
     points = macroel_sing_vrtx_and_edge (vertices[0], vertices[1], vertices[2],vertices[3], local_mu, n)
-#    drawing = [[],[],[],[]]
- #   for o in oct_range:
+    drawing = []
+    #drawing = [[],[],[],[]]
+    #   for o in oct_range:
  #       for t in [z for z in macro_elems if z < 4]:
 #    points = coord['points_T'+str(t)+'_C'+str(o)] # np.zeros((n+1,n+1,3,n+1))  # nivel, i, coordenada, j
 
 
 # CONTINUE HERE AND THEN LINE 126 in plot_mesh.py
 
-
     n = points.shape[0] - 1
     for k in range (n+1):
         for i in range (n-k+1):
             for j in range (n-k-i+1):
                 x, y, z = points[k,0:n-k-j+1,0,j], points[k,0:n-k-j+1,1,j], points[k,0:n-k-j+1,2,j]
-                drawing[t].append([x,y,z])
+                drawing.append([x,y,z])
             x, y, z = points[k,i,0,0:n-k-i+1], points[k,i,1,0:n-k-i+1], points[k,i,2,0:n-k-i+1]
-            drawing[t].append([x,y,z])
+            drawing.append([x,y,z])
         for c in range (n-k+1):
             x, y, z = np.zeros(c+1), np.zeros(c+1), np.zeros(c+1)
             for i in range (c+1):
                 x[i] = points[k,i,0,c-i]
                 y[i] = points[k,i,1,c-i]
                 z[i] = points[k,i,2,c-i]
-            drawing[t].append([x,y,z])  #  transversals
+            drawing.append([x,y,z])  #  transversals
     for i in range (n):
         for j in range (n-i):
             stop = n - (i + j) + 1
             x = points[0:stop,i,0,j]
             y = points[0:stop,i,1,j]
             z = points[0:stop,i,2,j]
-            drawing[t].append([x,y,z])  #  verticals
+            drawing.append([x,y,z])  #  verticals
         x, y, z = np.zeros(n-i+1), np.zeros(n-i+1), np.zeros(n-i+1)
         for k in range (n-i+1):
             x[k] = points[k,i,0,n-k-i]
             y[k] = points[k,i,1,n-k-i]
             z[k] = points[k,i,2,n-k-i]
-        drawing[t].append([x,y,z])  #  pyramidals
+        drawing.append([x,y,z])  #  pyramidals
     # simply interchange the roles of i and j
         x, y, z = np.zeros(n-i+1), np.zeros(n-i+1), np.zeros(n-i+1)
         for k in range (n-i+1):
             x[k] = points[k,n-k-i,0,i]
             y[k] = points[k,n-k-i,1,i]
             z[k] = points[k,n-k-i,2,i]
-        drawing[t].append([x,y,z])  #  pyramidals
+        drawing.append([x,y,z])  #  pyramidals
     return np.array(drawing)
 
 def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1):
@@ -93,14 +93,8 @@ def plot_bbrick(mu = [.65,1,1,1,.65], angle_steps = [9], refinements = [3]):
     for n in refinements:
         fig = plt.figure()
         ax  = fig.add_subplot(1,1,1, projection='3d')
-    
-        coords  = cube_mesh_2(n,mu[3],p_,macro_el,octants,macro_elems)
-        
         vertices = np.array([Q0,Q2,Q1,A0])
-
-        >>>>>>>> drawing = plot_hybrid_macroel (vertices, n, mu[0])
-        >>>>>>>>>>>>      drawing = cube_drawing(coords,octants,macro_elems)
-        del(coords)
+        drawing = plot_hybrid_macroel (vertices, n, mu[0])
         for azim in angle_steps:
             c   = 0
             # ax.axis('equal')
@@ -108,16 +102,15 @@ def plot_bbrick(mu = [.65,1,1,1,.65], angle_steps = [9], refinements = [3]):
             # ax.set_ylim3d(-1.0,1.0)
             # ax.set_zlim3d(-0.2,1.2)
             ax.view_init(elev, 49 + 15*(azim-1))
-            for tetra in drawing:
-                col_interval = int(len(tetra)/len(octants))
-                for o in range(len(octants)):
-                    col = colors[c]
-                    c   = c + 1
-                    for dr in range(col_interval*o, col_interval*(1+o)):
-                        pass
-                        ## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
-                        ## and not one by one as is now
-                        ax.plot(tetra[dr][0],tetra[dr][1],tetra[dr][2],color = "green")
+            col_interval = int(len(drawing)/len(octants))
+            for o in range(len(octants)):
+                col = colors[c]
+                c   = c + 1
+                for dr in range(col_interval*o, col_interval*(1+o)):
+                    pass
+                    ## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
+                    ## and not one by one as is now
+                    ax.plot(drawing[dr][0],drawing[dr][1],drawing[dr][2],color = "green")
 
             # now cubic macro-els nr 0,1,2 and 4 with tetrahedra
             for oc in octants:
@@ -159,8 +152,7 @@ def plot_fichera():
         coords  = cube_mesh_2(n,mu,p_,macro_el,octants,macro_elems)
         # uncomment for just the second octant
         drawing = cube_drawing(coords,octants,macro_elems)
-        # drawing = cube_drawing(coords)
-        
+        del(coords)
         fig = plt.figure()
         elev = 30
         
