@@ -4,17 +4,9 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import random
 
-def plot_hybrid_macroel(vertices, n, local_mu = 1):
+def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1):
     points = macroel_sing_vrtx_and_edge (vertices[0], vertices[1], vertices[2],vertices[3], local_mu, n)
     drawing = []
-    #drawing = [[],[],[],[]]
-    #   for o in oct_range:
- #       for t in [z for z in macro_elems if z < 4]:
-#    points = coord['points_T'+str(t)+'_C'+str(o)] # np.zeros((n+1,n+1,3,n+1))  # nivel, i, coordenada, j
-
-
-# CONTINUE HERE AND THEN LINE 126 in plot_mesh.py
-
     n = points.shape[0] - 1
     for k in range (n+1):
         for i in range (n-k+1):
@@ -50,7 +42,11 @@ def plot_hybrid_macroel(vertices, n, local_mu = 1):
             y[k] = points[k,n-k-i,1,i]
             z[k] = points[k,n-k-i,2,i]
         drawing.append([x,y,z])  #  pyramidals
-    return np.array(drawing)
+    for dr in range(len(drawing)):
+        ## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
+        ## and not one by one as is now
+        plt_axes.plot(drawing[dr][0],drawing[dr][1],drawing[dr][2],color = "green")
+    return
 
 def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1):
     local_grid_points = macroel_sing_edge(vertices, local_mu, n)
@@ -75,64 +71,39 @@ def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1):
     return
 
 def plot_bbrick(mu = [.65,1,1,1,.65], angle_steps = [9], refinements = [3]):
-    """
-    mu == [1,.4,.4,.4,.4] example for the graded case
-    """
-    macro_elems = [0,1,2,3]  # 0,1,2 or 3 in each cube
-    octants     = [6] # range(6,9) # any sublist in range(2,9)
+    """ mu == [1,.4,.4,.4,.4] example for the graded case """
     permutation_of_vertices = np.array([[0,1,2,3],[3,1,2,0],[3,1,2,0],[0,1,2,3],[0,1,2,3]])
     elev = 30
     colors  = ['brown','darkgreen','red','black','fuchsia','blue']*7
-    trans           = np.array([0,0,3])
+    trans   = np.array([0,0,3])
     A0 = np.zeros(3)
-    Q0              = np.array([0,0,-1])
-    Q1              = np.array([0,1,-1])
-    Q2              = np.array([-1,0,-1])
-    R0    = Q1 - Q0 + Q2
+    Q0 = np.array([0,0,-1])
+    Q1 = np.array([0,1,-1])
+    Q2 = np.array([-1,0,-1])
+    R0 = Q1 - Q0 + Q2
+    vertices_hybrid_1   = np.array([Q0,Q2,Q1,A0])
+    q                   = octant(6, p_)
+    vertices_tetra_1    = q[:,macro_el[4,permutation_of_vertices[4,:]]]
+
+    points_prisms   = np.array([Q0,Q1,Q2])
+    points_prisms_1   = np.concatenate((points_prisms,points_prisms - trans)).transpose()
+
+    points_prisms = np.array([R0,Q1,Q2])
+    points_prisms_2 = np.concatenate((points_prisms,points_prisms - trans)).transpose()
 
     for n in refinements:
         fig = plt.figure()
         ax  = fig.add_subplot(1,1,1, projection='3d')
-        vertices = np.array([Q0,Q2,Q1,A0])
-        drawing = plot_hybrid_macroel (vertices, n, mu[0])
         for azim in angle_steps:
-            c   = 0
-            # ax.axis('equal')
-            # ax.set_xlim3d(0.1,-1.1)
-            # ax.set_ylim3d(-1.0,1.0)
-            # ax.set_zlim3d(-0.2,1.2)
             ax.view_init(elev, 49 + 15*(azim-1))
-            col_interval = int(len(drawing)/len(octants))
-            for o in range(len(octants)):
-                col = colors[c]
-                c   = c + 1
-                for dr in range(col_interval*o, col_interval*(1+o)):
-                    pass
-                    ## TODO: this can be done putting (array_of_X, array_of_Y, array_of_Z, ...)
-                    ## and not one by one as is now
-                    ax.plot(drawing[dr][0],drawing[dr][1],drawing[dr][2],color = "green")
-
-            # now cubic macro-els nr 0,1,2 and 4 with tetrahedra
-            for oc in octants:
-                for m in [4]:
-                    q       = octant(oc, p_)
-                    vertices = q[:,macro_el[m,permutation_of_vertices[m,:]]]
-                    plot_tetra_macroel(ax,vertices,n,mu[m])
-            
-            
+            plot_hybrid_macroel (ax, vertices_hybrid_1, n, mu[0])
+            plot_tetra_macroel(ax,vertices_tetra_1,n,mu[4])
             # figure out how to put universally the points in 'prism' for macroel_sing_edge()
-            
             # now prismatic macroels
-            
-            points_prisms   = np.array([Q0,Q1,Q2])
-            points_prisms   = np.concatenate((points_prisms,points_prisms - trans)).transpose()
-            plot_prism_macroel(ax, points_prisms, n, mu[m])  
+            plot_prism_macroel(ax, points_prisms_1, n, mu[4])  
+            plot_prism_macroel(ax, points_prisms_2, n, 1)  
 
-            points_prisms = np.array([R0,Q1,Q2])
-            points_prisms = np.concatenate((points_prisms,points_prisms - trans)).transpose()
-            plot_prism_macroel(ax, points_prisms, n, 1)  
-
-            ax.plot([],[],[],label = "mu[3] = " + str(mu[3]) + " " + str(macro_elems) + " " + str(octants))
+            ax.plot([],[],[],label = "mu[3] = " + str(mu[3]))
             legend = ax.legend()
             ax.set_xlabel(' X ')
             ax.set_ylabel(' Y ')
