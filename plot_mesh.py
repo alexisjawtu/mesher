@@ -88,8 +88,8 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3]):
     vertices_hybrid_3   = np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0])
     vertices_hybrid_4   = np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1]) # -----> oposite to a singular vertex
 ## CONTINUE HERE, remove all references to "octant"  to build macro elements
-    q                   = octant(6, p_)
-    vertices_tetra_1    = q[:,macro_el[4,permutation_of_vertices[4,:]]]
+    vertices_tetra_1    = np.array([[0,-1,-1,0],[0,0,1,1],[0,-1,0,-1]])
+
     points_prisms   = np.array([Q0,Q1,Q2])
     points_prisms_1   = np.concatenate((points_prisms,points_prisms - trans)).transpose()
     points_prisms = np.array([R0,Q1,Q2])
