@@ -87,15 +87,17 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3]):
     vertices_hybrid_2   = np.array([Q2-Q0+A0,P1_hybrid_4,Q2,A0]) 
     vertices_hybrid_3   = np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0])
     vertices_hybrid_4   = np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1]) # -----> oposite to a singular vertex
-## CONTINUE HERE, remove all references to "octant"  to build macro elements
     vertices_tetra_1    = np.array([[0,-1,-1,0],[0,0,1,1],[0,-1,0,-1]])
 
     points_prisms   = np.array([Q0,Q1,Q2])
-    points_prisms_1   = np.concatenate((points_prisms,points_prisms - trans)).transpose()
-    points_prisms = np.array([R0,Q1,Q2])
+    points_prisms_1 = np.concatenate((points_prisms,points_prisms - trans)).transpose()
+    points_prisms   = np.array([R0,Q1,Q2])
     points_prisms_2 = np.concatenate((points_prisms,points_prisms - trans)).transpose()
 ###########
-    vertices_hybrid_11   = np.array([Q0,Q2,Q1,A0])
+    vertices_hybrid_11   = np.array([[0,-2,-1],[-1,-2,-1],[0,-3,-1],[0,-2,0]])
+    vertices_tetra_2     = np.array([[0,-1,0,-1],[-2,-2,-3,-3],[0,-1,-1,0]])
+
+## CONTINUE HERE, 
     vertices_hybrid_12   = np.array([Q2-Q0+A0,P1_hybrid_4,Q2,A0]) 
     vertices_hybrid_13   = np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0])
     vertices_hybrid_14   = np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1]) # -----> oposite to a singular vertex
@@ -118,10 +120,17 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3]):
             plot_prism_macroel(ax, points_prisms_1, n, mu)  
             plot_prism_macroel(ax, points_prisms_2, n, 1)  
 
+            ############
+            plot_hybrid_macroel(ax, vertices_hybrid_11, n, mu)
+            plot_tetra_macroel(ax,vertices_tetra_2,n,mu)
+            
             ax.scatter(A0[0],A0[1],A0[2],color="black")
-            ax.scatter(Q1[0],Q1[1],Q1[2],color="red")
-            ax.scatter(P1_hybrid_4[0],P1_hybrid_4[1],P1_hybrid_4[2],color="blue")
-            ax.scatter((Q1+A0-Q0)[0],(Q1+A0-Q0)[1],(Q1+A0-Q0)[2],color="violet")
+            ax.scatter(0,-2,0,color="red")
+            ax.scatter(0,-2,-1,color="green")
+            ax.scatter(-1,-2,-1,color="blue")
+            ax.scatter(0,-3,-1,color="blue")
+            #ax.scatter(P1_hybrid_4[0],P1_hybrid_4[1],P1_hybrid_4[2],color="blue")
+            #ax.scatter((Q1+A0-Q0)[0],(Q1+A0-Q0)[1],(Q1+A0-Q0)[2],color="violet")
 
             ax.plot([],[],[],label = " ")
             legend = ax.legend()
