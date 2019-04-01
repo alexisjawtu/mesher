@@ -161,12 +161,12 @@ def macroel_sing_vrtx_and_edge (local_origin, base_vrtx_1, base_vrtx_2, sing_vrt
                 points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu))*(sing_vrtx-local_origin) + local_origin
     return points
 
-def macroel_sing_edge(macroel_vertices, mu, n, n_vert):
+def macroel_sing_edge(macroel_vertices, mu, n, n_vertical):
     """ 
     n := number of subintervals betweeen nodes of each horizontal edge of the
     macroelement
-    n_vert := number of subintervals betweeen nodes of each vertical edge of the
-    macroelement
+    n_vertical := number of subintervals betweeen nodes of each vertical edge of the
+    macroelement. Warning: my Thesis states that n_vertical == n. Otherwise it's not proved.
 
     order of the columns in M := macroel_vertices:
         (M[0], M[1], M[2]) == a triangle
@@ -180,15 +180,15 @@ def macroel_sing_edge(macroel_vertices, mu, n, n_vert):
     greater than zero end up filled as a rectangle of points. 
     Be careful not to use that coordinates. 
     """
-    points = np.zeros((n+1,n+1,3,n+1))
+    points = np.zeros((n_vertical+1,n+1,3,n+1))
     for y in xrange(n+1):
         for z in xrange(n+1-y):
             lambda_1, lambda_2 = lambda1 (y,z,0,n,mu), lambda2 (y,z,0,n,mu)
             temp = lambda_1*(macroel_vertices[:,1] - macroel_vertices[:,0]) + lambda_2*(macroel_vertices[:,2] - macroel_vertices[:,0])
             points[0,y,:,z] = temp + macroel_vertices[:,0]
 
-    for x in xrange(1,n_vert+1): # translating level 0 to the levels above
-    	points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vert)*(macroel_vertices[:,3] - macroel_vertices[:,0]).reshape((3,1))
+    for x in xrange(1,n_vertical+1): # translating level 0 to the levels above
+    	points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vertical)*(macroel_vertices[:,3] - macroel_vertices[:,0]).reshape((3,1))
     return points
 
 def line (x, y, z):
