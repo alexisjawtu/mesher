@@ -69,7 +69,6 @@ def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1):
         z = points_T5[a,np.array([2]*8)]
         y = points_T5[a,np.array([1]*8)]
         x = points_T5[a,np.array([0]*8)]
-        ## CONTINUE HERE: WHY IS THE SECOND TETRA NOT RED??
         plt_axes.plot(x, y, z,color="red")
     return
 
@@ -137,11 +136,11 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vert_prims_refin
             plot_prism_macroel(ax, points_prisms_1,n,vert_prims_refinements, mu)
             plot_prism_macroel(ax, points_prisms_2,n,vert_prims_refinements, 1)  
 
-            plot_tetra_macroel (ax, vertices_tetra_2, n, mu)
             plot_hybrid_macroel(ax, vertices_hybrid_11, n, mu)
             plot_hybrid_macroel(ax, vertices_hybrid_12, n, mu)
             plot_hybrid_macroel(ax, vertices_hybrid_13, n, mu)
             plot_hybrid_macroel(ax, vertices_hybrid_14, n, 1)
+            plot_tetra_macroel (ax, vertices_tetra_2, n, mu)
 
             plot_prism_macroel(ax,points_prisms_3,n,vert_prims_refinements, 1)
             plot_prism_macroel(ax,points_prisms_4,n,vert_prims_refinements, mu)
