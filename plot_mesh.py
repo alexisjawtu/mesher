@@ -83,9 +83,14 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vert_prims_refin
     #colors  = ['brown','darkgreen','red','black','fuchsia','blue']*7
     prism_h   = np.array([0,0,4])
     horiz1  = 2    
+    x_max = 3
+    x_int_max = 2
+    x_min   = -1
+    x_int_min   = 0
     y_max   = 1
     y_min   = -3
     y_int_min   = -2
+    y_int_max   = 0
     A0 = np.zeros(3)
     Q0 = np.array([0,0,-1])
     Q1 = np.array([0,1,-1])
@@ -99,33 +104,49 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vert_prims_refin
     vertices_hybrid_4   = np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1]) # -----> oposite to a singular vertex
     vertices_tetra_1    = np.array([[0,-1,-1,0],[0,0,1,1],[0,-1,0,-1]])
     points_prisms   = np.array([Q0,Q1,Q2])
-    points_prisms_1 = np.concatenate((points_prisms,points_prisms - prism_h)).transpose()
+    points_prisms_1 = np.concatenate((points_prisms,points_prisms - prism_h))
     points_prisms   = np.array([R0,Q1,Q2])
-    points_prisms_2 = np.concatenate((points_prisms,points_prisms - prism_h)).transpose()
+    points_prisms_2 = np.concatenate((points_prisms,points_prisms - prism_h))
 ###########
     vertices_hybrid_11   = np.array([[0,-2,-1],[-1,-2,-1],[0,-3,-1],[0,-2,0]])
     vertices_tetra_2     = np.array([[0,-1,0,-1],[-2,-2,-3,-3],[0,-1,-1,0]])
     vertices_hybrid_12   = np.array([[0,-3,0],[0,-3,-1],[-1,-3,0],[0,-2,0]]) 
     vertices_hybrid_13   = np.array([[-1,-2,0],[-1,-3,0],[-1,-2,-1],[0,-2,0]])
     vertices_hybrid_14   = np.array([[-1,-3,-1],[-1,-3,0],[0,-3,-1],[-1,-2,-1]])
-    points_prisms_3      = np.array([[-1,-3,-1],[0,-3,-1],[-1,-2,-1],[-1,-3,-1]-prism_h,[0,-3,-1]-prism_h,[-1,-2,-1]-prism_h]).transpose()
-    points_prisms_4      = np.array([[0,-2,-1],[-1,-2,-1],[0,-3,-1],[0,-2,-1]-prism_h,[-1,-2,-1]-prism_h,[0,-3,-1]-prism_h]).transpose()
+    points_prisms_3      = np.array([[-1,-3,-1],[0,-3,-1],[-1,-2,-1],[-1,-3,-1]-prism_h,[0,-3,-1]-prism_h,[-1,-2,-1]-prism_h])
+    points_prisms_4      = np.array([[0,-2,-1],[-1,-2,-1],[0,-3,-1],[0,-2,-1]-prism_h,[-1,-2,-1]-prism_h,[0,-3,-1]-prism_h])
 ###########
-    points_prisms_5      = np.array([[0,-2,-1],[0,-1,-1], [-1,-2,-1], [0,-2,-1]-prism_h,[0,-1,-1]-prism_h,[0,-2,-1]-prism_h]).transpose()
-    points_prisms_6      = np.array([[0,-2,-1],[0,-3,-1],[1,-2,-1],[0,-2,-1]-prism_h,[0,-3,-1]-prism_h,[1,-2,-1]-prism_h]).transpose()
+    points_prisms_5      = np.array([[0,-2,-1],[0,-1,-1], [-1,-2,-1], [0,-2,-1]-prism_h,[0,-1,-1]-prism_h,[0,-2,-1]-prism_h])
+    points_prisms_6      = np.array([[0,-2,-1],[0,-3,-1],[1,-2,-1],[0,-2,-1]-prism_h,[0,-3,-1]-prism_h,[1,-2,-1]-prism_h])
 
-    points_prisms_7      = np.array([[-1,-1,-1],[-1,-2,-1],[0,-1,-1],[-1,-1,-1]-prism_h,[-1,-2,-1]-prism_h,[0,-1,-1]-prism_h]).transpose()
+    points_prisms_7      = np.array([[-1,-1,-1],[-1,-2,-1],[0,-1,-1],[-1,-1,-1]-prism_h,[-1,-2,-1]-prism_h,[0,-1,-1]-prism_h])
     points_prisms_8      = np.array([[1,y_min,-1],[1,y_int_min,-1],[0,y_min,-1],
-                                     [1,y_min,-1]-prism_h,[1,y_int_min,-1]-prism_h,[0,y_min,-1]-prism_h]).transpose()
-
+                                     [1,y_min,-1]-prism_h,[1,y_int_min,-1]-prism_h,[0,y_min,-1]-prism_h])
+    points_prisms_9      = np.array([[x_int_min,y_int_max,-1],[x_min,y_int_max,-1],[x_int_min,-1,-1],
+                                     [x_int_min,y_int_max,-1]-prism_h,[x_min,y_int_max,-1]-prism_h,[x_int_min,-1,-1]-prism_h])
+    points_prisms_10     = np.array([[x_min,-1,-1],[x_int_min,-1,-1],[x_min,y_int_max,-1],
+                                    [x_min,-1,-1]-prism_h,[x_int_min,-1,-1]-prism_h,[x_min,y_int_max,-1]-prism_h])
+    points_prisms_11     = np.array([[1,y_min,-1],[2,y_min,-1],[1,y_int_min,-1],
+        [1,y_min,-1]-prism_h,[2,y_min,-1]-prism_h,[1,y_int_min,-1]-prism_h])
+    points_prisms_12     = np.array([[2,y_int_min,-1],[1,y_int_min,-1],[2,y_min,-1],
+                                     [2,y_int_min,-1]-prism_h,[1,y_int_min,-1]-prism_h,[2,y_min,-1]-prism_h])
+    points_prisms_13     = np.array([[2,y_int_min,-1],[2,y_min,-1],[x_max,y_int_min,-1],
+                                     [2,y_int_min,-1]-prism_h,[2,y_min,-1]-prism_h,[x_max,y_int_min,-1]-prism_h])
+    points_prisms_14     = np.array([[x_max,y_min,-1],[x_max,y_int_min,-1],[x_int_max,y_min,-1],
+                                     [x_max,y_min,-1]-prism_h,[x_max,y_int_min,-1]-prism_h,[x_int_max,y_min,-1]-prism_h])
+    points_prisms_15     = np.array([[2,y_int_min,-1],[x_max,y_int_min,-1],[x_int_max,-1,-1],
+                                     [2,y_int_min,-1]-prism_h,[x_max,y_int_min,-1]-prism_h,[x_int_max,-1,-1]-prism_h])
+    points_prisms_16     = np.array([[x_max,-1,-1],[x_int_max,-1,-1],[x_max,y_int_min,-1],
+                                     [x_max,-1,-1]-prism_h,[x_int_max,-1,-1]-prism_h,[x_max,y_int_min,-1]-prism_h])
+    
 
 
     for n in refinements:
         vert_prims_refinements = n
         fig = plt.figure()
-        ax  = fig.add_subplot(1,1,1, projection='3d')
+        ax  = fig.add_subplot(1,1,1,projection='3d')
         for azim in angle_steps:
-            ax.view_init(elev, 49 + 15*(azim-1))
+            ax.view_init(elev,49+15*(azim-1))
             
             plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu)
             plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu)
@@ -150,6 +171,14 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vert_prims_refin
             plot_prism_macroel(ax, points_prisms_6,n,vert_prims_refinements, mu)
             plot_prism_macroel(ax, points_prisms_7,n,vert_prims_refinements, 1)
             plot_prism_macroel(ax, points_prisms_8,n,vert_prims_refinements,1)
+            plot_prism_macroel(ax, points_prisms_9,n,vert_prims_refinements,mu)
+            plot_prism_macroel(ax, points_prisms_10,n,vert_prims_refinements,1)
+            plot_prism_macroel(ax, points_prisms_11,n,vert_prims_refinements,1)
+            plot_prism_macroel(ax, points_prisms_12,n,vert_prims_refinements,mu)
+            plot_prism_macroel(ax, points_prisms_13,n,vert_prims_refinements,mu)
+            plot_prism_macroel(ax, points_prisms_14,n,vert_prims_refinements,1)
+            plot_prism_macroel(ax, points_prisms_15,n,vert_prims_refinements,mu)
+            plot_prism_macroel(ax, points_prisms_16,n,vert_prims_refinements,1)
 #           ax.scatter(A0[0],A0[1],A0[2],color="black")
 #           ax.scatter(0,-2,0,color="red")
 #           ax.scatter(0,-2,-1,color="green")
