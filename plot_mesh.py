@@ -72,7 +72,7 @@ def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1):
         plt_axes.plot(x, y, z,color="red")
     return
 
-def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vert_prims_refinements = 1):
+def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vert_prisms_refinements = 1):
     """ mu == [1,.4,.4,.4,.4] example for the graded case """
 
     ############ CONTINUE HERE: put variables for the repersentative lengths,
@@ -138,11 +138,14 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vert_prims_refin
                                      [2,y_int_min,-1]-prism_h,[x_max,y_int_min,-1]-prism_h,[x_int_max,-1,-1]-prism_h])
     points_prisms_16     = np.array([[x_max,-1,-1],[x_int_max,-1,-1],[x_max,y_int_min,-1],
                                      [x_max,-1,-1]-prism_h,[x_int_max,-1,-1]-prism_h,[x_max,y_int_min,-1]-prism_h])
-    
+    points_prisms_17     = np.array([[x_max,-1,-1],[x_max,y_int_max,-1],[x_int_max,-1,-1],
+                                     [x_max,-1,-1]-prism_h,[x_max,y_int_max,-1]-prism_h,[x_int_max,-1,-1]-prism_h])
 
+    points_prisms_18     = np.array([[x_int_max,y_int_max,-1],[x_int_max,-1,-1],[x_max,y_int_max,-1],
+                                     [x_int_max,y_int_max,-1]-prism_h,[x_int_max,-1,-1]-prism_h,[x_max,y_int_max,-1]-prism_h])
 
     for n in refinements:
-        vert_prims_refinements = n
+        vert_prisms_refinements = n
         fig = plt.figure()
         ax  = fig.add_subplot(1,1,1,projection='3d')
         for azim in angle_steps:
@@ -154,8 +157,8 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vert_prims_refin
             plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1)
             plot_tetra_macroel (ax, vertices_tetra_1, n, mu)
             
-            plot_prism_macroel(ax, points_prisms_1,n,vert_prims_refinements, mu)
-            plot_prism_macroel(ax, points_prisms_2,n,vert_prims_refinements, 1)  
+            plot_prism_macroel(ax, points_prisms_1,n,vert_prisms_refinements, mu)
+            plot_prism_macroel(ax, points_prisms_2,n,vert_prisms_refinements, 1)  
 
             plot_hybrid_macroel(ax, vertices_hybrid_11, n, mu)
             plot_hybrid_macroel(ax, vertices_hybrid_12, n, mu)
@@ -163,22 +166,27 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vert_prims_refin
             plot_hybrid_macroel(ax, vertices_hybrid_14, n, 1)
             plot_tetra_macroel (ax, vertices_tetra_2, n, mu)
 
-            plot_prism_macroel(ax,points_prisms_3,n,vert_prims_refinements, 1)
-            plot_prism_macroel(ax,points_prisms_4,n,vert_prims_refinements, mu)
+            plot_prism_macroel(ax,points_prisms_3,n,vert_prisms_refinements, 1)
+            plot_prism_macroel(ax,points_prisms_4,n,vert_prisms_refinements, mu)
 
 #########   non corner part
-            plot_prism_macroel(ax, points_prisms_5,n,vert_prims_refinements, mu)
-            plot_prism_macroel(ax, points_prisms_6,n,vert_prims_refinements, mu)
-            plot_prism_macroel(ax, points_prisms_7,n,vert_prims_refinements, 1)
-            plot_prism_macroel(ax, points_prisms_8,n,vert_prims_refinements,1)
-            plot_prism_macroel(ax, points_prisms_9,n,vert_prims_refinements,mu)
-            plot_prism_macroel(ax, points_prisms_10,n,vert_prims_refinements,1)
-            plot_prism_macroel(ax, points_prisms_11,n,vert_prims_refinements,1)
-            plot_prism_macroel(ax, points_prisms_12,n,vert_prims_refinements,mu)
-            plot_prism_macroel(ax, points_prisms_13,n,vert_prims_refinements,mu)
-            plot_prism_macroel(ax, points_prisms_14,n,vert_prims_refinements,1)
-            plot_prism_macroel(ax, points_prisms_15,n,vert_prims_refinements,mu)
-            plot_prism_macroel(ax, points_prisms_16,n,vert_prims_refinements,1)
+            plot_prism_macroel(ax, points_prisms_5,n,vert_prisms_refinements, mu)
+            plot_prism_macroel(ax, points_prisms_6,n,vert_prisms_refinements, mu)
+            plot_prism_macroel(ax, points_prisms_7,n,vert_prisms_refinements, 1)
+            plot_prism_macroel(ax, points_prisms_8,n,vert_prisms_refinements,1)
+            plot_prism_macroel(ax, points_prisms_9,n,vert_prisms_refinements,mu)
+            plot_prism_macroel(ax, points_prisms_10,n,vert_prisms_refinements,1)
+            plot_prism_macroel(ax, points_prisms_11,n,vert_prisms_refinements,1)
+            plot_prism_macroel(ax, points_prisms_12,n,vert_prisms_refinements,mu)
+            plot_prism_macroel(ax, points_prisms_13,n,vert_prisms_refinements,mu)
+            plot_prism_macroel(ax, points_prisms_14,n,vert_prisms_refinements,1)
+            plot_prism_macroel(ax, points_prisms_15,n,vert_prisms_refinements,mu)
+            plot_prism_macroel(ax, points_prisms_16,n,vert_prisms_refinements,1)
+
+            plot_prism_macroel(ax, points_prisms_17,n,vert_prisms_refinements,1)
+
+
+            plot_prism_macroel(ax, points_prisms_18,n,vert_prisms_refinements,mu)
 #           ax.scatter(A0[0],A0[1],A0[2],color="black")
 #           ax.scatter(0,-2,0,color="red")
 #           ax.scatter(0,-2,-1,color="green")
