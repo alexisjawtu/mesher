@@ -208,6 +208,8 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
             #plot_prism_macroel(ax, points_prisms_20,n,vertical_prism_refinement,)
             for v, m in zip(vertices_prisms,mu_for_prisms):
                 plot_prism_macroel(ax,v,n,vertical_prism_refinement,m)
+            #plot_prism_macroel(ax,vertices_prisms[20],n,vertical_prism_refinement,mu_for_prisms[20])
+            #plot_prism_macroel(ax,vertices_prisms[21],n,vertical_prism_refinement,mu_for_prisms[21])
 
 #           ax.scatter(A0[0],A0[1],A0[2],color="black")
 #           ax.scatter(0,-2,0,color="red")
