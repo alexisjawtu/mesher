@@ -203,7 +203,7 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
             plot_hybrid_macroel(ax, vertices_hybrid_14, n, 1)#,"white")
             plot_tetra_macroel (ax, vertices_tetra_2, n, mu)
 
-### CONTINUE HERE: see if the following two are right. They share an edge??
+### CONTINUE HERE: see if the following two are graded to the right vertex
             plot_tetra_macroel (ax, vertices_tetra_3, n, mu)
             plot_tetra_macroel (ax, vertices_tetra_4, n, mu)
 
