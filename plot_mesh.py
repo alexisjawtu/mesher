@@ -209,7 +209,7 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
 
 
             a = 0
-            for v, m in zip(vertices_prisms,mu_for_prisms):
+a            for v, m in zip(vertices_prisms,mu_for_prisms):
 #                plot_prism_macroel(ax,v,n,vertical_prism_refinement,m)
                 if a < 5: plot_prism_macroel(ax,v,n,vertical_prism_refinement,m)
                 a = a +1 
