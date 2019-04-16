@@ -176,7 +176,7 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
     vertices_prisms      = vertices_prisms + [np.array([[x_int_min,y_int_max,-1],[1,y_int_max,-1],[x_int_min,y_max,-1],
                             [x_int_min,y_int_max,-1]-prism_h,[1,y_int_max,-1]-prism_h,[x_int_min,y_max,-1]-prism_h])]
 
-    vertices_tetra_3    = np.array([[-1,-1,z_max],[x_int_min,-1,-1],[x_min,y_int_min,-1],[x_int_min,y_int_min,z_max]])
+    vertices_tetra_3    = np.array([[x_int_min,y_int_min,z_max],[-1,-1,z_max],[x_int_min,-1,-1],[x_min,y_int_min,-1]])
 
     vertices_tetra_4    = np.array([[-1,-1,z_max],[x_min,y_int_max,-1],[x_int_min,-1,-1],[x_int_min,y_int_max,z_max]])
 
@@ -191,26 +191,26 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
         for azim in angle_steps:
             ax.view_init(elev,49+15*(azim-1))
             
-            #plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu,"black")
-            #plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu)#,"white")
-            #plot_hybrid_macroel(ax, vertices_hybrid_3, n, mu)#,"white")
-            #plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1)#,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu,"black")
+            plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu)#,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_3, n, mu)#,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1)#,"white")
             plot_tetra_macroel (ax, vertices_tetra_1, n, mu, "blue")
             
-            #plot_hybrid_macroel(ax, vertices_hybrid_11, n, mu)#,"white")
-            #plot_hybrid_macroel(ax, vertices_hybrid_12, n, mu)#,"white")
-            #plot_hybrid_macroel(ax, vertices_hybrid_13, n, mu)#,"white")
-            #plot_hybrid_macroel(ax, vertices_hybrid_14, n, 1)#,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_11, n, mu)#,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_12, n, mu)#,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_13, n, mu)#,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_14, n, 1)#,"white")
             plot_tetra_macroel (ax, vertices_tetra_2, n, mu, "blue")
 
-### CONTINUE HERE: see if the following two are graded to the right vertex
-            plot_tetra_macroel (ax, vertices_tetra_3, n, mu)
+            plot_tetra_macroel (ax, vertices_tetra_3, n, mu, "green")
+### CONTINUE HERE: vertices_tetra_3 fixed, now fix vertices_tetra_4
             plot_tetra_macroel (ax, vertices_tetra_4, n, mu)
 
 
             a = 0
             for v, m in zip(vertices_prisms,mu_for_prisms):
-#                plot_prism_macroel(ax,v,n,vertical_prism_refinement,m)
+                plot_prism_macroel(ax,v,n,vertical_prism_refinement,m)
 #                if a < 5: plot_prism_macroel(ax,v,n,vertical_prism_refinement,m)
                 a = a +1 
 
