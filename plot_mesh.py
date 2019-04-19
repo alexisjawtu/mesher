@@ -120,11 +120,19 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
 
 
 
-    vertices_hybrid_21   = np.array([[x_int_min,y_int_min,-1],[x_int_min,-1,-1],
+    vertices_hybrid_31   = np.array([[x_int_min,y_int_min,-1],[x_int_min,-1,-1],
                             [x_min,y_int_min,-1],[x_int_min,y_int_min,0]])
+
+    vertices_hybrid_21   = np.array([[x_int_min,-1,z_max],[x_int_min,-1,-1],
+                                     [x_min,-1,z_max],[x_int_min, y_int_max,z_max]])
 
     vertices_hybrid_22   = np.array([[x_int_min,y_int_max,-1],[x_min,y_int_max,-1],
                             [x_int_min,-1,-1],[x_int_min,y_int_max,0]])
+    vertices_hybrid_32   = np.array([[x_int_min, -1, z_max],[x_min, -1, z_max],
+                                        [x_int_min, -1, -1],[x_int_min, y_int_min, z_max]])
+
+
+
 
 
     vertices_prisms      = vertices_prisms + [np.array([[-1,-3,-1],[0,-3,-1],[-1,-2,-1],[-1,-3,-1]-prism_h,[0,-3,-1]-prism_h,[-1,-2,-1]-prism_h])]
@@ -191,17 +199,17 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
         for azim in angle_steps:
             ax.view_init(elev,49+15*(azim-1))
             
-            plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu,"black")
-            plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu)#,"white")
-            plot_hybrid_macroel(ax, vertices_hybrid_3, n, mu)#,"white")
-            plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1)#,"white")
-            plot_tetra_macroel (ax, vertices_tetra_1, n, mu, "blue")
+        #    plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu,"black")
+        #    plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu)#,"white")
+        #    plot_hybrid_macroel(ax, vertices_hybrid_3, n, mu)#,"white")
+        #    plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1)#,"white")
+        #    plot_tetra_macroel (ax, vertices_tetra_1, n, mu, "blue")
             
-            plot_hybrid_macroel(ax, vertices_hybrid_11, n, mu)#,"white")
-            plot_hybrid_macroel(ax, vertices_hybrid_12, n, mu)#,"white")
-            plot_hybrid_macroel(ax, vertices_hybrid_13, n, mu)#,"white")
-            plot_hybrid_macroel(ax, vertices_hybrid_14, n, 1)#,"white")
-            plot_tetra_macroel (ax, vertices_tetra_2, n, mu, "blue")
+        #    plot_hybrid_macroel(ax, vertices_hybrid_11, n, mu)#,"white")
+        #    plot_hybrid_macroel(ax, vertices_hybrid_12, n, mu)#,"white")
+        #    plot_hybrid_macroel(ax, vertices_hybrid_13, n, mu)#,"white")
+        #    plot_hybrid_macroel(ax, vertices_hybrid_14, n, 1)#,"white")
+        #    plot_tetra_macroel (ax, vertices_tetra_2, n, mu, "blue")
 
             plot_tetra_macroel (ax, vertices_tetra_3, n, mu)
             plot_tetra_macroel (ax, vertices_tetra_4, n, mu, "green")
@@ -210,11 +218,13 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
             a = 0
             for v, m in zip(vertices_prisms,mu_for_prisms):
 #                plot_prism_macroel(ax,v,n,vertical_prism_refinement,m)
-                if a < 5: plot_prism_macroel(ax,v,n,vertical_prism_refinement,m)
+#                if a < 5: plot_prism_macroel(ax,v,n,vertical_prism_refinement,m)
                 a = a +1 
 
-            plot_hybrid_macroel(ax, vertices_hybrid_21, n, mu, "black")
-            plot_hybrid_macroel(ax, vertices_hybrid_22, n, mu, "black")
+            #plot_hybrid_macroel(ax, vertices_hybrid_21, n, mu, "yellow")
+            #plot_hybrid_macroel(ax, vertices_hybrid_22, n, mu, "black")
+            #plot_hybrid_macroel(ax, vertices_hybrid_31, n, mu, "yellow")
+            #plot_hybrid_macroel(ax, vertices_hybrid_32, n, mu, "orange")
 
 #           ax.scatter(A0[0],A0[1],A0[2],color="black")
 #           ax.scatter(0,-2,0,color="red")
