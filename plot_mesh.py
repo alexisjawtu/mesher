@@ -128,8 +128,17 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
 
     vertices_hybrid_22   = np.array([[x_int_min,y_int_max,-1],[x_min,y_int_max,-1],
                             [x_int_min,-1,-1],[x_int_min,y_int_max,0]])
+
+    vertices_hybrid_23   = np.array([[-1,0,0],[-1,-1,0],
+                            [-1,0,-1],[0,0,0]])
+############## CONTINUE HERE: como dispuse al hibrido no graduado en el caso de fichera??
+##############  afecta esto al recorrido para escribir la malla? anda solo con lo que ya hice???    
+    vertices_hybrid_24   = np.array([[-1,-1,-1],[-1,-1,0],
+                            [0,-1,-1],[-1,0,-1]])
+
     vertices_hybrid_32   = np.array([[x_int_min, -1, z_max],[x_min, -1, z_max],
                                         [x_int_min, -1, -1],[x_int_min, y_int_min, z_max]])
+    vertices_hybrid_33   = np.array([[-1,-2,0],[-1,-2,-1],[-1,-1,0],[0,-2,0]]) 
 
 
 
@@ -223,8 +232,11 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
 
             #plot_hybrid_macroel(ax, vertices_hybrid_21, n, mu, "yellow")
             #plot_hybrid_macroel(ax, vertices_hybrid_22, n, mu, "black")
+            #plot_hybrid_macroel(ax, vertices_hybrid_23, n, mu, "orange")
+            plot_hybrid_macroel(ax, vertices_hybrid_24, n, 1, "red")
             #plot_hybrid_macroel(ax, vertices_hybrid_31, n, mu, "yellow")
             #plot_hybrid_macroel(ax, vertices_hybrid_32, n, mu, "orange")
+            #plot_hybrid_macroel(ax, vertices_hybrid_33, n, mu, "orange")
 
 #           ax.scatter(A0[0],A0[1],A0[2],color="black")
 #           ax.scatter(0,-2,0,color="red")
