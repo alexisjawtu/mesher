@@ -64,3 +64,9 @@ Para revisar elements_by_faces.txt sugiero tenerlo abierto al mismo tiempo
 que:
 	-faces_local_to_global.txt
 	-faces_global.txt
+
+** Todo **
+----------
+
+The orientation of the non graded hybrid macrotetrahedron is irrelevant.
+It remains to CHECK WITH EXPERIMENTS whether it is irrelevant to write the txt files

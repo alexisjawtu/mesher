@@ -131,8 +131,6 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
 
     vertices_hybrid_23   = np.array([[-1,0,0],[-1,-1,0],
                             [-1,0,-1],[0,0,0]])
-############## CONTINUE HERE: como dispuse al hibrido no graduado en el caso de fichera??
-##############  afecta esto al recorrido para escribir la malla? anda solo con lo que ya hice???    
     vertices_hybrid_24   = np.array([[-1,-1,-1],[-1,-1,0],
                             [0,-1,-1],[-1,0,-1]])
 
@@ -208,11 +206,11 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
         for azim in angle_steps:
             ax.view_init(elev,49+15*(azim-1))
             
-        #    plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu,"black")
-        #    plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu)#,"white")
-        #    plot_hybrid_macroel(ax, vertices_hybrid_3, n, mu)#,"white")
-        #    plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1)#,"white")
-        #    plot_tetra_macroel (ax, vertices_tetra_1, n, mu, "blue")
+            plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu,"black")
+            plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu)#,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_3, n, mu)#,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1)#,"white")
+            plot_tetra_macroel (ax, vertices_tetra_1, n, mu, "blue")
             
         #    plot_hybrid_macroel(ax, vertices_hybrid_11, n, mu)#,"white")
         #    plot_hybrid_macroel(ax, vertices_hybrid_12, n, mu)#,"white")
@@ -220,8 +218,8 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
         #    plot_hybrid_macroel(ax, vertices_hybrid_14, n, 1)#,"white")
         #    plot_tetra_macroel (ax, vertices_tetra_2, n, mu, "blue")
 
-            plot_tetra_macroel (ax, vertices_tetra_3, n, mu)
-            plot_tetra_macroel (ax, vertices_tetra_4, n, mu, "green")
+        #    plot_tetra_macroel (ax, vertices_tetra_3, n, mu)
+        #    plot_tetra_macroel (ax, vertices_tetra_4, n, mu, "green")
 
 
             a = 0
@@ -259,8 +257,8 @@ def plot_fichera():
     mu          = .3
     macro_elems = [0,1,2,3]  # 0,1,2 or 3 in each cube
     angle_steps = range(1,2)
-    refinements = range(1,2)
-    octants     = range(2,9) # any sublist in range(2,9)
+    refinements = range(1,4)
+    octants     = [2]#range(2,9) # any sublist in range(2,9)
     
     for n in refinements:
         coords  = cube_mesh_2(n,mu,p_,macro_el,octants,macro_elems)
@@ -279,9 +277,12 @@ def plot_fichera():
             ax  = fig.add_subplot(1,1,1, projection='3d')
             plt.tight_layout()
             # ax.axis('equal')
-            ax.set_xlim3d(0,-3)
+            #ax.set_xlim3d(0,-3)
             # ax.set_ylim3d(-1.0,1.0)
             # ax.set_zlim3d(-0.2,1.2)
+            ax.set_xlabel(' X ')
+            ax.set_ylabel(' Y ')
+            ax.set_zlabel(' Z ')
             angle = 49 + 15*(azim-1)
             ax.view_init(elev, angle)
             for tetra in drawing:

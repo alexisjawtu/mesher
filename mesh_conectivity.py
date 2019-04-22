@@ -63,7 +63,7 @@ def write_elements_by_vertices_T4 (n_vert_T4, init, f_name_write):
 	"""
 		here we assume that in the (Npts x 3) array of points
 		the tetrahedra appear in order taking the rows
-		four at a time . This is how it si done in
+		four at a time. This is how it si done in
 		mesh.macroel_sing_vrtx()
 	"""
 	arr_out = np.array(range(init + 1, init + n_vert_T4 + 1)).reshape((n_vert_T4/4, 4))
