@@ -1,8 +1,10 @@
-    ###	TODO: refactor everything economizing code
+###	TODO: refactor everything economizing code
 from mesh import *
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import random
+
+from macroelements import D
 
 def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "green"):
     points = macroel_sing_vrtx_and_edge (vertices[0], vertices[1], vertices[2],vertices[3], local_mu, n)
@@ -95,51 +97,81 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
     R0 = Q1 - Q0 + Q2
     P1_hybrid_4 = Q2+Q1-2*Q0+A0
 
-    vertices_hybrid_1   = np.array([Q0,Q2,Q1,A0])
-    vertices_hybrid_2   = np.array([Q2-Q0+A0,P1_hybrid_4,Q2,A0]) 
-    vertices_hybrid_3   = np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0])
-    vertices_hybrid_4   = np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1]) # -----> oposite to a singular vertex
-    vertices_tetra_1    = np.array([[ 0,  0,  0], [-1,  0, -1],[-1,  1,  0],[ 0,  1, -1]])
+    vertices_hybrid_01   = np.array([Q0,Q2,Q1,A0])
+    vertices_hybrid_02   = np.array([Q2-Q0+A0,P1_hybrid_4,Q2,A0]) 
+    vertices_hybrid_03   = np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0])
+    vertices_hybrid_04   = np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1]) # -----> oposite to a singular vertex
+    vertices_tetra_0     = np.array([[ 0,  0,  0], [-1,  0, -1],[-1,  1,  0],[ 0,  1, -1]])
 
+    vertices_hybrid_01_reflected   = np.array([-1,1,1])*vertices_hybrid_01 + np.array([2,0,0])
+    vertices_hybrid_02_reflected   = np.array([-1,1,1])*vertices_hybrid_02 + np.array([2,0,0])
+    vertices_hybrid_03_reflected   = np.array([-1,1,1])*vertices_hybrid_03 + np.array([2,0,0])
+    vertices_hybrid_04_reflected   = np.array([-1,1,1])*vertices_hybrid_04 + np.array([2,0,0])
+    vertices_tetra_0_reflected     = np.array([-1,1,1])*vertices_tetra_0 + np.array([2,0,0])
 
-    vertices_prisms     = []
-    points_prisms   = np.array([Q0,Q1,Q2])
-    vertices_prisms = vertices_prisms + [np.concatenate((points_prisms,points_prisms - prism_h))]
-    points_prisms   = np.array([R0,Q1,Q2])
-    vertices_prisms = vertices_prisms + [np.concatenate((points_prisms,points_prisms - prism_h))]
-###########
+    vertices_tetra_1     = np.array([[ 0, -2,  0],[-1, -2, -1],[ 0, -3, -1],[-1, -3,  0]])
     vertices_hybrid_11   = np.array([[0,-2,-1],[-1,-2,-1],[0,-3,-1],[0,-2,z_max]])
-#######################33    #vertices_tetra_2     = np.array([[0,-1,0,-1],[-2,-2,-3,-3],[0,-1,-1,0]])
-    vertices_tetra_2     = np.array([[ 0, -2,  0],[-1, -2, -1],[ 0, -3, -1],[-1, -3,  0]])
-
     vertices_hybrid_12   = np.array([[0,-3,0],[0,-3,-1],[-1,-3,0],[0,-2,z_max]]) 
     vertices_hybrid_13   = np.array([[-1,-2,z_max],[-1,-3,z_max],[-1,-2,-1],[0,-2,z_max]])
     vertices_hybrid_14   = np.array([[-1,-3,-1],[-1,-3,z_max],[0,-3,-1],[-1,-2,-1]])
 
-
+    vertices_tetra_1_reflected   = np.array([-1,1,1])*vertices_tetra_1   + np.array([2,0,0])
+    vertices_hybrid_11_reflected = np.array([-1,1,1])*vertices_hybrid_11 + np.array([2,0,0])
+    vertices_hybrid_12_reflected = np.array([-1,1,1])*vertices_hybrid_12 + np.array([2,0,0])
+    vertices_hybrid_13_reflected = np.array([-1,1,1])*vertices_hybrid_13 + np.array([2,0,0])
+    vertices_hybrid_14_reflected = np.array([-1,1,1])*vertices_hybrid_14 + np.array([2,0,0])
 
 
     vertices_hybrid_21   = np.array([[x_int_min,-1,z_max],[x_int_min,-1,-1],
                                      [x_min,-1,z_max],[x_int_min, y_int_max,z_max]])
-
     vertices_hybrid_22   = np.array([[x_int_min,y_int_max,-1],[x_min,y_int_max,-1],
                             [x_int_min,-1,-1],[x_int_min,y_int_max,0]])
-
     vertices_hybrid_23   = np.array([[-1,0,0],[-1,-1,0],
                             [-1,0,-1],[0,0,0]])
     vertices_hybrid_24   = np.array([[-1,-1,-1],[-1,-1,0],
                             [0,-1,-1],[-1,0,-1]])
+    vertices_tetra_2    = np.array([[x_int_min,y_int_max,z_max],[-1,-1,z_max],[x_min,y_int_max,-1],[x_int_min,-1,-1]])
 
-    vertices_hybrid_31   = np.array([[x_int_min,y_int_min,-1],[x_int_min,-1,-1],
-                            [x_min,y_int_min,-1],[x_int_min,y_int_min,0]])
 
-    vertices_hybrid_32   = np.array([[x_int_min, -1, z_max],[x_min, -1, z_max],
-                                        [x_int_min, -1, -1],[x_int_min, y_int_min, z_max]])
+
+
+
+
+    vertices_tetra_2_reflected   = np.array([-1,1,1])*vertices_tetra_2+np.array([2,0,0])
+    vertices_hybrid_21_reflected   = np.array([-1,1,1])*vertices_hybrid_21+np.array([2,0,0])
+    vertices_hybrid_22_reflected   = np.array([-1,1,1])*vertices_hybrid_22+np.array([2,0,0])
+    vertices_hybrid_23_reflected   = np.array([-1,1,1])*vertices_hybrid_23+np.array([2,0,0])
+    vertices_hybrid_24_reflected   = np.array([-1,1,1])*vertices_hybrid_24+np.array([2,0,0])
+
+
+
+
+
+
+    vertices_tetra_3    = np.array([[x_int_min,y_int_min,z_max],[-1,-1,z_max],[x_int_min,-1,-1],[x_min,y_int_min,-1]])
+    vertices_hybrid_31   = np.array([[x_int_min,y_int_min,-1],[x_int_min,-1,-1],[x_min,y_int_min,-1],[x_int_min,y_int_min,0]])
+    vertices_hybrid_32   = np.array([[x_int_min, -1, z_max],[x_min, -1, z_max],[x_int_min, -1, -1],[x_int_min, y_int_min, z_max]])
     vertices_hybrid_33   = np.array([[-1,-2,0],[-1,-2,-1],[-1,-1,0],[0,-2,0]]) 
-
     vertices_hybrid_34  = np.array([[-1,-1,-1],[0,-1,-1],[-1,-1,0],[-1,-2,-1]])
 
 
+    vertices_tetra_3_reflected = np.array([-1,1,1])*vertices_tetra_3+np.array([2,0,0])
+    vertices_hybrid_31_reflected = np.array([-1,1,1])*vertices_hybrid_31+np.array([2,0,0])
+    vertices_hybrid_32_reflected = np.array([-1,1,1])*vertices_hybrid_32+np.array([2,0,0])
+    vertices_hybrid_33_reflected = np.array([-1,1,1])*vertices_hybrid_33+np.array([2,0,0])
+    vertices_hybrid_34_reflected = np.array([-1,1,1])*vertices_hybrid_34+np.array([2,0,0])
+
+
+
+
+
+
+
+    vertices_prisms = []
+    points_prisms   = np.array([Q0,Q1,Q2])
+    vertices_prisms = vertices_prisms + [np.concatenate((points_prisms,points_prisms - prism_h))]
+    points_prisms   = np.array([R0,Q1,Q2])
+    vertices_prisms = vertices_prisms + [np.concatenate((points_prisms,points_prisms - prism_h))]
 
     vertices_prisms      = vertices_prisms + [np.array([[-1,-3,-1],[0,-3,-1],[-1,-2,-1],[-1,-3,-1]-prism_h,[0,-3,-1]-prism_h,[-1,-2,-1]-prism_h])]
     vertices_prisms      = vertices_prisms + [np.array([[0,-2,-1],[-1,-2,-1],[0,-3,-1],[0,-2,-1]-prism_h,[-1,-2,-1]-prism_h,[0,-3,-1]-prism_h])]
@@ -190,10 +222,6 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
     vertices_prisms      = vertices_prisms + [np.array([[x_int_min,y_int_max,-1],[1,y_int_max,-1],[x_int_min,y_max,-1],
                             [x_int_min,y_int_max,-1]-prism_h,[1,y_int_max,-1]-prism_h,[x_int_min,y_max,-1]-prism_h])]
 
-    vertices_tetra_4    = np.array([[x_int_min,y_int_min,z_max],[-1,-1,z_max],[x_int_min,-1,-1],[x_min,y_int_min,-1]])
-
-    vertices_tetra_3    = np.array([[x_int_min,y_int_max,z_max],[-1,-1,z_max],[x_min,y_int_max,-1],[x_int_min,-1,-1]])
-
 
     mu_for_prisms       = [mu,1,1,mu,mu,mu,1,1,mu,1,1,mu,mu,1,mu,1,1,mu,mu,1,mu,1,1,mu]
     print len(vertices_prisms), len(mu_for_prisms)
@@ -204,18 +232,12 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
         ax  = fig.add_subplot(1,1,1,projection='3d')
         for azim in angle_steps:
             ax.view_init(elev,49+15*(azim-1))
-            
-
-
-
-
-
-            
+       
             plot_hybrid_macroel(ax, vertices_hybrid_11, n, mu)#,"white")
             plot_hybrid_macroel(ax, vertices_hybrid_12, n, mu)#,"white")
             plot_hybrid_macroel(ax, vertices_hybrid_13, n, mu)#,"white")
             plot_hybrid_macroel(ax, vertices_hybrid_14, n, 1)#,"white")
-            plot_tetra_macroel (ax, vertices_tetra_2, n, mu, "blue")
+            plot_tetra_macroel (ax, vertices_tetra_1, n, mu, "blue")
 
             a = 0
             for v, m in zip(vertices_prisms,mu_for_prisms):
@@ -227,19 +249,44 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
             plot_hybrid_macroel(ax, vertices_hybrid_22, n, mu, "black")
             plot_hybrid_macroel(ax, vertices_hybrid_23, n, mu, "orange")
             plot_hybrid_macroel(ax, vertices_hybrid_24, n, 1, "red")
-            plot_tetra_macroel (ax, vertices_tetra_3, n, mu)
+            plot_tetra_macroel (ax, vertices_tetra_2, n, mu)
 
-            plot_tetra_macroel (ax, vertices_tetra_4, n, mu, "green")
+            plot_tetra_macroel (ax, vertices_tetra_3, n, mu, "green")
             plot_hybrid_macroel(ax, vertices_hybrid_31, n, mu, "red")
             plot_hybrid_macroel(ax, vertices_hybrid_32, n, mu, "orange")
             plot_hybrid_macroel(ax, vertices_hybrid_33, n, mu, "orange")
             plot_hybrid_macroel(ax, vertices_hybrid_34, n, 1, "blue")
 
-            plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu,"white")
-            plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu,"white")
-            plot_hybrid_macroel(ax, vertices_hybrid_3, n, mu,"white")
-            plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1,"white")
-            plot_tetra_macroel (ax, vertices_tetra_1, n, mu, "white")
+            plot_hybrid_macroel(ax, vertices_hybrid_01, n, mu,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_02, n, mu,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_03, n, mu,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_04, n, 1,"white")
+            plot_tetra_macroel (ax, vertices_tetra_0, n, mu,"white")
+
+            plot_hybrid_macroel(ax, vertices_hybrid_01_reflected, n, mu)
+            plot_hybrid_macroel(ax, vertices_hybrid_02_reflected, n, mu)
+            plot_hybrid_macroel(ax, vertices_hybrid_03_reflected, n, mu)
+            plot_hybrid_macroel(ax, vertices_hybrid_04_reflected, n, 1)
+            plot_tetra_macroel(ax, vertices_tetra_0_reflected, n, mu)
+
+            plot_hybrid_macroel(ax, vertices_hybrid_11_reflected, n, mu)
+            plot_hybrid_macroel(ax, vertices_hybrid_12_reflected, n, mu)
+            plot_hybrid_macroel(ax, vertices_hybrid_13_reflected, n, mu)
+            plot_hybrid_macroel(ax, vertices_hybrid_14_reflected, n, 1)
+            plot_tetra_macroel(ax, vertices_tetra_1_reflected, n, mu)
+
+            plot_hybrid_macroel(ax, vertices_hybrid_21_reflected, n, mu,"black")
+            plot_hybrid_macroel(ax, vertices_hybrid_22_reflected, n, mu, "black")
+            plot_hybrid_macroel(ax, vertices_hybrid_23_reflected, n, mu, "black")
+            plot_hybrid_macroel(ax, vertices_hybrid_24_reflected, n, 1, "black")
+            plot_tetra_macroel(ax, vertices_tetra_2_reflected, n, mu, "black")
+
+            plot_hybrid_macroel(ax, vertices_hybrid_31_reflected, n, mu,"pink")
+            plot_hybrid_macroel(ax, vertices_hybrid_32_reflected, n, mu, "pink")
+            plot_hybrid_macroel(ax, vertices_hybrid_33_reflected, n, mu, "pink")
+            plot_hybrid_macroel(ax, vertices_hybrid_34_reflected, n, 1, "pink")
+            plot_tetra_macroel(ax, vertices_tetra_3_reflected, n, mu, "pink")
+
 
             ax.plot([],[],[],label = " ")
             legend = ax.legend()
