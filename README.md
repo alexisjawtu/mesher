@@ -1,9 +1,23 @@
 For plotting, ipython run plot_mesh.py
 
-instrucciones:
---------------
+**instrucciones:**
+------------------
 
-** en main.py **
+
+macroelements.py:
+----------------
+
+For i in [0,1,2], D[i] is the dictionary of all the i-type macroelements:
+
+Type 0 : hybrid
+Type 1 : isotropic
+Type 2 : prismatic
+
+D[i][j] is a dictionary of lists with the coordinates of the vertices
+of macro--element j of type i
+
+main.py:
+-------
 
 * levels:  habr'a (levels + 1) ptos por arista de macro--el
 * mu est'a en la variable mesh.mu_, o sea en el archivo mesh.py, linea 7, bajo 

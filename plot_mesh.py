@@ -99,9 +99,8 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
     vertices_hybrid_2   = np.array([Q2-Q0+A0,P1_hybrid_4,Q2,A0]) 
     vertices_hybrid_3   = np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0])
     vertices_hybrid_4   = np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1]) # -----> oposite to a singular vertex
-
-###########3    vertices_tetra_1    = np.array([[0,-1,-1,0],[0,0,1,1],[0,-1,0,-1]])
     vertices_tetra_1    = np.array([[ 0,  0,  0], [-1,  0, -1],[-1,  1,  0],[ 0,  1, -1]])
+
 
     vertices_prisms     = []
     points_prisms   = np.array([Q0,Q1,Q2])
@@ -206,11 +205,11 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
         for azim in angle_steps:
             ax.view_init(elev,49+15*(azim-1))
             
-            plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu,"black")
-            plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu)#,"white")
-            plot_hybrid_macroel(ax, vertices_hybrid_3, n, mu)#,"white")
-            plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1)#,"white")
-            plot_tetra_macroel (ax, vertices_tetra_1, n, mu, "blue")
+
+
+
+
+
             
             plot_hybrid_macroel(ax, vertices_hybrid_11, n, mu)#,"white")
             plot_hybrid_macroel(ax, vertices_hybrid_12, n, mu)#,"white")
@@ -236,13 +235,11 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
             plot_hybrid_macroel(ax, vertices_hybrid_33, n, mu, "orange")
             plot_hybrid_macroel(ax, vertices_hybrid_34, n, 1, "blue")
 
-#           ax.scatter(A0[0],A0[1],A0[2],color="black")
-#           ax.scatter(0,-2,0,color="red")
-#           ax.scatter(0,-2,-1,color="green")
-#           ax.scatter(-1,-2,-1,color="blue")
-#           ax.scatter(0,-3,-1,color="blue")
-            #ax.scatter(P1_hybrid_4[0],P1_hybrid_4[1],P1_hybrid_4[2],color="blue")
-            #ax.scatter((Q1+A0-Q0)[0],(Q1+A0-Q0)[1],(Q1+A0-Q0)[2],color="violet")
+            plot_hybrid_macroel(ax, vertices_hybrid_1, n, mu,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_2, n, mu,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_3, n, mu,"white")
+            plot_hybrid_macroel(ax, vertices_hybrid_4, n, 1,"white")
+            plot_tetra_macroel (ax, vertices_tetra_1, n, mu, "white")
 
             ax.plot([],[],[],label = " ")
             legend = ax.legend()
