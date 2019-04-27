@@ -1,3 +1,6 @@
+mu = .65
+hybrid_color = "green"
+isotropic_color = "red"
 prism_h   = np.array([0,0,4])
 horiz1  = 2    
 x_max = 3
@@ -16,19 +19,24 @@ Q2 = np.array([-1,0,-1])
 R0 = Q1 - Q0 + Q2
 P1_hybrid_4 = Q2+Q1-2*Q0+A0
 
-D = { 0 : { 
-CONTINUE HERE:
-poner una etiqueta tipo: 
-            0 : { 0: <<mu>>, 1: np.array([Q0,Q2,Q1,A0])},
-para no tener que saber si es graduado, y simplemente
-tomar mu = 1 si no lo es.        
-            1 : np.array([Q2-Q0+A0,P1_hybrid_4,Q2,A0]), 
-            2 : np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0]),
-            3 : np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1]),
-          },
-      1 : {
-            0 : np.array([[0,0,0],[-1,0,-1],[-1,1,0],[0,1,-1]])
-          }
+D = { 
+0 : { 0 : np.array([[x_int_min,y_int_max,-1],[-1,0,-1],[0,1,-1],[0,0,0]]), 1 : mu, 2 : hybrid_color, 3 : 0},
+1 : { 0 : np.array([Q2-Q0+A0,P1_hybrid_4,Q2,A0]),
+      1 : mu,
+      2 : hybrid_color,
+      3 : 0}, 
+2 : { 0 : np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0])
+      1 : mu,
+      2 : hybrid_color,
+      3 : 0},
+3 : { 0 : np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1])
+      1 : 1,
+      2 : hybrid_color,
+      3 : 0},
+4 : { 0 : np.array([[0,0,0],[-1,0,-1],[-1,1,0],[0,1,-1]]),
+      1 : mu,
+      2 : isotropic_color,
+      3 : 1}
 }
 
 """
