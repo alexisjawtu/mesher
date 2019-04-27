@@ -4,7 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import random
 
-## from macroelements import D
+from macroelements import D
 
 def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "green"):
     points = macroel_sing_vrtx_and_edge (vertices[0], vertices[1], vertices[2],vertices[3], local_mu, n)

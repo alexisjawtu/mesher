@@ -19,6 +19,19 @@ Q2 = np.array([-1,0,-1])
 R0 = Q1 - Q0 + Q2
 P1_hybrid_4 = Q2+Q1-2*Q0+A0
 
+CONTINUE HERE
+decidir si el dominio sera puesto tipo el D de ahora
+o tipo:
+0
+x y z
+x y z
+x y z
+x y z
+mu
+'color'
+
+etcetera
+
 D = { 
 0 : { 0 : np.array([[x_int_min,y_int_max,-1],[-1,0,-1],[0,1,-1],[0,0,0]]), 1 : mu, 2 : hybrid_color, 3 : 0},
 1 : { 0 : np.array([Q2-Q0+A0,P1_hybrid_4,Q2,A0]),
