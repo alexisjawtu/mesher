@@ -1,3 +1,13 @@
+""" is this good as input
+0
+x y z
+x y z
+x y z
+x y z
+mu
+'color'? 
+"""
+
 mu = .65
 hybrid_color = "green"
 isotropic_color = "red"
@@ -18,53 +28,27 @@ Q1 = np.array([0,1,-1])
 Q2 = np.array([-1,0,-1])
 R0 = Q1 - Q0 + Q2
 P1_hybrid_4 = Q2+Q1-2*Q0+A0
-
-CONTINUE HERE
-decidir si el dominio sera puesto tipo el D de ahora
-o tipo:
-0
-x y z
-x y z
-x y z
-x y z
-mu
-'color'
-
-etcetera
-
 D = { 
-0 : { 0 : np.array([[x_int_min,y_int_max,-1],[-1,0,-1],[0,1,-1],[0,0,0]]), 1 : mu, 2 : hybrid_color, 3 : 0},
-1 : { 0 : np.array([Q2-Q0+A0,P1_hybrid_4,Q2,A0]),
-      1 : mu,
-      2 : hybrid_color,
-      3 : 0}, 
-2 : { 0 : np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0])
-      1 : mu,
-      2 : hybrid_color,
-      3 : 0},
-3 : { 0 : np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1])
-      1 : 1,
-      2 : hybrid_color,
-      3 : 0},
-4 : { 0 : np.array([[0,0,0],[-1,0,-1],[-1,1,0],[0,1,-1]]),
-      1 : mu,
-      2 : isotropic_color,
-      3 : 1}
+0 : { 0 : np.array([[x_int_min,y_int_max,-1],[-1,0,-1],[0,1,-1],[0,0,0]]), 1 : mu, 2 : hybrid_color,    3 : 0},
+1 : { 0 : np.array([[-1,0,0],[-1,1,0],[-1,0,-1],[0,0,0]]),                 1 : mu, 2 : hybrid_color,    3 : 0}, 
+2 : { 0 : np.array([[0,1,0],[0,1,-1],[-1,1,0],[0,0,0]]),                   1 : mu, 2 : hybrid_color,    3 : 0},
+3 : { 0 : np.array([[-1,1,-1],[-1,0,-1],[-1,1,0],[0,1,-1]]),               1 : 1,  2 : hybrid_color,    3 : 0},
+4 : { 0 : np.array([[0,0,0],[-1,0,-1],[-1,1,0],[0,1,-1]]),                 1 : mu, 2 : isotropic_color, 3 : 1}
+
+5 : { 0 : np.array([-1,1,1])*np.array([[x_int_min,y_int_max,-1],[-1,0,-1],[0,1,-1],[0,0,0]])  + np.array([2,0,0]), 1 : mu,2 : hybrid_color,    3 : 0},
+6 : { 0 : np.array([-1,1,1])*np.array([[-1,0,0],[-1,1,0],[-1,0,-1],[0,0,0]])                  + np.array([2,0,0]), 1 : mu,2 : hybrid_color,    3 : 0},
+7 : { 0 : np.array([-1,1,1])*np.array([[0,1,0],[0,1,-1],[-1,1,0],[0,0,0]])                    + np.array([2,0,0]), 1 : mu,2 : hybrid_color,    3 : 0},
+8 : { 0 : np.array([-1,1,1])*np.array([[-1,1,-1],[-1,0,-1],[-1,1,0],[0,1,-1]])                + np.array([2,0,0]), 1 : 1 ,2 : hybrid_color,    3 : 0},
+9 : { 0 : np.array([-1,1,1])*np.array([[0,0,0],[-1,0,-1],[-1,1,0],[0,1,-1]])                  + np.array([2,0,0]), 1 : mu,2 : isotropic_color, 3 : 1}
+
+10 : {0: np.array([[0,-2,-1],[-1,-2,-1],[0,-3,-1],[0,-2,z_max]])        ,  1 : mu,2 : hybrid_color,    3 : 0},
+11 : {0: np.array([[0,-3,0],[0,-3,-1],[-1,-3,0],[0,-2,z_max]])          ,  1 : mu,2 : hybrid_color,    3 : 0},
+12 : {0: np.array([[-1,-2,z_max],[-1,-3,z_max],[-1,-2,-1],[0,-2,z_max]]),  1 : mu,2 : hybrid_color,    3 : 0},
+13 : {0: np.array([[-1,-3,-1],[-1,-3,z_max],[0,-3,-1],[-1,-2,-1]])      ,  1 : 1 ,2 : hybrid_color,    3 : 0},
+14 : {0: np.array([[ 0, -2,  0],[-1, -2, -1],[ 0, -3, -1],[-1, -3,  0]]),  1 : mu,2 : isotropic_color, 3 : 1}
+
 }
-
 """
-
-vertices_hybrid_01_reflected   = np.array([-1,1,1])*vertices_hybrid_01 + np.array([2,0,0])
-vertices_hybrid_02_reflected   = np.array([-1,1,1])*vertices_hybrid_02 + np.array([2,0,0])
-vertices_hybrid_03_reflected   = np.array([-1,1,1])*vertices_hybrid_03 + np.array([2,0,0])
-vertices_hybrid_04_reflected   = np.array([-1,1,1])*vertices_hybrid_04 + np.array([2,0,0])
-vertices_tetra_0_reflected     = np.array([-1,1,1])*vertices_tetra_0 + np.array([2,0,0])
-
-vertices_tetra_1     = np.array([[ 0, -2,  0],[-1, -2, -1],[ 0, -3, -1],[-1, -3,  0]])
-vertices_hybrid_11   = np.array([[0,-2,-1],[-1,-2,-1],[0,-3,-1],[0,-2,z_max]])
-vertices_hybrid_12   = np.array([[0,-3,0],[0,-3,-1],[-1,-3,0],[0,-2,z_max]]) 
-vertices_hybrid_13   = np.array([[-1,-2,z_max],[-1,-3,z_max],[-1,-2,-1],[0,-2,z_max]])
-vertices_hybrid_14   = np.array([[-1,-3,-1],[-1,-3,z_max],[0,-3,-1],[-1,-2,-1]])
 
 vertices_tetra_1_reflected   = np.array([-1,1,1])*vertices_tetra_1   + np.array([2,0,0])
 vertices_hybrid_11_reflected = np.array([-1,1,1])*vertices_hybrid_11 + np.array([2,0,0])
@@ -73,19 +57,11 @@ vertices_hybrid_13_reflected = np.array([-1,1,1])*vertices_hybrid_13 + np.array(
 vertices_hybrid_14_reflected = np.array([-1,1,1])*vertices_hybrid_14 + np.array([2,0,0])
 
 
-vertices_hybrid_21   = np.array([[x_int_min,-1,z_max],[x_int_min,-1,-1],
-                                     [x_min,-1,z_max],[x_int_min, y_int_max,z_max]])
-vertices_hybrid_22   = np.array([[x_int_min,y_int_max,-1],[x_min,y_int_max,-1],
-                            [x_int_min,-1,-1],[x_int_min,y_int_max,0]])
-vertices_hybrid_23   = np.array([[-1,0,0],[-1,-1,0],
-                            [-1,0,-1],[0,0,0]])
-vertices_hybrid_24   = np.array([[-1,-1,-1],[-1,-1,0],
-                            [0,-1,-1],[-1,0,-1]])
-vertices_tetra_2    = np.array([[x_int_min,y_int_max,z_max],[-1,-1,z_max],[x_min,y_int_max,-1],[x_int_min,-1,-1]])
-
-
-
-
+vertices_hybrid_21   = np.array([[x_int_min,-1,z_max],[x_int_min,-1,-1],[x_min,-1,z_max],[x_int_min, y_int_max,z_max]])
+vertices_hybrid_22   = np.array([[x_int_min,y_int_max,-1],[x_min,y_int_max,-1],[x_int_min,-1,-1],[x_int_min,y_int_max,0]])
+vertices_hybrid_23   = np.array([[-1,0,0],[-1,-1,0],[-1,0,-1],[0,0,0]])
+vertices_hybrid_24   = np.array([[-1,-1,-1],[-1,-1,0],[0,-1,-1],[-1,0,-1]])
+vertices_tetra_2     = np.array([[x_int_min,y_int_max,z_max],[-1,-1,z_max],[x_min,y_int_max,-1],[x_int_min,-1,-1]])
 
 
 vertices_tetra_2_reflected   = np.array([-1,1,1])*vertices_tetra_2+np.array([2,0,0])
