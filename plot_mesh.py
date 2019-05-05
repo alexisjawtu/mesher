@@ -1,10 +1,9 @@
 ###	TODO: refactor everything economizing code
 from mesh import *
+from macroelements import *
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import random
-
-from macroelements import D
 
 def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "green"):
     points = macroel_sing_vrtx_and_edge (vertices[0], vertices[1], vertices[2],vertices[3], local_mu, n)
@@ -108,6 +107,7 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
     vertices_hybrid_03   = np.array([Q1+A0-Q0,Q1,P1_hybrid_4,A0])
     vertices_hybrid_04   = np.array([Q2+Q1-Q0,Q2,P1_hybrid_4,Q1]) # -----> oposite to a singular vertex
     vertices_tetra_0     = np.array([[0,0,0],[-1,0,-1],[-1,1,0],[0,1,-1]])
+
     vertices_hybrid_01_reflected   = np.array([-1,1,1])*vertices_hybrid_01 + np.array([2,0,0])
     vertices_hybrid_02_reflected   = np.array([-1,1,1])*vertices_hybrid_02 + np.array([2,0,0])
     vertices_hybrid_03_reflected   = np.array([-1,1,1])*vertices_hybrid_03 + np.array([2,0,0])
@@ -137,32 +137,21 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
     vertices_hybrid_13_reflected = np.array([-1,1,1])*vertices_hybrid_13 + np.array([2,0,0])
     vertices_hybrid_14_reflected = np.array([-1,1,1])*vertices_hybrid_14 + np.array([2,0,0])
     vertices_tetra_1_reflected   = np.array([-1,1,1])*vertices_tetra_1   + np.array([2,0,0])
-
     
     vertices_hybrid_21_reflected   = np.array([-1,1,1])*vertices_hybrid_21+np.array([2,0,0])
-    print vertices_hybrid_21_reflected
     vertices_hybrid_22_reflected   = np.array([-1,1,1])*vertices_hybrid_22+np.array([2,0,0])
-    print vertices_hybrid_22_reflected
     vertices_hybrid_23_reflected   = np.array([-1,1,1])*vertices_hybrid_23+np.array([2,0,0])
-    print vertices_hybrid_23_reflected
     vertices_hybrid_24_reflected   = np.array([-1,1,1])*vertices_hybrid_24+np.array([2,0,0])
-    print vertices_hybrid_24_reflected
     vertices_tetra_2_reflected   = np.array([-1,1,1])*vertices_tetra_2+np.array([2,0,0])
-    print vertices_tetra_2_reflected
 
-    
-##############
 
-    vertices_tetra_3_reflected = np.array([-1,1,1])*vertices_tetra_3+np.array([2,0,0])
     vertices_hybrid_31_reflected = np.array([-1,1,1])*vertices_hybrid_31+np.array([2,0,0])
     vertices_hybrid_32_reflected = np.array([-1,1,1])*vertices_hybrid_32+np.array([2,0,0])
     vertices_hybrid_33_reflected = np.array([-1,1,1])*vertices_hybrid_33+np.array([2,0,0])
     vertices_hybrid_34_reflected = np.array([-1,1,1])*vertices_hybrid_34+np.array([2,0,0])
-
-
-
-
-
+    vertices_tetra_3_reflected = np.array([-1,1,1])*vertices_tetra_3+np.array([2,0,0])
+#
+###############
 
     vertices_prisms = []
     points_prisms   = np.array([Q0,Q1,Q2])
@@ -220,7 +209,6 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
 
     mu_for_prisms       = [mu,1,1,mu,mu,mu,1,1,mu,1,1,mu,mu,1,mu,1,1,mu,mu,1,mu,1,1,mu]
 
-
     for n in refinements:
         vertical_prism_refinement = n
         fig = plt.figure()
@@ -228,17 +216,23 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
         for azim in angle_steps:
             ax.view_init(elev,49+15*(azim-1))
        
-            plot[0](ax, vertices_hybrid_11, n, mu)#,"white")
-            plot[0](ax, vertices_hybrid_12, n, mu)#,"white")
-            plot[0](ax, vertices_hybrid_13, n, mu)#,"white")
-            plot[0](ax, vertices_hybrid_14, n, 1)#,"white")
-            plot[1] (ax, vertices_tetra_1, n, mu, "blue")
-
             a = 0
             for v, m in zip(vertices_prisms,mu_for_prisms):
                 plot[2](ax,v,n,vertical_prism_refinement,m)
 #                if a < 5: plot[2](ax,v,n,vertical_prism_refinement,m)
                 a = a +1 
+
+
+CONTINUE HERE: pasar los prismaticos al input
+terminar el branch develop y borrar el input de este modulo
+#            for k, m in macro_elements.iteritems():
+#                plot[m[3]](ax, m[0], n, m[1], m[2])
+
+            plot[0](ax, vertices_hybrid_11, n, mu)#,"white")
+            plot[0](ax, vertices_hybrid_12, n, mu)#,"white")
+            plot[0](ax, vertices_hybrid_13, n, mu)#,"white")
+            plot[0](ax, vertices_hybrid_14, n, 1)#,"white")
+            plot[1] (ax, vertices_tetra_1, n, mu, "blue")
 
             plot[0](ax, vertices_hybrid_21, n, mu, "yellow")
             plot[0](ax, vertices_hybrid_22, n, mu, "black")
@@ -281,6 +275,7 @@ def plot_bbrick(mu = .65, angle_steps = [9], refinements = [3], vertical_prism_r
             plot[0](ax, vertices_hybrid_33_reflected, n, mu, "pink")
             plot[0](ax, vertices_hybrid_34_reflected, n, 1, "pink")
             plot[1](ax, vertices_tetra_3_reflected, n, mu, "pink")
+
 
 
             ax.plot([],[],[],label = " ")
