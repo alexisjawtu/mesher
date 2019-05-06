@@ -79,9 +79,9 @@ plot = { 0 : plot_hybrid_macroel,
          1 : plot_tetra_macroel,
          2 : plot_prism_macroel}
 
-def plot_bbrick(initial_partition = macro_elements, mu = .65, angle_steps = [9], refinements = [3], vertical_prism_refinement = 1):
+def plot_bbrick(initial_partition = "partition.txt", mu = .65, angle_steps = [9], refinements = [3], vertical_prism_refinement = 1):
     
-#    CONTINUE HERE: 
+    CONTINUE HERE: en el archivo partition
 #    
 #    terminar el branch develop y borrar el input de este modulo
 #
@@ -90,10 +90,7 @@ def plot_bbrick(initial_partition = macro_elements, mu = .65, angle_steps = [9],
 #    haga todo sola desde ahi. Despues deberia andar tambien desde un csv hasta
 #    dejar la malla en los txt como de fichera
 
-
     """ 
-    
-
     initial_partition is a dictionary with the macroelements, that is, the
     first of the sequence of meshes. A record in initial_partition has to be:
 
@@ -101,8 +98,7 @@ def plot_bbrick(initial_partition = macro_elements, mu = .65, angle_steps = [9],
 
     mu == [1,.4,.4,.4,.4] example for the graded case """
 
-    elev    = 70
-    #colors  = ['brown','darkgreen','red','black','fuchsia','blue']*7
+    elev    = 90
     prism_h   = np.array([0,0,4])
     horiz1  = 2    
     x_max = 3
@@ -115,13 +111,31 @@ def plot_bbrick(initial_partition = macro_elements, mu = .65, angle_steps = [9],
     y_int_max   = 0
     z_max   = 0
 
-#    A0 = np.zeros(3)
-    Q0 = np.array([x_int_min,y_int_max,-1])
-    Q1 = np.array([0,1,-1])
-    Q2 = np.array([-1,0,-1])
-    R0 = Q1 - Q0 + Q2
+    for n in refinements:
+        fig = plt.figure()
+        ax  = fig.add_subplot(1,1,1,projection='3d')
+        for azim in angle_steps:
+            #ax.view_init(elev,49+15*(azim-1))
+            ax.view_init(elev,0)
+       
+            for k, m in macro_elements.iteritems():
+                plot[m[3]](ax, m[0], n, m[1], m[2])
+
+            ax.plot([],[],[],label = " ")
+            legend = ax.legend()
+            ax.set_xlabel(' X ')
+            ax.set_ylabel(' Y ')
+            ax.set_zlabel(' Z ')
+            plt.show()
+            #fig.savefig('test-bbrick' + str(azim) + '-' + str(n) + '.png')
+
 
 #    P1_hybrid_4 = Q2+Q1-2*Q0+A0
+#    A0 = np.zeros(3)
+#    Q0 = np.array([x_int_min,y_int_max,-1])
+#    Q1 = np.array([0,1,-1])
+#    Q2 = np.array([-1,0,-1])
+#    R0 = Q1 - Q0 + Q2
 
 ######## copied to macroelements.py  START
 #    vertices_hybrid_01   = np.array([Q0,Q2,Q1,A0])
@@ -231,20 +245,6 @@ def plot_bbrick(initial_partition = macro_elements, mu = .65, angle_steps = [9],
 
 ###############  copied to macroelements.py  END
 
-    for n in refinements:
-        fig = plt.figure()
-        ax  = fig.add_subplot(1,1,1,projection='3d')
-        for azim in angle_steps:
-            ax.view_init(elev,49+15*(azim-1))
-       
-#            a = 0
-#            for v, m in zip(vertices_prisms,mu_for_prisms):
-#                plot[2](ax,v,n,m)
-#                if a < 5: plot[2](ax,v,n,vertical_prism_refinement,m)
-#                a = a +1 
-
-            for k, m in macro_elements.iteritems():
-                plot[m[3]](ax, m[0], n, m[1], m[2])
 
 #            plot[0](ax, vertices_hybrid_11, n, mu)#,"white")
 #            plot[0](ax, vertices_hybrid_12, n, mu)#,"white")
@@ -293,16 +293,6 @@ def plot_bbrick(initial_partition = macro_elements, mu = .65, angle_steps = [9],
 #            plot[0](ax, vertices_hybrid_33_reflected, n, mu, "pink")
 #            plot[0](ax, vertices_hybrid_34_reflected, n, 1, "pink")
 #            plot[1](ax, vertices_tetra_3_reflected, n, mu, "pink")
-
-
-
-            ax.plot([],[],[],label = " ")
-            legend = ax.legend()
-            ax.set_xlabel(' X ')
-            ax.set_ylabel(' Y ')
-            ax.set_zlabel(' Z ')
-            plt.show()
-            fig.savefig('test-bbrick' + str(azim) + '-' + str(n) + '.png')
     return
 
 

@@ -1,11 +1,9 @@
 import numpy as np
+
 mu = .65
 hybrid_color = "green"
 isotropic_color = "red"
 prismatic_color = "blue"
-prism_h   = np.array([0,0,4])
-
-#horiz1  = 2    
 
 x_max = 3
 x_int_max = 2
@@ -16,11 +14,6 @@ y_min   = -3
 y_int_min   = -2
 y_int_max   = 0
 z_max   = 0
-
-Q0 = np.array([x_int_min,y_int_max,-1])
-Q1 = np.array([0,1,-1])
-Q2 = np.array([-1,0,-1])
-R0 = Q1 - Q0 + Q2
 
 macro_elements = { 
 0 : { 0 : np.array([[x_int_min,y_int_max,-1],[-1,0,-1],[0,1,-1],[0,0,0]]), 1 : mu, 2 : hybrid_color,    3 : 0},
@@ -95,5 +88,6 @@ macro_elements = {
 61 : {0 : np.array([[ 1,  1, -1],[ 1,  0, -1],[ 2,  1, -1],[ 1,  1, -5],[ 1,  0, -5],[ 2,  1, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
 62 : {0 : np.array([[ 1,  1, -1],[ 0,  1, -1],[ 1,  0, -1],[ 1,  1, -5],[ 0,  1, -5],[ 1,  0, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
 63 : {0 : np.array([[ 0,  0, -1],[ 1,  0, -1],[ 0,  1, -1],[ 0,  0, -5],[ 1,  0, -5],[ 0,  1, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2}
-
 }
+
+print macro_elements
