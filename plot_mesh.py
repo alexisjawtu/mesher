@@ -49,14 +49,15 @@ def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "green
         plt_axes.plot(drawing[dr][0],drawing[dr][1],drawing[dr][2], color = color_name)
     return
 
-def plot_prism_macroel(plt_axes, vertices, n, n_vertical, local_mu = 1):
+def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "blue"):
+    n_vertical = n  ## TODO: FIX THIS
     local_grid_points = macroel_sing_edge(vertices, local_mu, n, n_vertical)
     for j in range(n_vertical+1):
         for k in xrange(n+1):
             plt_axes.plot(local_grid_points[j,k,0,0:n+1-k], local_grid_points[j,k,1,0:n+1-k], local_grid_points[j,k,2,0:n+1-k], color="red")
             plt_axes.plot(local_grid_points[j,0:n+1-k,0,k], local_grid_points[j,0:n+1-k,1,k], local_grid_points[j,0:n+1-k,2,k], color="green")
             x = np.array([local_grid_points[j,l,:,n-l-k] for l in range(n-k,-1,-1)])
-            plt_axes.plot(x[:,0],x[:,1],x[:,2],color="black")
+            plt_axes.plot(x[:,0],x[:,1],x[:,2],color=color_name)
     
     for j in range(n+1):  # <<
         for i in xrange(n+1-j):  # verticals: TODO FIX PLOTTING BUG when setting independent horix and vertic. refinements
@@ -80,14 +81,14 @@ plot = { 0 : plot_hybrid_macroel,
 
 def plot_bbrick(initial_partition = macro_elements, mu = .65, angle_steps = [9], refinements = [3], vertical_prism_refinement = 1):
     
-    CONTINUE HERE: 
-    
-    terminar el branch develop y borrar el input de este modulo
-
-    cambiar esta primera parte de la funcion:
-    hacer que initial_partition sea un csv por espacios y que plot_bbrick()
-    haga todo sola desde ahi. Despues deberia andar tambien desde un csv hasta
-    dejar la malla en los txt como de fichera
+#    CONTINUE HERE: 
+#    
+#    terminar el branch develop y borrar el input de este modulo
+#
+#    cambiar esta primera parte de la funcion:
+#    hacer que initial_partition sea un csv por espacios y que plot_bbrick()
+#    haga todo sola desde ahi. Despues deberia andar tambien desde un csv hasta
+#    dejar la malla en los txt como de fichera
 
 
     """ 
@@ -231,17 +232,16 @@ def plot_bbrick(initial_partition = macro_elements, mu = .65, angle_steps = [9],
 ###############  copied to macroelements.py  END
 
     for n in refinements:
-        vertical_prism_refinement = n
         fig = plt.figure()
         ax  = fig.add_subplot(1,1,1,projection='3d')
         for azim in angle_steps:
             ax.view_init(elev,49+15*(azim-1))
        
-            a = 0
-            for v, m in zip(vertices_prisms,mu_for_prisms):
-#                plot[2](ax,v,n,vertical_prism_refinement,m)
+#            a = 0
+#            for v, m in zip(vertices_prisms,mu_for_prisms):
+#                plot[2](ax,v,n,m)
 #                if a < 5: plot[2](ax,v,n,vertical_prism_refinement,m)
-                a = a +1 
+#                a = a +1 
 
             for k, m in macro_elements.iteritems():
                 plot[m[3]](ax, m[0], n, m[1], m[2])

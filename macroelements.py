@@ -2,6 +2,7 @@ import numpy as np
 mu = .65
 hybrid_color = "green"
 isotropic_color = "red"
+prismatic_color = "blue"
 prism_h   = np.array([0,0,4])
 
 #horiz1  = 2    
@@ -58,13 +59,11 @@ macro_elements = {
 28 : {0 : np.array([[ 3,-3,-1],[ 3,-3, 0],[ 2,-3,-1],[ 3,-2,-1]]),1 : 1 ,2 : hybrid_color,    3 : 0},
 29 : {0 : np.array([[ 2,-2, 0],[ 3,-2,-1],[ 2,-3,-1],[ 3,-3, 0]]),1 : mu,2 : isotropic_color, 3 : 1},
 
-
 30 : {0: np.array([[2,-1, 0],[2,-1,-1],[3,-1, 0],[2,0,0]]),1 : mu,2 : hybrid_color,    3 : 0},
 31 : {0: np.array([[2,0,-1],[3,0,-1],[2,-1,-1],[2,0,0]]),1 : mu,2 : hybrid_color,    3 : 0},
 32: {0: np.array([[3,0,0],[3,-1,0],[3,0,-1],[2,0,0]]),1 : mu,2 : hybrid_color,    3 : 0},
 33 : {0: np.array([[3,-1,-1],[3,-1,0],[2,-1,-1],[3,0,-1]]),1 : 1 ,2 : hybrid_color,    3 : 0},
 34 : {0: np.array([[2,0,0],[3,-1,0],[3,0,-1],[2,-1,-1]]),1 : mu,2 : isotropic_color, 3 : 1},
-
 
 35 : {0 : np.array([[2,-2,-1],[2,-1,-1],[3,-2,-1],[2,-2, 0]]),1 : mu,2 : hybrid_color,    3 : 0},
 36 : {0 : np.array([[2,-1, 0],[3,-1, 0],[2,-1,-1],[2,-2, 0]]),1 : mu,2 : hybrid_color,    3 : 0},
@@ -72,66 +71,29 @@ macro_elements = {
 38 : {0 : np.array([[3,-1,-1],[2,-1,-1],[3,-1, 0],[3,-2,-1]]),1 : 1 ,2 : hybrid_color,    3 : 0},
 39 : {0 : np.array([[2,-2, 0],[3,-1, 0],[2,-1,-1],[3,-2,-1]]),1 : mu,2 : isotropic_color, 3 : 1},
 
+40 : {0 : np.array([[ 0,  0, -1],[ 0,  1, -1],[-1,  0, -1],[ 0,  0, -5],[ 0,  1, -5],[-1,  0, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+41 : {0 : np.array([[-1,  1, -1],[ 0,  1, -1],[-1,  0, -1],[-1,  1, -5],[ 0,  1, -5],[-1,  0, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+42 : {0 : np.array([[-1, -3, -1],[ 0, -3, -1],[-1, -2, -1],[-1, -3, -5],[ 0, -3, -5],[-1, -2, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+43 : {0 : np.array([[ 0, -2, -1],[-1, -2, -1],[ 0, -3, -1],[ 0, -2, -5],[-1, -2, -5],[ 0, -3, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+44 : {0 : np.array([[ 0, -2, -1],[ 0, -1, -1],[-1, -2, -1],[ 0, -2, -5],[ 0, -1, -5],[ 0, -2, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+45 : {0 : np.array([[ 0, -2, -1],[ 0, -3, -1],[ 1, -2, -1],[ 0, -2, -5],[ 0, -3, -5],[ 1, -2, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+46 : {0 : np.array([[-1, -1, -1],[-1, -2, -1],[ 0, -1, -1],[-1, -1, -5],[-1, -2, -5],[ 0, -1, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+47 : {0 : np.array([[ 1, -3, -1],[ 1, -2, -1],[ 0, -3, -1],[ 1, -3, -5],[ 1, -2, -5],[ 0, -3, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+48 : {0 : np.array([[ 0,  0, -1],[-1,  0, -1],[ 0, -1, -1],[ 0,  0, -5],[-1,  0, -5],[ 0, -1, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+49 : {0 : np.array([[-1, -1, -1],[ 0, -1, -1],[-1,  0, -1],[-1, -1, -5],[ 0, -1, -5],[-1,  0, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+50 : {0 : np.array([[ 1, -3, -1],[ 2, -3, -1],[ 1, -2, -1],[ 1, -3, -5],[ 2, -3, -5],[ 1, -2, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+51 : {0 : np.array([[ 2, -2, -1],[ 1, -2, -1],[ 2, -3, -1],[ 2, -2, -5],[ 1, -2, -5],[ 2, -3, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+52 : {0 : np.array([[ 2, -2, -1],[ 2, -3, -1],[ 3, -2, -1],[ 2, -2, -5],[ 2, -3, -5],[ 3, -2, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+53 : {0 : np.array([[ 3, -3, -1],[ 3, -2, -1],[ 2, -3, -1],[ 3, -3, -5],[ 3, -2, -5],[ 2, -3, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+54 : {0 : np.array([[ 2, -2, -1],[ 3, -2, -1],[ 2, -1, -1],[ 2, -2, -5],[ 3, -2, -5],[ 2, -1, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+55 : {0 : np.array([[ 3, -1, -1],[ 2, -1, -1],[ 3, -2, -1],[ 3, -1, -5],[ 2, -1, -5],[ 3, -2, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+56 : {0 : np.array([[ 3, -1, -1],[ 3,  0, -1],[ 2, -1, -1],[ 3, -1, -5],[ 3,  0, -5],[ 2, -1, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+57 : {0 : np.array([[ 2,  0, -1],[ 2, -1, -1],[ 3,  0, -1],[ 2,  0, -5],[ 2, -1, -5],[ 3,  0, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+58 : {0 : np.array([[ 2,  0, -1],[ 3,  0, -1],[ 2,  1, -1],[ 2,  0, -5],[ 3,  0, -5],[ 2,  1, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+59 : {0 : np.array([[ 3,  1, -1],[ 2,  1, -1],[ 3,  0, -1],[ 3,  1, -5],[ 2,  1, -5],[ 3,  0, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+60 : {0 : np.array([[ 2,  0, -1],[ 2,  1, -1],[ 1,  0, -1],[ 2,  0, -5],[ 2,  1, -5],[ 1,  0, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2},
+61 : {0 : np.array([[ 1,  1, -1],[ 1,  0, -1],[ 2,  1, -1],[ 1,  1, -5],[ 1,  0, -5],[ 2,  1, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+62 : {0 : np.array([[ 1,  1, -1],[ 0,  1, -1],[ 1,  0, -1],[ 1,  1, -5],[ 0,  1, -5],[ 1,  0, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
+63 : {0 : np.array([[ 0,  0, -1],[ 1,  0, -1],[ 0,  1, -1],[ 0,  0, -5],[ 1,  0, -5],[ 0,  1, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2}
+
 }
-
-
-vertices_prisms = []
-points_prisms   = np.array([Q0,Q1,Q2])
-vertices_prisms = vertices_prisms + [np.concatenate((points_prisms,points_prisms - prism_h))]
-points_prisms   = np.array([R0,Q1,Q2])
-vertices_prisms = vertices_prisms + [np.concatenate((points_prisms,points_prisms - prism_h))]
-
-vertices_prisms      = vertices_prisms + [np.array([[-1,-3,-1],[0,-3,-1],[-1,-2,-1],[-1,-3,-1]-prism_h,[0,-3,-1]-prism_h,[-1,-2,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[0,-2,-1],[-1,-2,-1],[0,-3,-1],[0,-2,-1]-prism_h,[-1,-2,-1]-prism_h,[0,-3,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[0,-2,-1],[0,-1,-1], [-1,-2,-1], [0,-2,-1]-prism_h,[0,-1,-1]-prism_h,[0,-2,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[0,-2,-1],[0,-3,-1],[1,-2,-1],[0,-2,-1]-prism_h,[0,-3,-1]-prism_h,[1,-2,-1]-prism_h])]
-
-vertices_prisms      = vertices_prisms + [np.array([[-1,-1,-1],[-1,-2,-1],[0,-1,-1],[-1,-1,-1]-prism_h,[-1,-2,-1]-prism_h,[0,-1,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[1,y_min,-1],[1,y_int_min,-1],[0,y_min,-1],
-                                         [1,y_min,-1]-prism_h,[1,y_int_min,-1]-prism_h,[0,y_min,-1]-prism_h])]
-vertices_prisms      = vertices_prisms +  [np.array([[x_int_min,y_int_max,-1],[x_min,y_int_max,-1],[x_int_min,-1,-1],
-                                         [x_int_min,y_int_max,-1]-prism_h,[x_min,y_int_max,-1]-prism_h,[x_int_min,-1,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[x_min,-1,-1],[x_int_min,-1,-1],[x_min,y_int_max,-1],
-                                        [x_min,-1,-1]-prism_h,[x_int_min,-1,-1]-prism_h,[x_min,y_int_max,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[1,y_min,-1],[2,y_min,-1],[1,y_int_min,-1],
-                                           [1,y_min,-1]-prism_h,[2,y_min,-1]-prism_h,[1,y_int_min,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[2,y_int_min,-1],[1,y_int_min,-1],[2,y_min,-1],
-                                            [2,y_int_min,-1]-prism_h,[1,y_int_min,-1]-prism_h,[2,y_min,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[2,y_int_min,-1],[2,y_min,-1],[x_max,y_int_min,-1],
-                                         [2,y_int_min,-1]-prism_h,[2,y_min,-1]-prism_h,[x_max,y_int_min,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[x_max,y_min,-1],[x_max,y_int_min,-1],[x_int_max,y_min,-1],
-                                         [x_max,y_min,-1]-prism_h,[x_max,y_int_min,-1]-prism_h,[x_int_max,y_min,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[2,y_int_min,-1],[x_max,y_int_min,-1],[x_int_max,-1,-1],
-                                         [2,y_int_min,-1]-prism_h,[x_max,y_int_min,-1]-prism_h,[x_int_max,-1,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[x_max,-1,-1],[x_int_max,-1,-1],[x_max,y_int_min,-1],
-                                         [x_max,-1,-1]-prism_h,[x_int_max,-1,-1]-prism_h,[x_max,y_int_min,-1]-prism_h])]
-vertices_prisms      = vertices_prisms + [np.array([[x_max,-1,-1],[x_max,y_int_max,-1],[x_int_max,-1,-1],
-                                         [x_max,-1,-1]-prism_h,[x_max,y_int_max,-1]-prism_h,[x_int_max,-1,-1]-prism_h])]
-
-vertices_prisms      = vertices_prisms + [np.array([[x_int_max,y_int_max,-1],[x_int_max,-1,-1],[x_max,y_int_max,-1],
-                                         [x_int_max,y_int_max,-1]-prism_h,[x_int_max,-1,-1]-prism_h,[x_max,y_int_max,-1]-prism_h])]
-
-vertices_prisms      = vertices_prisms + [np.array([[x_int_max,y_int_max,-1],           [x_max,y_int_max,-1],[x_int_max,y_max,-1],
-                                         [x_int_max,y_int_max,-1]-prism_h,   [x_max,y_int_max,-1]-prism_h,[x_int_max,y_max,-1]-prism_h])]
-
-vertices_prisms      = vertices_prisms + [np.array([[x_max,y_max,-1],[x_int_max,y_max,-1],[x_max,y_int_max,-1],
-                                         [x_max,y_max,-1]-prism_h,[x_int_max,y_max,-1]-prism_h,[x_max,y_int_max,-1]-prism_h])]
-
-vertices_prisms      = vertices_prisms + [np.array([[x_int_max,y_int_max,-1],[x_int_max,y_max,-1],[1,y_int_max,-1],
-                            [x_int_max,y_int_max,-1]-prism_h,[x_int_max,y_max,-1]-prism_h,[1,y_int_max,-1]-prism_h])]
-
-vertices_prisms      = vertices_prisms + [np.array([[1,y_max,-1],[1,y_int_max,-1],[x_int_max,y_max,-1],
-                            [1,y_max,-1]-prism_h,[1,y_int_max,-1]-prism_h,[x_int_max,y_max,-1]-prism_h])]
-    
-vertices_prisms      = vertices_prisms + [np.array([[1,y_max,-1],[x_int_min,y_max,-1],[1,y_int_max,-1],
-                            [1,y_max,-1]-prism_h,[x_int_min,y_max,-1]-prism_h,[1,y_int_max,-1]-prism_h])]
-
-vertices_prisms      = vertices_prisms + [np.array([[x_int_min,y_int_max,-1],[1,y_int_max,-1],[x_int_min,y_max,-1],
-                            [x_int_min,y_int_max,-1]-prism_h,[1,y_int_max,-1]-prism_h,[x_int_min,y_max,-1]-prism_h])]
-
-mu_for_prisms       = [mu,1,1,mu,mu,mu,1,1,mu,1,1,mu,mu,1,mu,1,1,mu,mu,1,mu,1,1,mu]
-
-print vertices_prisms
-
-with open ('prismatics.txt', 'w') as out:
-    np.savetxt(out,vertices_prisms,fmt = '%s')
