@@ -20,9 +20,26 @@ import mesh_conectivity
 import time
 
 ## TODO: como hacer el flujo de ejecucion. 
-## ¿Dejar para que ande con $ python module.py?
-## ¿Poner un txt con un diccionario con los refinamientos y el parametro de graduacion y otros,
+## Dejar para que ande con $ python module.py?
+## Poner un txt con un diccionario con los refinamientos y el parametro de graduacion y otros,
 ## tipo los diccionarios para configurar el sublime?
+
+#    Despues deberia andar tambien desde un csv hasta
+#    dejar la malla en los txt como de fichera
+
+def load_partition (in_file):
+    with open(in_file,'r') as infile:
+        inlist = infile.readlines()
+    pre_list = [line.strip(' \n').split(',') for line in inlist]
+    pre_list = [[int(st[0])] + [int(st[k]) for k in xrange(1,len(st)-1)]+[float(st[-1])] for st in pre_list]
+    colors = [ "green", "red", "blue"]
+    macro_elements = { key : 
+                        { 0 : np.array(pre_list[key][1:-1]).reshape((len(pre_list[key])-2)/3,3), 
+                          1 : pre_list[key][-1], 
+                          2 : colors[pre_list[key][0]], 
+                          3 : pre_list[key][0] } 
+                       for key in range(len(pre_list)) }
+    return macro_elements
 
 def filter_repeated_vertices (n_vert_prism = 6):
 	"""	look for repetitions of vertices
