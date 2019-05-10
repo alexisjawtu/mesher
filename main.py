@@ -19,7 +19,10 @@ import mesh_write
 import mesh_conectivity
 import time
 
-test1 = np.array([[0,0,1],[-1,0,1],[0,-1,1],[0,0,4],[-1,0,4],[0,-1,4]]).transpose()
+## TODO: como hacer el flujo de ejecucion. 
+## ¿Dejar para que ande con $ python module.py?
+## ¿Poner un txt con un diccionario con los refinamientos y el parametro de graduacion y otros,
+## tipo los diccionarios para configurar el sublime?
 
 def filter_repeated_vertices (n_vert_prism = 6):
 	"""	look for repetitions of vertices

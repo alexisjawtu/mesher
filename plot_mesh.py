@@ -81,7 +81,9 @@ plot = { 0 : plot_hybrid_macroel,
 
 def plot_bbrick(initial_partition = "partition.txt", mu = .65, angle_steps = [9], refinements = [3], vertical_prism_refinement = 1):
     
-    CONTINUE HERE: en el archivo partition
+    CONTINUE HERE: en el archivo macroelements.py: programar un
+    chequeo de igualdad de los dos diccionarios, el que esta a mano y 
+    el automatico (poner np.all(np.all(...)))
 #    
 #    terminar el branch develop y borrar el input de este modulo
 #

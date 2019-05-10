@@ -1,9 +1,11 @@
 import numpy as np
 
 mu = .65
-hybrid_color = "green"
+hybrid_color    = "green"
 isotropic_color = "red"
 prismatic_color = "blue"
+
+colors = [ "green", "red", "blue"]
 
 x_max = 3
 x_int_max = 2
@@ -14,6 +16,19 @@ y_min   = -3
 y_int_min   = -2
 y_int_max   = 0
 z_max   = 0
+
+with open('partition.txt','r') as infile:
+    inlist = infile.readlines()
+
+pre_list = [line.strip(' \n').split(',') for line in inlist]
+pre_list = [[int(st[0])] + [int(st[k]) for k in xrange(1,len(st)-1)]+[float(st[-1])] for st in pre_list]
+
+macro_elements_aux = { key : 
+                        { 0 : np.array(pre_list[key][1:-1]).reshape((len(pre_list[key])-2)/3,3), 
+                          1 : pre_list[key][-1], 
+                          2 : colors[pre_list[key][0]], 
+                          3 : pre_list[key][0] } 
+                       for key in range(len(pre_list)) }
 
 macro_elements = { 
 0 : { 0 : np.array([[x_int_min,y_int_max,-1],[-1,0,-1],[0,1,-1],[0,0,0]]), 1 : mu, 2 : hybrid_color,    3 : 0},
@@ -89,5 +104,3 @@ macro_elements = {
 62 : {0 : np.array([[ 1,  1, -1],[ 0,  1, -1],[ 1,  0, -1],[ 1,  1, -5],[ 0,  1, -5],[ 1,  0, -5]]), 1 : 1, 2 : prismatic_color, 3 : 2},
 63 : {0 : np.array([[ 0,  0, -1],[ 1,  0, -1],[ 0,  1, -1],[ 0,  0, -5],[ 1,  0, -5],[ 0,  1, -5]]), 1 : mu, 2 : prismatic_color, 3 : 2}
 }
-
-print macro_elements
