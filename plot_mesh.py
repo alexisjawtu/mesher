@@ -54,14 +54,14 @@ def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "blue")
     local_grid_points = macroel_sing_edge(vertices, local_mu, n, n_vertical)
     for j in range(n_vertical+1):
         for k in xrange(n+1):
-            plt_axes.plot(local_grid_points[j,k,0,0:n+1-k], local_grid_points[j,k,1,0:n+1-k], local_grid_points[j,k,2,0:n+1-k], color="red")
-            plt_axes.plot(local_grid_points[j,0:n+1-k,0,k], local_grid_points[j,0:n+1-k,1,k], local_grid_points[j,0:n+1-k,2,k], color="green")
+            plt_axes.plot(local_grid_points[j,k,0,0:n+1-k], local_grid_points[j,k,1,0:n+1-k], local_grid_points[j,k,2,0:n+1-k], color=color_name)
+            plt_axes.plot(local_grid_points[j,0:n+1-k,0,k], local_grid_points[j,0:n+1-k,1,k], local_grid_points[j,0:n+1-k,2,k], color=color_name)
             x = np.array([local_grid_points[j,l,:,n-l-k] for l in range(n-k,-1,-1)])
             plt_axes.plot(x[:,0],x[:,1],x[:,2],color=color_name)
     
     for j in range(n+1):  # <<
         for i in xrange(n+1-j):  # verticals: TODO FIX PLOTTING BUG when setting independent horix and vertic. refinements
-            plt_axes.plot(local_grid_points[:,j,0,i],local_grid_points[:,j,1,i],local_grid_points[:,j,2,i], color="blue")
+            plt_axes.plot(local_grid_points[:,j,0,i],local_grid_points[:,j,1,i],local_grid_points[:,j,2,i], color=color_name)
     return local_grid_points
 
 def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "red"):
@@ -79,7 +79,6 @@ plot_functions = { 0 : plot_hybrid_macroel,
                    1 : plot_tetra_macroel,
                    2 : plot_prism_macroel}
 
-
 def plot(initial_partition = "partition.txt", mu = .65, angle_steps = [9], refinements = [3], vertical_prism_refinement = 1):
     """ initial_partition is a dictionary with the macroelements, that is, the
     first of the sequence of meshes. A record in initial_partition has to be:
@@ -88,7 +87,13 @@ def plot(initial_partition = "partition.txt", mu = .65, angle_steps = [9], refin
 
     mu == [1,.4,.4,.4,.4] example for the graded case """
     macro_elements = load_partition (initial_partition)
+    
+    macro_elements[0][2] = "black"
+    print macro_elements
+
     elev    = 90
+
+    trans = {}
 
     for n in refinements:
         fig = plt.figure()
@@ -97,8 +102,20 @@ def plot(initial_partition = "partition.txt", mu = .65, angle_steps = [9], refin
             #ax.view_init(elev,49+15*(azim-1))
             ax.view_init(elev,0)
        
+
+####### CONTINUE HERE: REVISAR ESTO!!! ojo que piso m por referencia
             for k, m in macro_elements.iteritems():
-                plot_functions[m[3]](ax, m[0], n, m[1], m[2])
+                if m[3] < 2:
+                    trans [k] = m
+                    trans [k][0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
+                if k in range(41,52):
+                    plot_functions[m[3]](ax, m[0], n, m[1], m[2])
+
+            with open ('translations.txt','w') as tr__:
+                tr__.write(trans.__str__())      
+
+            m = macro_elements[0]
+            plot_functions[m[3]](ax, m[0], n, m[1], m[2])
 
             ax.plot([],[],[],label = " ")
             legend = ax.legend()
