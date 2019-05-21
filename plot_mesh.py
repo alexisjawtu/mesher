@@ -53,20 +53,20 @@ def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "blue")
     n_vertical = n  ## TODO: FIX THIS
     local_grid_points = macroel_sing_edge(vertices, local_mu, n, n_vertical)
     for j in range(n_vertical+1):
-        for k in xrange(n+1):
+        for k in range(n+1):
             plt_axes.plot(local_grid_points[j,k,0,0:n+1-k], local_grid_points[j,k,1,0:n+1-k], local_grid_points[j,k,2,0:n+1-k], color=color_name)
             plt_axes.plot(local_grid_points[j,0:n+1-k,0,k], local_grid_points[j,0:n+1-k,1,k], local_grid_points[j,0:n+1-k,2,k], color=color_name)
             x = np.array([local_grid_points[j,l,:,n-l-k] for l in range(n-k,-1,-1)])
             plt_axes.plot(x[:,0],x[:,1],x[:,2],color=color_name)
     
     for j in range(n+1):  # <<
-        for i in xrange(n+1-j):  # verticals: TODO FIX PLOTTING BUG when setting independent horix and vertic. refinements
+        for i in range(n+1-j):  # verticals: TODO FIX PLOTTING BUG when setting independent horix and vertic. refinements
             plt_axes.plot(local_grid_points[:,j,0,i],local_grid_points[:,j,1,i],local_grid_points[:,j,2,i], color=color_name)
     return local_grid_points
 
 def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "red"):
     points_T5 = macroel_sing_vrtx(vertices[0], vertices[1], vertices[2], vertices[3], local_mu, n)
-    for i in [4*nn for nn in range(points_T5.shape[0]/4)]:
+    for i in [4*nn for nn in range(points_T5.shape[0]//4)]:
         a = np.array([0,1,2,3]+[0,2,3,1])+i*np.ones(8,dtype=int)
         z = points_T5[a,np.array([2]*8)]
         y = points_T5[a,np.array([1]*8)]
@@ -103,7 +103,7 @@ def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [
        
 
 ####### CONTINUE HERE: REVISAR ESTO!!! ojo que piso m por referencia
-            for k, m in macro_elements.iteritems():
+            for k, m in iter(macro_elements.items()):
                 #if m[3] < 2:
                 #    trans [k] = m
                 #    trans [k][0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
