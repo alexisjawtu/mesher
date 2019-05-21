@@ -79,7 +79,7 @@ plot_functions = { 0 : plot_hybrid_macroel,
                    1 : plot_tetra_macroel,
                    2 : plot_prism_macroel}
 
-def plot(initial_partition = "partition.txt", mu = .65, angle_steps = [9], refinements = [3], vertical_prism_refinement = 1):
+def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [3], vertical_prism_refinement = 1):
     """ initial_partition is a dictionary with the macroelements, that is, the
     first of the sequence of meshes. A record in initial_partition has to be:
 
@@ -89,7 +89,6 @@ def plot(initial_partition = "partition.txt", mu = .65, angle_steps = [9], refin
     macro_elements = load_partition (initial_partition)
     
     macro_elements[0][2] = "black"
-    print macro_elements
 
     elev    = 90
 
@@ -105,11 +104,11 @@ def plot(initial_partition = "partition.txt", mu = .65, angle_steps = [9], refin
 
 ####### CONTINUE HERE: REVISAR ESTO!!! ojo que piso m por referencia
             for k, m in macro_elements.iteritems():
-                if m[3] < 2:
-                    trans [k] = m
-                    trans [k][0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
-                if k in range(41,52):
-                    plot_functions[m[3]](ax, m[0], n, m[1], m[2])
+                #if m[3] < 2:
+                #    trans [k] = m
+                #    trans [k][0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
+                #if k in range(41,52):
+                plot_functions[m[3]](ax, m[0], n, m[1], m[2])
 
             with open ('translations.txt','w') as tr__:
                 tr__.write(trans.__str__())      
@@ -122,6 +121,7 @@ def plot(initial_partition = "partition.txt", mu = .65, angle_steps = [9], refin
             ax.set_xlabel(' X ')
             ax.set_ylabel(' Y ')
             ax.set_zlabel(' Z ')
+#           fig.savefig('fichera-' + str(azim) + '-' + str(n) + str(mu) + '.png')
             plt.show()
     return
 

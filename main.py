@@ -31,7 +31,7 @@ def load_partition (in_file):
     with open(in_file,'r') as infile:
         inlist = infile.readlines()
     pre_list = [line.strip(' \n').split(',') for line in inlist]
-    pre_list = [[int(st[0])] + [int(st[k]) for k in xrange(1,len(st)-1)]+[float(st[-1])] for st in pre_list]
+    pre_list = [[int(st[0])] + [float(st[k]) for k in xrange(1,len(st)-1)]+[float(st[-1])] for st in pre_list]
     colors = [ "green", "red", "blue"]
     macro_elements = { key : 
                         { 0 : np.array(pre_list[key][1:-1]).reshape((len(pre_list[key])-2)/3,3), 
