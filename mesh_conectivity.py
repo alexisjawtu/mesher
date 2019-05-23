@@ -13,7 +13,7 @@ def vertex_global_index (n, l, i, j):
 	#return ((n+1)**2)*level + (n+1)*i + j 
 
 	## TODO: CLOSED FORMULA. Do benchmark
-	return sum([(n-r+1)*(n-r+2)/2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
+	return sum([(n-r+1)*(n-r+2)//2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
 
 def write_elements_by_vertices (f_name, n, lang, initial):
 	""" 
@@ -66,8 +66,8 @@ def write_elements_by_vertices_T4 (n_vert_T4, init, f_name_write):
 		four at a time. This is how it si done in
 		mesh.macroel_sing_vrtx()
 	"""
-	arr_out = np.array(range(init + 1, init + n_vert_T4 + 1)).reshape((n_vert_T4/4, 4))
-	arr_out	= np.concatenate((4*np.ones((n_vert_T4/4, 1),dtype=int), arr_out), axis=1)
+	arr_out = np.array(range(init + 1, init + n_vert_T4 + 1)).reshape((n_vert_T4//4, 4))
+	arr_out	= np.concatenate((4*np.ones((n_vert_T4//4, 1),dtype=int), arr_out), axis=1)
 	with open (f_name_write, 'a') as tgt:
 		np.savetxt(tgt, arr_out, fmt='%d')
 	return
@@ -160,7 +160,7 @@ def faces (f_name, n_elem, lang):
 		for m in range(language[lang], n):
 			count = 0
 			face_vertices = []
-			for key, val in d.iteritems():
+			for key, val in iter(d.items()):
 				if (m in val.values()) and (n in val.values()):
 					count += 1
 					face_vertices.append(str(int(key)))
@@ -243,13 +243,13 @@ def kill_repeated (vertices_file_name):
 	d_out 	 = {}
 	Nv 		 = vertices.shape[0]
 	for v in range(Nv):
-		print 'progress: {0}/{1}\r'.format(counter,Nv),
+		print ('progress: {0}/{1}\r'.format(counter,Nv)),
 		counter += 1
 		for w in range(v + 1, Nv):
 			if np.all(np.equal(vertices[v], vertices[w])):
 				d_out[v] = d_out.get(v,[])
 				d_out[v].append(w)
-	print '\r'
+	print ('\r')
 	return d_out
 
 def kill_repeated_faces (faces_file_name):
@@ -268,14 +268,14 @@ def kill_repeated_faces (faces_file_name):
 
 	counter = 1
 	for f in indices:
-		print 'progress: {0}/{1}\r'.format(counter,n_faces),
+		print ('progress: {0}/{1}\r'.format(counter,n_faces)),
 		counter += 1
 		for g in range(f + 1, n_faces+1):
 			if (face_dict[f][0] == face_dict[g][0]):	
 				if set(face_dict[f][1:]) == set(face_dict[g][1:]):
 					d_out[f] = d_out.get(f, [])
 					d_out[f].append(g)
-	print '\r'
+	print ('\r')
 
 	duplicates = []
 	for ff in d_out:

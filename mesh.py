@@ -16,16 +16,16 @@ def n_elem_macrotetra (lev):
     """ sum([sum([(2*j+1) for j in range(l)]) for l in range(1,a+1)]) 
     this works just for the macro_element with both singularities """
     dic = {}
-    dic['number_of_elements']   = lev*(lev+1)*(2*lev+1)/6
-    dic['number_of_prisms']     = lev*(lev*(2*lev-3)+1)/6
-    dic['number_of_tetr']       = lev*(lev+1)/2 
-    dic['number_of_pyrs']       = lev*(lev-1)/2
-    dic['number_of_vertices']   = sum([r*(r+1)/2 for r in range(lev+2)])
+    dic['number_of_elements']   = lev*(lev+1)*(2*lev+1)//6
+    dic['number_of_prisms']     = lev*(lev*(2*lev-3)+1)//6
+    dic['number_of_tetr']       = lev*(lev+1)//2 
+    dic['number_of_pyrs']       = lev*(lev-1)//2
+    dic['number_of_vertices']   = sum([r*(r+1)//2 for r in range(lev+2)])
     return dic
 
 def n_faces_macrotetra (lev):
     Nel = n_elem_macrotetra(lev)['number_of_elements']
-    return 2*lev**2+lev*(lev+1)+Nel-lev**2+2*(lev-1)**2+(lev-1)*lev*(lev+1)/6
+    return 2*lev**2+lev*(lev+1)+Nel-lev**2+2*(lev-1)**2+(lev-1)*lev*(lev+1)//6
 
 def octant (o, points):
     """ takes a fixed octant [points] and affine--transforms it to the other six.
@@ -151,9 +151,9 @@ def macroel_sing_vrtx_and_edge (local_origin, base_vrtx_1, base_vrtx_2, sing_vrt
     """
 #   mu_vec = [1, mu, mu, mu]            # first one is not graded!
     points = np.zeros((n+1, n+1, 3, n+1))  # level, i, coord, j
-    for k in xrange(n+1):
-        for i in xrange(n-k+1):
-            for j in xrange(n-k-i+1):
+    for k in range(n+1):
+        for i in range(n-k+1):
+            for j in range(n-k-i+1):
                 lambda_1 = lambda1 (i,j,0,n,mu); # it can be done with much lesser calls to these lambda
                 lambda_2 = lambda2 (i,j,0,n,mu);
                 # the sub-mesh is just the following two lines
@@ -181,13 +181,13 @@ def macroel_sing_edge(macroel_vertices, mu, n, n_vertical):
     Be careful not to use that coordinates. 
     """
     points = np.zeros((n_vertical+1,n+1,3,n+1))
-    for y in xrange(n+1):
-        for z in xrange(n+1-y):
+    for y in range(n+1):
+        for z in range(n+1-y):
             lambda_1, lambda_2 = lambda1 (y,z,0,n,mu), lambda2 (y,z,0,n,mu)
             temp = lambda_1*(macroel_vertices[1] - macroel_vertices[0]) + lambda_2*(macroel_vertices[2] - macroel_vertices[0])
             points[0,y,:,z] = temp + macroel_vertices[0]
 
-    for x in xrange(1,n_vertical+1): # translating level 0 to the levels above
+    for x in range(1,n_vertical+1): # translating level 0 to the levels above
     	points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vertical)*(macroel_vertices[3] - macroel_vertices[0]).reshape((3,1))
     return points
 
