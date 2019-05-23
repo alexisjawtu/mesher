@@ -88,9 +88,25 @@ def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [
     mu == [1,.4,.4,.4,.4] example for the graded case """
     macro_elements = load_partition (initial_partition)
     
-    macro_elements[0][2] = "black"
+    macro_elements[5][2] = "black"
+    macro_elements[6][2] = "black"
+    macro_elements[7][2] = "black"
+    macro_elements[8][2] = "black"
+    macro_elements[9][2] = "black"
+    
+    macro_elements[0][2] = "yellow"
+    macro_elements[1][2] = "yellow"
+    macro_elements[2][2] = "yellow"
+    macro_elements[3][2] = "yellow"
+    macro_elements[4][2] = "yellow"
+    
+    macro_elements[15+25][2] = "pink"
+    macro_elements[15+26][2] = "pink"
+    macro_elements[15+27][2] = "pink"
+    macro_elements[15+28][2] = "pink"
+    macro_elements[15+29][2] = "pink"
 
-    elev    = 90
+    elev    = 55
 
     trans = {}
 
@@ -100,21 +116,23 @@ def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [
         for azim in angle_steps:
             #ax.view_init(elev,49+15*(azim-1))
             ax.view_init(elev,0)
-       
 
-####### CONTINUE HERE: REVISAR ESTO!!! ojo que piso m por referencia
             for k, m in iter(macro_elements.items()):
+
+CONTINUE HERE: reflexiones 3 y 4 de mi cuaderno
+de notas
                 #if m[3] < 2:
                 #    trans [k] = m
                 #    trans [k][0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
-                #if k in range(41,52):
-                plot_functions[m[3]](ax, m[0], n, m[1], m[2])
+                #if k in range(20):
+                if m[3] < 2:
+                    plot_functions[m[3]](ax, m[0], n, m[1], m[2])
 
-            with open ('translations.txt','w') as tr__:
-                tr__.write(trans.__str__())      
+            #with open ('translations.txt','w') as tr__:
+            #    tr__.write(trans.__str__())      
 
-            m = macro_elements[0]
-            plot_functions[m[3]](ax, m[0], n, m[1], m[2])
+            #m = macro_elements[0]
+            #plot_functions[m[3]](ax, m[0], n, m[1], m[2])
 
             ax.plot([],[],[],label = " ")
             legend = ax.legend()
