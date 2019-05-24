@@ -33,6 +33,7 @@ def load_partition (in_file):
     pre_list = [line.strip(' \n').split(',') for line in inlist]
     pre_list = [[int(st[0])] + [float(st[k]) for k in range(1,len(st)-1)]+[float(st[-1])] for st in pre_list]
     colors = [ "green", "red", "blue"]
+	## TODO : reorder indices in this dictionary to be the same of partition.txt
     macro_elements = { key : 
                         { 0 : np.array(pre_list[key][1:-1]).reshape((len(pre_list[key])-2)//3,3), 
                           1 : pre_list[key][-1], 

@@ -108,8 +108,8 @@ def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [
 
     elev    = 55
 
-    trans = {}
-
+    trans = []
+    __out__ = ''
     for n in refinements:
         fig = plt.figure()
         ax  = fig.add_subplot(1,1,1,projection='3d')
@@ -118,18 +118,20 @@ def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [
             ax.view_init(elev,0)
 
             for k, m in iter(macro_elements.items()):
-
-CONTINUE HERE: reflexiones 3 y 4 de mi cuaderno
-de notas
+#CONTINUE HERE: reflexiones 3 y 4 de mi cuaderno
+#de notas
                 #if m[3] < 2:
                 #    trans [k] = m
                 #    trans [k][0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
                 #if k in range(20):
                 if m[3] < 2:
-                    plot_functions[m[3]](ax, m[0], n, m[1], m[2])
-
-            #with open ('translations.txt','w') as tr__:
-            #    tr__.write(trans.__str__())      
+                    #plot_functions[m[3]](ax, m[0], n, m[1], m[2])
+                    m[0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
+                    trans.append(m)
+            with open ('translations.txt','w') as tr__:
+                for l in range(len(trans)):
+                    __out__ = str(trans[l][k])*********
+                    tr__.write(str(trans[l][3]) +', '+ trans[l][0].__str__() +', '+ str(trans[l][1]) + '\n')      
 
             #m = macro_elements[0]
             #plot_functions[m[3]](ax, m[0], n, m[1], m[2])
