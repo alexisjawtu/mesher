@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 ###	TODO: refactor everything economizing code
 from mesh import *
 from main import load_partition
@@ -88,24 +89,6 @@ def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [
     mu == [1,.4,.4,.4,.4] example for the graded case """
     macro_elements = load_partition (initial_partition)
     
-    macro_elements[5][2] = "black"
-    macro_elements[6][2] = "black"
-    macro_elements[7][2] = "black"
-    macro_elements[8][2] = "black"
-    macro_elements[9][2] = "black"
-    
-    macro_elements[0][2] = "yellow"
-    macro_elements[1][2] = "yellow"
-    macro_elements[2][2] = "yellow"
-    macro_elements[3][2] = "yellow"
-    macro_elements[4][2] = "yellow"
-    
-    macro_elements[15+25][2] = "pink"
-    macro_elements[15+26][2] = "pink"
-    macro_elements[15+27][2] = "pink"
-    macro_elements[15+28][2] = "pink"
-    macro_elements[15+29][2] = "pink"
-
     elev    = 55
 
     trans = []
@@ -118,30 +101,22 @@ def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [
             ax.view_init(elev,0)
 
             for k, m in iter(macro_elements.items()):
-#CONTINUE HERE: reflexiones 3 y 4 de mi cuaderno
-#de notas
-                #if m[3] < 2:
-                #    trans [k] = m
-                #    trans [k][0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
-                #if k in range(20):
-                if m[3] < 2:
-                    #plot_functions[m[3]](ax, m[0], n, m[1], m[2])
-                    m[0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
-                    trans.append(m)
-            with open ('translations.txt','w') as tr__:
-                for l in range(len(trans)):
-                    __out__ = str(trans[l][k])*********
-                    tr__.write(str(trans[l][3]) +', '+ trans[l][0].__str__() +', '+ str(trans[l][1]) + '\n')      
-
-            #m = macro_elements[0]
-            #plot_functions[m[3]](ax, m[0], n, m[1], m[2])
+                plot_functions[m[3]](ax, m[0], n, m[1], m[2])
+                # CONTINUE HERE: reflexion 4 de mi cuaderno
+                ##    if m[3] < 2:
+                ##        m[0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
+                ##        trans.append(m)
+                ##with open ('translations.txt','w') as tr__:
+                ##    for l in range(len(trans)):
+                ##        __out__ = ', '.join([', '.join([str(int(trans[l][0][i,j])) for j in range(len(trans[l][0][i]))]) for i in range(len(trans[l][0]))])
+                ##        tr__.write(str(trans[l][3]) +', '+ __out__ +', '+ str(trans[l][1]) + '\n')      
 
             ax.plot([],[],[],label = " ")
             legend = ax.legend()
             ax.set_xlabel(' X ')
             ax.set_ylabel(' Y ')
             ax.set_zlabel(' Z ')
-#           fig.savefig('fichera-' + str(azim) + '-' + str(n) + str(mu) + '.png')
+            fig.savefig('bbrick-script-' + str(azim) + '-' + str(n) + str(m[2]) + '.png')
             plt.show()
     return
 
