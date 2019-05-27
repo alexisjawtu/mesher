@@ -189,9 +189,6 @@ def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
 	filter_repeated_faces(filter_repeated_vertices())
 
 def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
-	"""
-	TODO: CONTINUE HERE.
-	"""
 	tau_zero = load_partition ("partition")
 
 	for i, E in iter(tau_zero.items()):
