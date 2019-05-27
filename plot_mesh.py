@@ -101,15 +101,12 @@ def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [
             ax.view_init(elev,0)
 
             for k, m in iter(macro_elements.items()):
-                plot_functions[m[3]](ax, m[0], n, m[1], m[2])
-                # CONTINUE HERE: reflexion 4 de mi cuaderno
-                ##    if m[3] < 2:
-                ##        m[0] = m[0]*np.array([1,1,-1]) + np.array([0,0,-6])
-                ##        trans.append(m)
-                ##with open ('translations.txt','w') as tr__:
-                ##    for l in range(len(trans)):
-                ##        __out__ = ', '.join([', '.join([str(int(trans[l][0][i,j])) for j in range(len(trans[l][0][i]))]) for i in range(len(trans[l][0]))])
-                ##        tr__.write(str(trans[l][3]) +', '+ __out__ +', '+ str(trans[l][1]) + '\n')      
+                #plot_functions[m[3]](ax, m[0], n, m[1], m[2])
+                m[0] = m[0]*np.array([-1,1,1]) + np.array([-2,0,0])
+            with open ('translations.txt','w') as tr__:
+                for j, w in iter(macro_elements.items()):
+                    __out__ = ', '.join([', '.join([str(int(w[0][i,j])) for j in range(len(w[0][i]))]) for i in range(len(w[0]))])
+                    tr__.write(str(w[3]) +', '+ __out__ +', '+ str(w[1]) + '\n')      
 
             ax.plot([],[],[],label = " ")
             legend = ax.legend()
