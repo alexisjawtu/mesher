@@ -80,13 +80,10 @@ plot_functions = { 0 : plot_hybrid_macroel,
                    1 : plot_tetra_macroel,
                    2 : plot_prism_macroel}
 
-def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [3], vertical_prism_refinement = 1):
-    """ initial_partition is a dictionary with the macroelements, that is, the
+def plot(initial_partition = "partition", angle_steps = [9], refinements = [3], vertical_prism_refinement = 1):
+    """ initial_partition is a csv the macroelements, that is, the
     first of the sequence of meshes. A record in initial_partition has to be:
-
-    { 0 : np.array([P0,..,PN]), 1 : mu, 2 : color_string, 3 : type_of_macro_element}
-
-    mu == [1,.4,.4,.4,.4] example for the graded case """
+    type_of_macro_element, np.array([P0,..,PN]), local_grading_parameter  """
     macro_elements = load_partition (initial_partition)
     
     elev    = 55
@@ -101,19 +98,14 @@ def plot(initial_partition = "partition.txt", angle_steps = [9], refinements = [
             ax.view_init(elev,0)
 
             for k, m in iter(macro_elements.items()):
-                #plot_functions[m[3]](ax, m[0], n, m[1], m[2])
-                m[0] = m[0]*np.array([-1,1,1]) + np.array([-2,0,0])
-            with open ('translations.txt','w') as tr__:
-                for j, w in iter(macro_elements.items()):
-                    __out__ = ', '.join([', '.join([str(int(w[0][i,j])) for j in range(len(w[0][i]))]) for i in range(len(w[0]))])
-                    tr__.write(str(w[3]) +', '+ __out__ +', '+ str(w[1]) + '\n')      
+                plot_functions[m[3]](ax, m[0], n, m[1], m[2])
 
             ax.plot([],[],[],label = " ")
             legend = ax.legend()
             ax.set_xlabel(' X ')
             ax.set_ylabel(' Y ')
             ax.set_zlabel(' Z ')
-            fig.savefig('bbrick-script-' + str(azim) + '-' + str(n) + str(m[2]) + '.png')
+            fig.savefig('bbrick-script-' + str(n) + '.png')
             plt.show()
     return
 

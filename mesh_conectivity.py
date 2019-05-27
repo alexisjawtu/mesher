@@ -15,7 +15,7 @@ def vertex_global_index (n, l, i, j):
 	## TODO: CLOSED FORMULA. Do benchmark
 	return sum([(n-r+1)*(n-r+2)//2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
 
-def write_elements_by_vertices (f_name, n, lang, initial):
+def write_elements_by_vertices_hybrid (f_name, n, lang, initial):
 	""" 
 	This funtion is at the beggining in the program, for the case
 	we start with the mesh we proposed. For a general mesh, the algorithm
@@ -127,7 +127,7 @@ def faces (f_name, n_elem, lang):
 	""" 
 	f_name == vertices_by_elements.txt
 
-	n_elem == sum of write_elements_by_vertices (f,n) in this way it won't depend on the topology of the mesh.
+	n_elem == sum of write_elements_by_vertices_hybrid (f,n) in this way it won't depend on the topology of the mesh.
 
 	language[lang]: this is for the case starting with ones or zeroes
 

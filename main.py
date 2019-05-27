@@ -33,7 +33,7 @@ def load_partition (in_file):
     pre_list = [line.strip(' \n').split(',') for line in inlist]
     pre_list = [[int(st[0])] + [float(st[k]) for k in range(1,len(st)-1)]+[float(st[-1])] for st in pre_list]
     colors = [ "green", "red", "blue"]
-	## TODO : reorder indices in this dictionary to be the same of partition.txt
+	## TODO : reorder indices in this dictionary to be the same of file partition
     macro_elements = { key : 
                         { 0 : np.array(pre_list[key][1:-1]).reshape((len(pre_list[key])-2)//3,3), 
                           1 : pre_list[key][-1], 
@@ -174,7 +174,7 @@ def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
 	for oc in range(2,9):    # integers 2, 3, 4, 5, 6, 7, 8
 		for t in range(4):
 			coords 	= fichera_coords_['points_T' + str(t) + '_C' + str(oc)] 
-			mesh_conectivity.write_elements_by_vertices('elements.txt', levels, 'Octave', init) # writes elements_by_vertices_repeated.txt: GLOBAL INDICES per element
+			mesh_conectivity.write_elements_by_vertices_hybrid('elements.txt', levels, 'Octave', init) # writes elements_by_vertices_repeated.txt: GLOBAL INDICES per element
 			init   += mesh_write.vertices(coords)	# writes 'vertices.txt' global list of vertices
 		## Type II macro--element
 		n_vertT4 = np.shape(fichera_coords_['points_T4_C' + str(oc)])[0]
