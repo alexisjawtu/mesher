@@ -44,7 +44,7 @@ def lambda2 (i, j, k, n, mu):
 def lambda3 (i, j, k, n, mu):
     return float(k)/n * (float(i+j+k)/n)**((1/float(mu))-1)
 
-def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
+def macroel_tetrahedra (P0, P1, P2, P3, mu, n):
     """ 
         return value: Nel == nmbr of elmts
         
@@ -144,7 +144,7 @@ def macroel_sing_vrtx (P0, P1, P2, P3, mu, n):
     points = np.delete(points, 0, 0)
     return points
 
-def macroel_sing_vrtx_and_edge (local_origin, base_vrtx_1, base_vrtx_2, sing_vrtx, mu, n):
+def macroel_hybrid (local_origin, base_vrtx_1, base_vrtx_2, sing_vrtx, mu, n):
     """ singular edge the one which is parallel to v = (sing_vrtx - local_origin)
         n  == levels
         mu == grading param
@@ -161,7 +161,7 @@ def macroel_sing_vrtx_and_edge (local_origin, base_vrtx_1, base_vrtx_2, sing_vrt
                 points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu))*(sing_vrtx-local_origin) + local_origin
     return points
 
-def macroel_sing_edge(macroel_vertices, mu, n, n_vertical):
+def macroel_prisms (macroel_vertices, mu, n, n_vertical):
     """ 
     n := number of subintervals betweeen nodes of each horizontal edge of the
     macroelement
@@ -226,9 +226,11 @@ def cube2mat (obj, file_name = 'data.mat'):
 colours = ['lightgreen']*4
 
 def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,2,3,4]):
-    """ TODO: this one goes out of mesh.py: put this in main.py probably
-        inside fichera()
-        here we calculate the mesh of the whole fichera 
+    """ TODO: 
+        
+        this has to be an independent "hexaedral" macroelement. see point 6)
+        in the notebook
+
         n == levels
         mu == grading param
         p == vertices of the cubes; the octants
@@ -243,63 +245,14 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
             point1 = q[:,tetrahedra[m,1]]
             point2 = q[:,tetrahedra[m,2]]
             e3     = q[:,tetrahedra[m,3]]
-            dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_sing_vrtx_and_edge (point0,point1,point2,e3,mu_vec[m],n)
+            dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (point0,point1,point2,e3,mu_vec[m],n)
         for m in [z for z in macro_elems if z == 4]: # CALCULATION FOR t = 4 (T5)
             P0    = q[:,tetrahedra[4,0]]
             P1    = q[:,tetrahedra[4,1]]
             P2    = q[:,tetrahedra[4,2]]
             P3    = q[:,tetrahedra[4,3]]
-            dict_save['points_T4_C' + str(o)] = macroel_sing_vrtx(P0, P1, P2, P3, mu, n)
+            dict_save['points_T4_C' + str(o)] = macroel_tetrahedra(P0, P1, P2, P3, mu, n)
     return dict_save
-
-def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
-    ## TODO: this function goes in module plot_mesh.py
-    drawing = [[],[],[],[]]
-    for o in oct_range:
-        for t in [z for z in macro_elems if z < 4]:
-            points = coord['points_T'+str(t)+'_C'+str(o)] # np.zeros((n+1,n+1,3,n+1))  # nivel, i, coordenada, j
-            n = points.shape[0] - 1
-            for k in range (n+1):
-                for i in range (n-k+1):
-                    for j in range (n-k-i+1):
-                        x, y, z = points[k,0:n-k-j+1,0,j], points[k,0:n-k-j+1,1,j], points[k,0:n-k-j+1,2,j]
-                        drawing[t].append([x,y,z])
-            # ax.scatter3D(points[k][i][0,0:n-k-i+1],points[k][i][1,0:n-k-i+1],points[k][i][2,0:n-k-i+1]) # opcional
-                    x, y, z = points[k,i,0,0:n-k-i+1], points[k,i,1,0:n-k-i+1], points[k,i,2,0:n-k-i+1]
-                    drawing[t].append([x,y,z])
-                for c in range (n-k+1):
-                    x, y, z = np.zeros(c+1), np.zeros(c+1), np.zeros(c+1)
-                    for i in range (c+1):
-                        x[i] = points[k,i,0,c-i]
-                        y[i] = points[k,i,1,c-i]
-                        z[i] = points[k,i,2,c-i]
-                    drawing[t].append([x,y,z])  #  transversals
-            for i in range (n):
-                for j in range (n-i):
-                    stop = n - (i + j) + 1
-                    x = points[0:stop,i,0,j]
-                    y = points[0:stop,i,1,j]
-                    z = points[0:stop,i,2,j]
-                    drawing[t].append([x,y,z])  #  verticals
-                x, y, z = np.zeros(n-i+1), np.zeros(n-i+1), np.zeros(n-i+1)
-                for k in range (n-i+1):
-                    x[k] = points[k,i,0,n-k-i]
-                    y[k] = points[k,i,1,n-k-i]
-                    z[k] = points[k,i,2,n-k-i]
-                drawing[t].append([x,y,z])  #  pyramidals
-            # simply interchange the roles of i and j
-                x, y, z = np.zeros(n-i+1), np.zeros(n-i+1), np.zeros(n-i+1)
-                for k in range (n-i+1):
-                    x[k] = points[k,n-k-i,0,i]
-                    y[k] = points[k,n-k-i,1,i]
-                    z[k] = points[k,n-k-i,2,i]
-                drawing[t].append([x,y,z])  #  pyramidals
-
-        ### TODO: ACA EL TETRA REGULAR CON SUBMESH TETRA
-    
-    return np.array(drawing)
-
-
 
 ################################################################################
 ################################################################################

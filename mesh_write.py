@@ -82,10 +82,9 @@ def vertices (points):
 		#out.write('\n')
 	return nVertices
 
-def verticesT4 (points, f_write):
-	"""
-		points: dictionary with the points of the type II macro--element
-	"""
+def vertices_macro_tetra (points, f_write):
+	""" points: dictionary with the points of the 
+	tetrahedral non--hybrid macro--element """
 	L = len(points)
 	with open (f_write, 'a') as out:
 		np.savetxt(out, points, fmt = __format__)

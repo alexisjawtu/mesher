@@ -6,7 +6,7 @@ take from second column in file elem_by_vert.txt because 6,5 y 4 are not
 things to replace. the analogue for faces repetitions
 another option is to put -3 -2 y -1 etc ...
 
-Obs: write_elements_by_vertices_T4() has 4*ones 
+Obs: write_elements_by_vertices_tetra() has 4*ones 
 has to be changed to: -np.ones( whatever , dtype=int) etc
 ## macro_elements type 1: prisms, pyrs and tetra
 ## macro_elements type 2: prisms
@@ -26,6 +26,10 @@ import time
 
 #    Despues deberia andar tambien desde un csv hasta
 #    dejar la malla en los txt como de fichera
+
+local_meshers = { 0 : mesh.macroel_hybrid, 
+				  1 : mesh.macroel_tetrahedra, 
+				  2 : mesh.macroel_prisms }
 
 def load_partition (in_file):
     with open(in_file,'r') as infile:
@@ -179,13 +183,8 @@ def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
 		## Type II macro--element
 		n_vertT4 = np.shape(fichera_coords_['points_T4_C' + str(oc)])[0]
 	
-		if not ((n_vertT4 % 4) == 0):
-			print('incorrect number of points in T4')
-			print('oc:' + str(oc) + ' t:' + str(t))
-			exit()
-	
-		mesh_conectivity.write_elements_by_vertices_T4(n_vertT4, init ,'elements_by_vertices_repeated.txt')
-		init += mesh_write.verticesT4(fichera_coords_['points_T4_C' + str(oc)], 'vertices.txt')
+		mesh_conectivity.write_elements_by_vertices_tetra(n_vertT4, init ,'elements_by_vertices_repeated.txt')
+		init += mesh_write.vertices_macro_tetra(fichera_coords_['points_T4_C' + str(oc)], 'vertices.txt')
 
 	filter_repeated_faces(filter_repeated_vertices())
 
@@ -193,7 +192,13 @@ def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
 	"""
 	TODO: CONTINUE HERE.
 	"""
-	hybrid_submesh_coords = mesh.cube_mesh_2(levels, mu_, mesh.p_, mesh.macro_el, [6,7,8], [3])
+	tau_zero = load_partition ("partition")
+
+	for i, E in iter(tau_zero.items()):
+		pass
+		##local_meshers[E[3]]( CONTINUE HERE )
+
+
 	return
 
 

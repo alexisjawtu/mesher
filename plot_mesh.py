@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import random
 
 def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "green"):
-    points = macroel_sing_vrtx_and_edge (vertices[0], vertices[1], vertices[2],vertices[3], local_mu, n)
+    points = macroel_hybrid (vertices[0], vertices[1], vertices[2],vertices[3], local_mu, n)
     drawing = []
     n = points.shape[0] - 1
     for k in range (n+1):
@@ -52,7 +52,7 @@ def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "green
 
 def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "blue"):
     n_vertical = n  ## TODO: FIX THIS
-    local_grid_points = macroel_sing_edge(vertices, local_mu, n, n_vertical)
+    local_grid_points = macroel_prisms(vertices, local_mu, n, n_vertical)
     for j in range(n_vertical+1):
         for k in range(n+1):
             plt_axes.plot(local_grid_points[j,k,0,0:n+1-k], local_grid_points[j,k,1,0:n+1-k], local_grid_points[j,k,2,0:n+1-k], color=color_name)
@@ -66,7 +66,7 @@ def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "blue")
     return local_grid_points
 
 def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "red"):
-    points_T5 = macroel_sing_vrtx(vertices[0], vertices[1], vertices[2], vertices[3], local_mu, n)
+    points_T5 = macroel_tetrahedra(vertices[0], vertices[1], vertices[2], vertices[3], local_mu, n)
     for i in [4*nn for nn in range(points_T5.shape[0]//4)]:
         a = np.array([0,1,2,3]+[0,2,3,1])+i*np.ones(8,dtype=int)
         z = points_T5[a,np.array([2]*8)]
@@ -79,6 +79,50 @@ def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "red"):
 plot_functions = { 0 : plot_hybrid_macroel,
                    1 : plot_tetra_macroel,
                    2 : plot_prism_macroel}
+
+def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
+    ## TODO: this function goes in module plot_mesh.py
+    drawing = [[],[],[],[]]
+    for o in oct_range:
+        for t in [z for z in macro_elems if z < 4]:
+            points = coord['points_T'+str(t)+'_C'+str(o)] # np.zeros((n+1,n+1,3,n+1))  # nivel, i, coordenada, j
+            n = points.shape[0] - 1
+            for k in range (n+1):
+                for i in range (n-k+1):
+                    for j in range (n-k-i+1):
+                        x, y, z = points[k,0:n-k-j+1,0,j], points[k,0:n-k-j+1,1,j], points[k,0:n-k-j+1,2,j]
+                        drawing[t].append([x,y,z])
+            # ax.scatter3D(points[k][i][0,0:n-k-i+1],points[k][i][1,0:n-k-i+1],points[k][i][2,0:n-k-i+1]) # opcional
+                    x, y, z = points[k,i,0,0:n-k-i+1], points[k,i,1,0:n-k-i+1], points[k,i,2,0:n-k-i+1]
+                    drawing[t].append([x,y,z])
+                for c in range (n-k+1):
+                    x, y, z = np.zeros(c+1), np.zeros(c+1), np.zeros(c+1)
+                    for i in range (c+1):
+                        x[i] = points[k,i,0,c-i]
+                        y[i] = points[k,i,1,c-i]
+                        z[i] = points[k,i,2,c-i]
+                    drawing[t].append([x,y,z])  #  transversals
+            for i in range (n):
+                for j in range (n-i):
+                    stop = n - (i + j) + 1
+                    x = points[0:stop,i,0,j]
+                    y = points[0:stop,i,1,j]
+                    z = points[0:stop,i,2,j]
+                    drawing[t].append([x,y,z])  #  verticals
+                x, y, z = np.zeros(n-i+1), np.zeros(n-i+1), np.zeros(n-i+1)
+                for k in range (n-i+1):
+                    x[k] = points[k,i,0,n-k-i]
+                    y[k] = points[k,i,1,n-k-i]
+                    z[k] = points[k,i,2,n-k-i]
+                drawing[t].append([x,y,z])  #  pyramidals
+            # simply interchange the roles of i and j
+                x, y, z = np.zeros(n-i+1), np.zeros(n-i+1), np.zeros(n-i+1)
+                for k in range (n-i+1):
+                    x[k] = points[k,n-k-i,0,i]
+                    y[k] = points[k,n-k-i,1,i]
+                    z[k] = points[k,n-k-i,2,i]
+                drawing[t].append([x,y,z])  #  pyramidals
+    return np.array(drawing)
 
 def plot(initial_partition = "partition", angle_steps = [9], refinements = [3], vertical_prism_refinement = 1):
     """ initial_partition is a csv the macroelements, that is, the
