@@ -142,7 +142,7 @@ def plot(initial_partition = "partition", angle_steps = [9], refinements = [3], 
             ax.view_init(elev,0)
 
             for k, m in iter(macro_elements.items()):
-                plot_functions[m[3]](ax, m[0], n, m[1], m[2])
+                plot_functions[m[0]](ax, m[1], n, m[2], m[3])
 
             ax.plot([],[],[],label = " ")
             legend = ax.legend()
