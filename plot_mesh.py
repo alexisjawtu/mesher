@@ -51,8 +51,7 @@ def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "green
     return
 
 def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "blue"):
-    n_vertical = n  ## TODO: FIX THIS
-    local_grid_points = macroel_prisms(vertices, local_mu, n, n_vertical)
+    local_grid_points = macroel_prisms(vertices, local_mu, n)
     for j in range(n_vertical+1):
         for k in range(n+1):
             plt_axes.plot(local_grid_points[j,k,0,0:n+1-k], local_grid_points[j,k,1,0:n+1-k], local_grid_points[j,k,2,0:n+1-k], color=color_name)
@@ -162,6 +161,7 @@ def plot_fichera():
     
     for n in refinements:
         coords  = cube_mesh_2(n,mu,p_,macro_el,octants,macro_elems)
+        tmp_coords  = cube_mesh_2(n,mu,p_,macro_el,octants,[0,1,2,3,4])
         # uncomment for just the second octant
         drawing = cube_drawing(coords,octants,macro_elems)
         del(coords)

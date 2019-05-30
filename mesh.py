@@ -161,12 +161,14 @@ def macroel_hybrid (local_origin, base_vrtx_1, base_vrtx_2, sing_vrtx, mu, n):
                 points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu))*(sing_vrtx-local_origin) + local_origin
     return points
 
-def macroel_prisms (macroel_vertices, mu, n, n_vertical):
+def macroel_prisms (macroel_vertices, mu, n):
     """ 
     n := number of subintervals betweeen nodes of each horizontal edge of the
     macroelement
     n_vertical := number of subintervals betweeen nodes of each vertical edge of the
     macroelement. Warning: my Thesis states that n_vertical == n. Otherwise it's not proved.
+
+    TODO: In a future version we will have n_vertical independent of n
 
     order of the columns in M := macroel_vertices:
         (M[0], M[1], M[2]) == a triangle
@@ -180,6 +182,7 @@ def macroel_prisms (macroel_vertices, mu, n, n_vertical):
     greater than zero end up filled as a rectangle of points. 
     Be careful not to use that coordinates. 
     """
+    n_vertical = n 
     points = np.zeros((n_vertical+1,n+1,3,n+1))
     for y in range(n+1):
         for z in range(n+1-y):
@@ -241,17 +244,20 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
     for o in octants:
         q = octant(o, p)
         for m in [z for z in macro_elems if z < 4]:
-            point0 = q[:,tetrahedra[m,0]]
-            point1 = q[:,tetrahedra[m,1]]
-            point2 = q[:,tetrahedra[m,2]]
-            e3     = q[:,tetrahedra[m,3]]
-            dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (point0,point1,point2,e3,mu_vec[m],n)
+            #point0 = q[:,tetrahedra[m,0]] #point1 = q[:,tetrahedra[m,1]] #point2 = q[:,tetrahedra[m,2]] #e3     = q[:,tetrahedra[m,3]]
+            #CONTINUE here: replace this
+            #dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (q[:,tetrahedra[m,0:4]],mu_vec[m],n)
+            tmp = q[:,tetrahedra[m,0:4]]
+            dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (tmp[:,0],tmp[:,1],tmp[:,2],tmp[:,3],mu_vec[m],n)
+
+
         for m in [z for z in macro_elems if z == 4]: # CALCULATION FOR t = 4 (T5)
-            P0    = q[:,tetrahedra[4,0]]
-            P1    = q[:,tetrahedra[4,1]]
-            P2    = q[:,tetrahedra[4,2]]
-            P3    = q[:,tetrahedra[4,3]]
-            dict_save['points_T4_C' + str(o)] = macroel_tetrahedra(P0, P1, P2, P3, mu, n)
+            #P0    = q[:,tetrahedra[4,0]] #P1    = q[:,tetrahedra[4,1]] #P2    = q[:,tetrahedra[4,2]] #P3    = q[:,tetrahedra[4,3]]
+            ##CONTINUE
+            ### TODO: replace this
+            tmp = q[:,tetrahedra[4,0:4]]
+            dict_save['points_T4_C' + str(o)] = macroel_tetrahedra(tmp[:,0], tmp[:,1], tmp[:,2], tmp[:,3], mu, n)
+
     return dict_save
 
 ################################################################################

@@ -194,9 +194,7 @@ def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
 
 	for i, E in iter(tau_zero.items()):
 		pass
-		##local_meshers[E[3]]( CONTINUE HERE )
-
-
+#		local_meshers[E[0]]( CONTINUE HERE cambiar las func. indiv para que tomen una matriz de vertices)
 	return
 
 
