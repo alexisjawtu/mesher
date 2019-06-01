@@ -161,7 +161,6 @@ def plot_fichera():
     
     for n in refinements:
         coords  = cube_mesh_2(n,mu,p_,macro_el,octants,macro_elems)
-        tmp_coords  = cube_mesh_2(n,mu,p_,macro_el,octants,[0,1,2,3,4])
         # uncomment for just the second octant
         drawing = cube_drawing(coords,octants,macro_elems)
         del(coords)

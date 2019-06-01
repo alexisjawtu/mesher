@@ -44,7 +44,8 @@ def lambda2 (i, j, k, n, mu):
 def lambda3 (i, j, k, n, mu):
     return float(k)/n * (float(i+j+k)/n)**((1/float(mu))-1)
 
-def macroel_tetrahedra (P0, P1, P2, P3, mu, n):
+#def macroel_tetrahedra (P0, P1, P2, P3, mu, n):
+def macroel_tetrahedra (vertices, mu, n):
     """ 
         return value: Nel == nmbr of elmts
         
@@ -61,11 +62,20 @@ def macroel_tetrahedra (P0, P1, P2, P3, mu, n):
 
             and then call it. Make sure the dimension is the most comfortable.
 
-    """
     P0 = np.array(P0).reshape((1,3))
     P1 = np.array(P1).reshape((1,3))
     P2 = np.array(P2).reshape((1,3))
     P3 = np.array(P3).reshape((1,3))
+
+    """
+
+
+    ## TODO: remove this reshape() thing
+    P0 = np.array(vertices[:,0]).reshape((1,3))
+    P1 = np.array(vertices[:,1]).reshape((1,3))
+    P2 = np.array(vertices[:,2]).reshape((1,3))
+    P3 = np.array(vertices[:,3]).reshape((1,3))
+
 
     lambda_ = np.zeros((4, n+1, n+1, n+1))
 
@@ -144,21 +154,26 @@ def macroel_tetrahedra (P0, P1, P2, P3, mu, n):
     points = np.delete(points, 0, 0)
     return points
 
-def macroel_hybrid (local_origin, base_vrtx_1, base_vrtx_2, sing_vrtx, mu, n):
-    """ singular edge the one which is parallel to v = (sing_vrtx - local_origin)
+#def macroel_hybrid (local_origin, base_vrtx_1, base_vrtx_2, sing_vrtx, mu, n):
+def macroel_hybrid (macroel_vertices, mu, n):
+    """ 
+        vertices = ( local_origin | base_vrtx_1 | base_vrtx_2 | sing_vrtx )
+        singular edge the one which is parallel to v = (sing_vrtx - local_origin)
         n  == levels
         mu == grading param
     """
-#   mu_vec = [1, mu, mu, mu]            # first one is not graded!
-    points = np.zeros((n+1, n+1, 3, n+1))  # level, i, coord, j
+    points = np.zeros((n+1, n+1, 3, n+1))  # level, i, coordinate, j
     for k in range(n+1):
         for i in range(n-k+1):
             for j in range(n-k-i+1):
-                lambda_1 = lambda1 (i,j,0,n,mu); # it can be done with much lesser calls to these lambda
-                lambda_2 = lambda2 (i,j,0,n,mu);
+                # it can be done with much lesser calls to these lambda
+                lambda_1 = lambda1 (i,j,0,n,mu)
+                lambda_2 = lambda2 (i,j,0,n,mu)
                 # the sub-mesh is just the following two lines
-                points[k,i,:,j] = lambda_1*(base_vrtx_1-local_origin) + lambda_2*(base_vrtx_2-local_origin)
-                points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu))*(sing_vrtx-local_origin) + local_origin
+                #points[k,i,:,j] = lambda_1*(base_vrtx_1- local_origin) + lambda_2*(base_vrtx_2- local_origin)
+                #points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu))*(sing_vrtx- local_origin) + local_origin
+                points[k,i,:,j] = lambda_1*(macroel_vertices[:,1]-macroel_vertices[:,0]) + lambda_2*(macroel_vertices[:,2]-macroel_vertices[:,0])
+                points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu))*(macroel_vertices[:,3]-macroel_vertices[:,0]) + macroel_vertices[:,0]
     return points
 
 def macroel_prisms (macroel_vertices, mu, n):
@@ -226,8 +241,6 @@ def cube2mat (obj, file_name = 'data.mat'):
     sio.savemat(file_name, d)
     return i
 
-colours = ['lightgreen']*4
-
 def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,2,3,4]):
     """ TODO: 
         
@@ -246,17 +259,18 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
         for m in [z for z in macro_elems if z < 4]:
             #point0 = q[:,tetrahedra[m,0]] #point1 = q[:,tetrahedra[m,1]] #point2 = q[:,tetrahedra[m,2]] #e3     = q[:,tetrahedra[m,3]]
             #CONTINUE here: replace this
-            #dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (q[:,tetrahedra[m,0:4]],mu_vec[m],n)
-            tmp = q[:,tetrahedra[m,0:4]]
-            dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (tmp[:,0],tmp[:,1],tmp[:,2],tmp[:,3],mu_vec[m],n)
+            dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (q[:,tetrahedra[m,0:4]],mu_vec[m],n)
+            #tmp = q[:,tetrahedra[m,0:4]]
+            #dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (tmp[:,0],tmp[:,1],tmp[:,2],tmp[:,3],mu_vec[m],n)
 
 
         for m in [z for z in macro_elems if z == 4]: # CALCULATION FOR t = 4 (T5)
             #P0    = q[:,tetrahedra[4,0]] #P1    = q[:,tetrahedra[4,1]] #P2    = q[:,tetrahedra[4,2]] #P3    = q[:,tetrahedra[4,3]]
             ##CONTINUE
             ### TODO: replace this
-            tmp = q[:,tetrahedra[4,0:4]]
-            dict_save['points_T4_C' + str(o)] = macroel_tetrahedra(tmp[:,0], tmp[:,1], tmp[:,2], tmp[:,3], mu, n)
+            #tmp = q[:,tetrahedra[4,0:4]]
+            #dict_save['points_tetra_C' + str(o)] = macroel_tetrahedra(tmp[:,0], tmp[:,1], tmp[:,2], tmp[:,3], mu, n)
+            dict_save['points_tetra_C' + str(o)] = macroel_tetrahedra(q[:,tetrahedra[4,0:4]], mu, n)
 
     return dict_save
 

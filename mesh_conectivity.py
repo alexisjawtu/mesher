@@ -3,74 +3,76 @@ import numpy as np
 #from boltons.iterutils import remap
 
 def vertex_global_index (n, l, i, j):
-	"""
-	*indices in the macro--element with sing v and sing e into naturals
-
-	*a one by one function that maps indices of the tensor
-	into naturals 
-	l = level
-	"""
-	#return ((n+1)**2)*level + (n+1)*i + j 
-
-	## TODO: CLOSED FORMULA. Do benchmark
-	return sum([(n-r+1)*(n-r+2)//2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
+    """
+    *indices in the macro--element with sing v and sing e into naturals
+    *a one by one function that maps indices of the tensor
+    into naturals 
+    l = level
+    """
+    #return ((n+1)**2)*level + (n+1)*i + j 
+    ## TODO: CLOSED FORMULA. Do benchmark
+    return sum([(n-r+1)*(n-r+2)//2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
 
 def write_elements_by_vertices_hybrid (f_name, n, lang, initial):
-	""" 
-	This funtion is at the beggining in the program, for the case
-	we start with the mesh we proposed. For a general mesh, the algorithm
-	starts directly in the next step (with element_by_vertices.txt given 
-	somehow).
+    """ 
+    This funtion is at the beggining in the program, for the case
+    we start with the mesh we proposed. For a general mesh, the algorithm
+    starts directly in the next step (with element_by_vertices.txt given 
+    somehow).
 
-	initial: tracks the number of vertices of the previous macro_element
+    initial: tracks the number of vertices of the previous macro_element
 
-	esto es solo para el macro elemento
-	con un vertice singular y una arista singular en el np.array:
+    esto es solo para el macro elemento
+    con un vertice singular y una arista singular en el np.array:
 
-	Takes the file f_name written by
-	mesh_write.write_element_indices() 
+    Takes the file f_name written by
+    mesh_write.write_element_indices() 
 
-	n == current quantity of levels
-	
-	Writes GLOBAL INDICES per element appending in the file
+    n == current quantity of levels
+    
+    Writes GLOBAL INDICES per element appending in the file
 
-	elements_by_vertices_repeated.txt:
-	--------------------------------------------------------
+    elements_by_vertices_repeated.txt:
+    --------------------------------------------------------
 
-	6|v1_{prism}|v2_{prism}|v3_{prism}|v4_{prism}|v5_{prism}|v6_{prism}|
+    6|v1_{prism}|v2_{prism}|v3_{prism}|v4_{prism}|v5_{prism}|v6_{prism}|
 
-	4|v1_{tetra}|v2_{tetra}|v3_{tetra}|v4_{tetra}|
+    4|v1_{tetra}|v2_{tetra}|v3_{tetra}|v4_{tetra}|
 
-	5|v1_{pyra} |v2_{pyra} |v3_{pyra} |v4_{pyra} |v5_{pyra} |
+    5|v1_{pyra} |v2_{pyra} |v3_{pyra} |v4_{pyra} |v5_{pyra} |
 
-	etc...
-	"""
-	language  = {'C' : 0, 'Octave' : 1}
-	with open (f_name, 'r') as inp:
-		indices = inp.readlines()
-	with open ('elements_by_vertices_repeated.txt', 'a') as out:
-		for j in range(len(indices)):
-			l = [int(c) for c in indices[j].rstrip().split(' ')]
-			line = np.zeros((1,l[0]+1))
-			line[0] = l[0]
-			for i in range (1,l[0]+1):
-				calc = vertex_global_index(n,l[3*(i-1)+1],l[3*(i-1)+2],l[3*(i-1)+3])
-				line[0,i] =  initial + calc + language[lang]
-			np.savetxt(out,line,fmt='%d')
-	return len(indices)
+    etc...
+    """
+    language  = {'C' : 0, 'Octave' : 1}
+    with open (f_name, 'r') as inp:
+        indices = inp.readlines()
+    with open ('elements_by_vertices_repeated.txt', 'ab') as out:
+        for j in range(len(indices)):
+            l = [int(c) for c in indices[j].rstrip().split(' ')]
+            line = np.zeros((1,l[0]+1),dtype=int)
+            line[0] = l[0]
+            for i in range (1,l[0]+1):
+                calc = vertex_global_index(n,l[3*(i-1)+1],l[3*(i-1)+2],l[3*(i-1)+3])
+                line[0,i] =  initial + calc + language[lang]
+            np.savetxt(out,line,fmt='%d')
+    return len(indices)
 
-def write_elements_by_vertices_tetra (n_vert_T4, init, f_name_write):
+def write_elements_by_vertices_tetra (n_vert_graded, init, f_name_write):
 	"""
 		here we assume that in the (Npts x 3) array of points
 		the tetrahedra appear in order taking the rows
 		four at a time. This is how it si done in
 		mesh.macroel_tetrahedra()
 	"""
-	arr_out = np.array(range(init + 1, init + n_vert_T4 + 1)).reshape((n_vert_T4//4, 4))
-	arr_out	= np.concatenate((4*np.ones((n_vert_T4//4, 1),dtype=int), arr_out), axis=1)
-	with open (f_name_write, 'a') as tgt:
+	arr_out = np.array(range(init + 1, init + n_vert_graded + 1)).reshape((n_vert_graded//4, 4))
+	arr_out	= np.concatenate((4*np.ones((n_vert_graded//4, 1),dtype=int), arr_out), axis=1)
+	with open (f_name_write, 'ab') as tgt:
 		np.savetxt(tgt, arr_out, fmt='%d')
 	return
+
+def write_elements_by_vertices_prisms (f_name,n,initial):
+    ## TODO 
+    pass
 
 def vertices_by_elements (f_name, lang):
 	""" 
@@ -243,7 +245,7 @@ def kill_repeated (vertices_file_name):
 	d_out 	 = {}
 	Nv 		 = vertices.shape[0]
 	for v in range(Nv):
-		print ('progress: {0}/{1}\r'.format(counter,Nv)),
+		print ('progress: {0}/{1}\r'.format(counter,Nv), sep = ' ', end = '', flush=True)
 		counter += 1
 		for w in range(v + 1, Nv):
 			if np.all(np.equal(vertices[v], vertices[w])):
@@ -264,11 +266,11 @@ def kill_repeated_faces (faces_file_name):
 
 	d_out = {}
 	
-	indices = range(1, n_faces+1)
+	indices = list(range(1, n_faces+1))
 
 	counter = 1
 	for f in indices:
-		print ('progress: {0}/{1}\r'.format(counter,n_faces)),
+		print ('progress: {0}/{1}\r'.format(counter,n_faces), sep = ' ', end = '', flush=True)
 		counter += 1
 		for g in range(f + 1, n_faces+1):
 			if (face_dict[f][0] == face_dict[g][0]):	
