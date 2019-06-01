@@ -167,12 +167,9 @@ def macroel_hybrid (macroel_vertices, mu, n):
         for i in range(n-k+1):
             for j in range(n-k-i+1):
                 # it can be done with much lesser calls to these lambda
-                lambda_1 = lambda1 (i,j,0,n,mu)
-                lambda_2 = lambda2 (i,j,0,n,mu)
+                coef = (lambda1 (i,j,0,n,mu), lambda2 (i,j,0,n,mu))
                 # the sub-mesh is just the following two lines
-                #points[k,i,:,j] = lambda_1*(base_vrtx_1- local_origin) + lambda_2*(base_vrtx_2- local_origin)
-                #points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu))*(sing_vrtx- local_origin) + local_origin
-                points[k,i,:,j] = lambda_1*(macroel_vertices[:,1]-macroel_vertices[:,0]) + lambda_2*(macroel_vertices[:,2]-macroel_vertices[:,0])
+                points[k,i,:,j] = coef[0]*(macroel_vertices[:,1]-macroel_vertices[:,0]) + coef[1]*(macroel_vertices[:,2]-macroel_vertices[:,0])
                 points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu))*(macroel_vertices[:,3]-macroel_vertices[:,0]) + macroel_vertices[:,0]
     return points
 
@@ -256,22 +253,11 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
     dict_save = {}
     for o in octants:
         q = octant(o, p)
+        ## TODO: fix these ugly two FORs
         for m in [z for z in macro_elems if z < 4]:
-            #point0 = q[:,tetrahedra[m,0]] #point1 = q[:,tetrahedra[m,1]] #point2 = q[:,tetrahedra[m,2]] #e3     = q[:,tetrahedra[m,3]]
-            #CONTINUE here: replace this
             dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (q[:,tetrahedra[m,0:4]],mu_vec[m],n)
-            #tmp = q[:,tetrahedra[m,0:4]]
-            #dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (tmp[:,0],tmp[:,1],tmp[:,2],tmp[:,3],mu_vec[m],n)
-
-
         for m in [z for z in macro_elems if z == 4]: # CALCULATION FOR t = 4 (T5)
-            #P0    = q[:,tetrahedra[4,0]] #P1    = q[:,tetrahedra[4,1]] #P2    = q[:,tetrahedra[4,2]] #P3    = q[:,tetrahedra[4,3]]
-            ##CONTINUE
-            ### TODO: replace this
-            #tmp = q[:,tetrahedra[4,0:4]]
-            #dict_save['points_tetra_C' + str(o)] = macroel_tetrahedra(tmp[:,0], tmp[:,1], tmp[:,2], tmp[:,3], mu, n)
             dict_save['points_tetra_C' + str(o)] = macroel_tetrahedra(q[:,tetrahedra[4,0:4]], mu, n)
-
     return dict_save
 
 ################################################################################

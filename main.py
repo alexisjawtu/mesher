@@ -173,9 +173,11 @@ def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
 def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
     tau_zero = load_partition ("partition")
 
+    #CONTINUE HERE las func. indiv ya toman una matriz de vertices
+    ## AHORA chequear que los E[i] sean columnitas de R3.
     for i, E in iter(tau_zero.items()):
         pass
-    #   local_meshers[E[0]]( CONTINUE HERE cambiar las func. indiv para que tomen una matriz de vertices)
+        local_meshers[E[0]](E[1],mu_,levels) 
     return
 
 
