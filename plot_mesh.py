@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import random
 
 def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "green"):
-    points = macroel_hybrid (vertices[0], vertices[1], vertices[2],vertices[3], local_mu, n)
+    points = macroel_hybrid (vertices, local_mu, n)
     drawing = []
     n = points.shape[0] - 1
     for k in range (n+1):
@@ -52,6 +52,7 @@ def plot_hybrid_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "green
 
 def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "blue"):
     local_grid_points = macroel_prisms(vertices, local_mu, n)
+    n_vertical = n                 # TODO: make n_vertical independent!
     for j in range(n_vertical+1):
         for k in range(n+1):
             plt_axes.plot(local_grid_points[j,k,0,0:n+1-k], local_grid_points[j,k,1,0:n+1-k], local_grid_points[j,k,2,0:n+1-k], color=color_name)
@@ -65,12 +66,12 @@ def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "blue")
     return local_grid_points
 
 def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "red"):
-    points_T5 = macroel_tetrahedra(vertices[0], vertices[1], vertices[2], vertices[3], local_mu, n)
-    for i in [4*nn for nn in range(points_T5.shape[0]//4)]:
+    points = macroel_tetrahedra(vertices, local_mu, n)
+    for i in [4*nn for nn in range(points.shape[0]//4)]:
         a = np.array([0,1,2,3]+[0,2,3,1])+i*np.ones(8,dtype=int)
-        z = points_T5[a,np.array([2]*8)]
-        y = points_T5[a,np.array([1]*8)]
-        x = points_T5[a,np.array([0]*8)]
+        z = points[a,np.array([2]*8)]
+        y = points[a,np.array([1]*8)]
+        x = points[a,np.array([0]*8)]
         plt_axes.plot(x, y, z,color=color_name)
     return
 
@@ -128,7 +129,6 @@ def plot(initial_partition = "partition", angle_steps = [9], refinements = [3], 
     first of the sequence of meshes. A record in initial_partition has to be:
     type_of_macro_element, np.array([P0,..,PN]), local_grading_parameter  """
     macro_elements = load_partition (initial_partition)
-    
     elev    = 55
 
     trans = []

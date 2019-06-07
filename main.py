@@ -40,7 +40,7 @@ def load_partition (in_file):
     macro_elements = { key : 
                         { 
                           0 : pre_list[key][0],
-                          1 : np.array(pre_list[key][1:-1]).reshape((len(pre_list[key])-2)//3,3), 
+                          1 : np.array(pre_list[key][1:-1]).reshape(3,(len(pre_list[key])-2)//3,order='F'),
                           2 : pre_list[key][-1], 
                           3 : colors[pre_list[key][0]]
                          } 
@@ -76,7 +76,7 @@ def filter_repeated_vertices (n_vert_prism = 6):
     counter = 1
     elem_vert_dscnt_indcs = np.copy(elem_vert_repeated).reshape(n_elem*7)
     for key in replace_verts:
-        print ('progress: {0}/{1}\r'.format(counter,len(replace_verts)), sep = ' ', end = '', flush=True)
+        print ('progress: {}/{}\r'.format(counter,len(replace_verts)),sep=' ',end='',flush=True)
         counter += 1
         for r in replace_verts[key]:
             elem_vert_dscnt_indcs[elem_vert_dscnt_indcs == r+1] = (key +1)

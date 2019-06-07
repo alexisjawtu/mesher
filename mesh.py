@@ -199,11 +199,12 @@ def macroel_prisms (macroel_vertices, mu, n):
     for y in range(n+1):
         for z in range(n+1-y):
             lambda_1, lambda_2 = lambda1 (y,z,0,n,mu), lambda2 (y,z,0,n,mu)
-            temp = lambda_1*(macroel_vertices[1] - macroel_vertices[0]) + lambda_2*(macroel_vertices[2] - macroel_vertices[0])
-            points[0,y,:,z] = temp + macroel_vertices[0]
+            temp = lambda_1*(macroel_vertices[:,1] - macroel_vertices[:,0]) + lambda_2*(macroel_vertices[:,2] - macroel_vertices[:,0])
+            #points[0,y,:,z] = temp + macroel_vertices[:,0]
+            points[0,y,:,z] = temp + macroel_vertices[:,0]
 
     for x in range(1,n_vertical+1): # translating level 0 to the levels above
-    	points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vertical)*(macroel_vertices[3] - macroel_vertices[0]).reshape((3,1))
+    	points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vertical)*(macroel_vertices[:,3] - macroel_vertices[:,0]).reshape((3,1))
     return points
 
 def line (x, y, z):
