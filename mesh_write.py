@@ -73,7 +73,7 @@ def vertices (points):
 	"""
 	nVertices = 0
 	L = points.shape[0]
-	with open ('vertices.txt','a') as out:
+	with open ('vertices.txt','ab') as out:
 		for l in range(L):
 			for i in range(L-l):
 				for j in range(L-l-i):
@@ -82,18 +82,18 @@ def vertices (points):
 		#out.write('\n')
 	return nVertices
 
-def verticesT4 (points, f_write):
-	"""
-		points: dictionary with the points of the type II macro--element
-	"""
+def vertices_macro_tetra (points, f_write):
+	""" points: dictionary with the points of the 
+	tetrahedral non--hybrid macro--element """
 	L = len(points)
-	with open (f_write, 'a') as out:
+	with open (f_write, 'ab') as out:
 		np.savetxt(out, points, fmt = __format__)
 	return L		
 
+"""
+TODO: deprecate this
 def write_element_coordinates (index_file, tetr):
-	""" I don't merge this with write_element_indices because indices
-	are the same everywhere """
+	# I don't merge this with write_element_indices because indices are the same everywhere
 	indices = [] 
 	with open(index_file, 'r') as data:
 		lines = data.readlines()
@@ -112,3 +112,4 @@ def write_element_coordinates (index_file, tetr):
 				aux[:,j] = tetr[elem[3*j+1],elem[3*j+2],:,elem[3*j+3]]
 			np.savetxt(out, aux, fmt=__format__)
 	return indices
+"""

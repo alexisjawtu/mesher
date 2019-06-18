@@ -4,3 +4,4 @@
 *.txt
 !partition.txt
 !translations.txt
+macroTetraedro.py
