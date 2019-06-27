@@ -267,7 +267,7 @@ def kill_repeated_faces (faces_file_name):
 	d_out = {}
 	
 	indices = list(range(1, n_faces+1))
-
+	
 	counter = 1
 	for f in indices:
 		print ('progress: {0}/{1}\r'.format(counter,n_faces), sep = ' ', end = '', flush=True)
