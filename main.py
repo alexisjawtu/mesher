@@ -169,15 +169,19 @@ def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
         mesh_conectivity.write_elements_by_vertices_tetra(n_vert_graded, init ,'elements_by_vertices_repeated.txt')
         init += mesh_write.vertices_macro_tetra(fichera_coords_['points_tetra_C' + str(oc)], 'vertices.txt')
     filter_repeated_faces(filter_repeated_vertices())
+    return
 
 def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
     tau_zero = load_partition ("partition")
-
-##>>>>>>>>>>>CONTINUE HERE
-
+    mesh_write.write_element_indices("elements.txt", levels)
+    init=0
     for i, E in iter(tau_zero.items()):
-        pass
-        local_meshers[E[0]](E[1],mu_,levels) 
+        points = local_meshers[E[0]](E[1],mu_,levels)
+        if E[0] == hybrid or the other ...
+        CONTINUE HERE, this has cases, the three macro-el types
+            mesh_conectivity.write_elements_by_vertices_hybrid("elements.txt", levels, "Octave", init)
+            init += mesh_write.vertices(points)
+
     return
 
 

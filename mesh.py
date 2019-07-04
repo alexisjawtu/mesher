@@ -47,8 +47,6 @@ def lambda3 (i, j, k, n, mu):
 #def macroel_tetrahedra (P0, P1, P2, P3, mu, n):
 def macroel_tetrahedra (vertices, mu, n):
     """ 
-        return value: Nel == nmbr of elmts
-        
         OBS: the graduation is, by default, towards 'P0',
         so we have to put the corresponding permutation of vertices when 
         calling the function.
@@ -69,7 +67,6 @@ def macroel_tetrahedra (vertices, mu, n):
 
     """
 
-
     ## TODO: remove this reshape() thing
     P0 = np.array(vertices[:,0]).reshape((1,3))
     P1 = np.array(vertices[:,1]).reshape((1,3))
@@ -83,7 +80,6 @@ def macroel_tetrahedra (vertices, mu, n):
 
 ## todo: fix the order of the indices
 
-    Nel     = 0
     for k in range(n+1):
         for j in range(n+1):
             for i in range(n+1):
@@ -103,7 +99,6 @@ def macroel_tetrahedra (vertices, mu, n):
 
                 points = np.concatenate((points,q0,q1,q2,q3))
                 del(q0,q1,q2,q3)
-                Nel += 1
 
     for k in range(n-1):
         for j in range(n-1-k):
@@ -114,7 +109,6 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
 
                 points = np.concatenate((points,q0,q1,q2,q3))
-                Nel += 1
 
                 q0 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
                 q1 = lambda_[0,i,j,k+1]*P0 + lambda_[1,i,j,k+1]*P1 + lambda_[2,i,j,k+1]*P2 + lambda_[3,i,j,k+1]*P3
@@ -122,7 +116,6 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i,j+1,k+1]*P0 + lambda_[1,i,j+1,k+1]*P1 + lambda_[2,i,j+1,k+1]*P2 + lambda_[3,i,j+1,k+1]*P3
 
                 points = np.concatenate((points,q0,q1,q2,q3))
-                Nel += 1
                 
                 q0 = lambda_[0,i+1,j,k]*P0 + lambda_[1,i+1,j,k]*P1 + lambda_[2,i+1,j,k]*P2 + lambda_[3,i+1,j,k]*P3
                 q1 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
@@ -130,7 +123,6 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
 
                 points = np.concatenate((points,q0,q1,q2,q3))
-                Nel += 1
                 
                 q0 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
                 q1 = lambda_[0,i+1,j+1,k]*P0 + lambda_[1,i+1,j+1,k]*P1 + lambda_[2,i+1,j+1,k]*P2 + lambda_[3,i+1,j+1,k]*P3
@@ -138,7 +130,6 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i,j+1,k+1]*P0 + lambda_[1,i,j+1,k+1]*P1 + lambda_[2,i,j+1,k+1]*P2 + lambda_[3,i,j+1,k+1]*P3
                 
                 points = np.concatenate((points,q0,q1,q2,q3))
-                Nel += 1
 
     for k in range(n-2):
         for j in range(n-2-k):
@@ -149,7 +140,6 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i+1,j+1,k+1]*P0 + lambda_[1,i+1,j+1,k+1]*P1 + lambda_[2,i+1,j+1,k+1]*P2 + lambda_[3,i+1,j+1,k+1]*P3
 
                 points = np.concatenate((points,q0,q1,q2,q3))
-                Nel += 1
 
     points = np.delete(points, 0, 0)
     return points
