@@ -183,6 +183,12 @@ def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
         points = local_meshers[E[0]](E[1],mu_,levels)
         if E[0] == 0:
             mesh_conectivity.write_elements_by_vertices_hybrid("elements.txt", levels, "Octave", init)
+
+            >>>>>> poner aca write_elements_by_vertices_hybrid(arch_out-->"elements_by_vertices_repeated.txt")
+                   para que queden iguales con la "_tetra"
+                   estudiar y hacer una prueba para ver que pasa si permutamos el orden: si primero
+                   aparece un _tetra y despues un _hybrid
+
             init += mesh_write.vertices(points) # writes 'vertices.txt' global list of vertices
         elif E[0] == 1:
             n_vert_graded = np.shape(points)[0]

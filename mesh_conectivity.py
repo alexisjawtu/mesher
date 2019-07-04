@@ -61,7 +61,7 @@ def write_elements_by_vertices_tetra (f_name_write, n_vert_graded, init):
 	"""
 		here we assume that in the (Npts x 3) array of points
 		the tetrahedra appear in order taking the rows
-		four at a time. This is how it si done in
+		four at a time. This is how it is done in
 		mesh.macroel_tetrahedra()
 	"""
 	arr_out = np.array(range(init + 1, init + n_vert_graded + 1)).reshape((n_vert_graded//4, 4))
