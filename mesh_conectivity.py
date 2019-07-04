@@ -57,7 +57,7 @@ def write_elements_by_vertices_hybrid (f_name, n, lang, initial):
             np.savetxt(out,line,fmt='%d')
     return len(indices)
 
-def write_elements_by_vertices_tetra (n_vert_graded, init, f_name_write):
+def write_elements_by_vertices_tetra (f_name_write, n_vert_graded, init):
 	"""
 		here we assume that in the (Npts x 3) array of points
 		the tetrahedra appear in order taking the rows
@@ -70,7 +70,7 @@ def write_elements_by_vertices_tetra (n_vert_graded, init, f_name_write):
 		np.savetxt(tgt, arr_out, fmt='%d')
 	return
 
-def write_elements_by_vertices_prisms (f_name,n,initial):
+def write_elements_by_vertices_prisms (f_name,n,lang,initial):
     ## TODO 
     pass
 

@@ -166,7 +166,7 @@ def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
             init   += mesh_write.vertices(coords)	# writes 'vertices.txt' global list of vertices
         ## Type II macro--element
         n_vert_graded = np.shape(fichera_coords_['points_tetra_C' + str(oc)])[0]
-        mesh_conectivity.write_elements_by_vertices_tetra(n_vert_graded, init ,'elements_by_vertices_repeated.txt')
+        mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt",n_vert_graded,init)
         init += mesh_write.vertices_macro_tetra(fichera_coords_['points_tetra_C' + str(oc)], 'vertices.txt')
     filter_repeated_faces(filter_repeated_vertices())
     return
@@ -174,14 +174,24 @@ def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
 def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
     tau_zero = load_partition ("partition")
     mesh_write.write_element_indices("elements.txt", levels)
-    init=0
+    init = 0
+
+    ## CONTINNUE HERE: DICTIONARY if writing functions
+    ## headers are different!!
+
     for i, E in iter(tau_zero.items()):
         points = local_meshers[E[0]](E[1],mu_,levels)
-        if E[0] == hybrid or the other ...
-        CONTINUE HERE, this has cases, the three macro-el types
+        if E[0] == 0:
             mesh_conectivity.write_elements_by_vertices_hybrid("elements.txt", levels, "Octave", init)
-            init += mesh_write.vertices(points)
-
+            init += mesh_write.vertices(points) # writes 'vertices.txt' global list of vertices
+        elif E[0] == 1:
+            n_vert_graded = np.shape(points)[0]
+            mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt", n_vert_graded, init)
+            CONTINNUE: ojo que esto asume que primero se pasa por un hibrido, 
+            en el cual se escribe en el disco el "elements_by_vertices_repeated.txt"
+        else:  # E[0] == 2
+            pass
+            #mesh_conectivity.write_elements_by_vertices_prisms(f_name,n,lang,initial)
     return
 
 
