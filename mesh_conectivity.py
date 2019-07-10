@@ -13,7 +13,7 @@ def vertex_global_index (n, l, i, j):
     ## TODO: CLOSED FORMULA. Do benchmark
     return sum([(n-r+1)*(n-r+2)//2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
 
-def write_elements_by_vertices_hybrid (f_name, n, lang, initial):
+def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     """ 
     This funtion is at the beggining in the program, for the case
     we start with the mesh we proposed. For a general mesh, the algorithm
@@ -25,14 +25,15 @@ def write_elements_by_vertices_hybrid (f_name, n, lang, initial):
     esto es solo para el macro elemento
     con un vertice singular y una arista singular en el np.array:
 
-    Takes the file f_name written by
-    mesh_write.write_element_indices() 
+    Requires the file elements.txt written by
+    mesh_write.write_element_indices() to be
+    in the same directory.
 
     n == current quantity of levels
     
     Writes GLOBAL INDICES per element appending in the file
 
-    elements_by_vertices_repeated.txt:
+    f_name_out in the following way:
     --------------------------------------------------------
 
     6|v1_{prism}|v2_{prism}|v3_{prism}|v4_{prism}|v5_{prism}|v6_{prism}|
@@ -44,9 +45,9 @@ def write_elements_by_vertices_hybrid (f_name, n, lang, initial):
     etc...
     """
     language  = {'C' : 0, 'Octave' : 1}
-    with open (f_name, 'r') as inp:
+    with open ("elements.txt", 'r') as inp:
         indices = inp.readlines()
-    with open ('elements_by_vertices_repeated.txt', 'ab') as out:
+    with open (f_name_out, 'ab') as out:
         for j in range(len(indices)):
             l = [int(c) for c in indices[j].rstrip().split(' ')]
             line = np.zeros((1,l[0]+1),dtype=int)
@@ -57,7 +58,7 @@ def write_elements_by_vertices_hybrid (f_name, n, lang, initial):
             np.savetxt(out,line,fmt='%d')
     return len(indices)
 
-def write_elements_by_vertices_tetra (f_name_write, n_vert_graded, init):
+def write_elements_by_vertices_tetra (f_name_write, n_vert_graded, lang, init):
 	"""
 		here we assume that in the (Npts x 3) array of points
 		the tetrahedra appear in order taking the rows

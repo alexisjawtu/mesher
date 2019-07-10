@@ -157,16 +157,16 @@ def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
     print (time.time() - t0)
     print ('\r')
     # indices only for type I macro--el. writes file: elements.txt 
-    mesh_write.write_element_indices('elements.txt', levels)
+    mesh_write.write_element_indices("elements.txt", levels)
     init     = 0
     for oc in range(2,9):    # integers 2, 3, 4, 5, 6, 7, 8
         for t in range(4):
             coords 	= fichera_coords_['points_T' + str(t) + '_C' + str(oc)] 
-            mesh_conectivity.write_elements_by_vertices_hybrid('elements.txt', levels, 'Octave', init) # writes elements_by_vertices_repeated.txt: GLOBAL INDICES per element
+            mesh_conectivity.write_elements_by_vertices_hybrid("elements_by_vertices_repeated.txt", levels, 'Octave', init) # writes elements_by_vertices_repeated.txt: GLOBAL INDICES per element
             init   += mesh_write.vertices(coords)	# writes 'vertices.txt' global list of vertices
         ## Type II macro--element
         n_vert_graded = np.shape(fichera_coords_['points_tetra_C' + str(oc)])[0]
-        mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt",n_vert_graded,init)
+        mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt",n_vert_graded, "Octave", init)
         init += mesh_write.vertices_macro_tetra(fichera_coords_['points_tetra_C' + str(oc)], 'vertices.txt')
     filter_repeated_faces(filter_repeated_vertices())
     return
@@ -182,9 +182,9 @@ def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
     for i, E in iter(tau_zero.items()):
         points = local_meshers[E[0]](E[1],mu_,levels)
         if E[0] == 0:
-            mesh_conectivity.write_elements_by_vertices_hybrid("elements.txt", levels, "Octave", init)
+            mesh_conectivity.write_elements_by_vertices_hybrid("elements_by_vertices_repeated.txt", levels, "Octave", init)
 
-            >>>>>> poner aca write_elements_by_vertices_hybrid(arch_out-->"elements_by_vertices_repeated.txt")
+            >>>>>> poner aca write_elements_by_vertices_hybrid("elements_by_vertices_repeated.txt")
                    para que queden iguales con la "_tetra"
                    estudiar y hacer una prueba para ver que pasa si permutamos el orden: si primero
                    aparece un _tetra y despues un _hybrid
@@ -192,8 +192,9 @@ def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
             init += mesh_write.vertices(points) # writes 'vertices.txt' global list of vertices
         elif E[0] == 1:
             n_vert_graded = np.shape(points)[0]
-            mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt", n_vert_graded, init)
-            CONTINNUE: ojo que esto asume que primero se pasa por un hibrido, 
+            mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt",n_vert_graded, "Octave", init)
+
+            CONTINUE: ojo que esto asume que primero se pasa por un hibrido, 
             en el cual se escribe en el disco el "elements_by_vertices_repeated.txt"
         else:  # E[0] == 2
             pass
