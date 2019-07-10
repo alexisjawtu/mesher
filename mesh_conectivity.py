@@ -57,11 +57,11 @@ def write_elements_by_vertices_hybrid (f_name, n, lang, initial):
             np.savetxt(out,line,fmt='%d')
     return len(indices)
 
-def write_elements_by_vertices_tetra (n_vert_graded, init, f_name_write):
+def write_elements_by_vertices_tetra (f_name_write, n_vert_graded, init):
 	"""
 		here we assume that in the (Npts x 3) array of points
 		the tetrahedra appear in order taking the rows
-		four at a time. This is how it si done in
+		four at a time. This is how it is done in
 		mesh.macroel_tetrahedra()
 	"""
 	arr_out = np.array(range(init + 1, init + n_vert_graded + 1)).reshape((n_vert_graded//4, 4))
@@ -70,7 +70,7 @@ def write_elements_by_vertices_tetra (n_vert_graded, init, f_name_write):
 		np.savetxt(tgt, arr_out, fmt='%d')
 	return
 
-def write_elements_by_vertices_prisms (f_name,n,initial):
+def write_elements_by_vertices_prisms (f_name,n,lang,initial):
     ## TODO 
     pass
 
@@ -267,7 +267,7 @@ def kill_repeated_faces (faces_file_name):
 	d_out = {}
 	
 	indices = list(range(1, n_faces+1))
-	
+
 	counter = 1
 	for f in indices:
 		print ('progress: {0}/{1}\r'.format(counter,n_faces), sep = ' ', end = '', flush=True)

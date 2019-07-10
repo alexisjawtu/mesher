@@ -37,7 +37,6 @@ def load_partition (in_file):
     pre_list = [line.strip(' \n').split(',') for line in inlist]
     pre_list = [[int(st[0])] + [float(st[k]) for k in range(1,len(st)-1)]+[float(st[-1])] for st in pre_list]
     colors = [ "green", "red", "blue"]
-    print(len(pre_list))
     macro_elements = { key : 
                         { 
                           0 : pre_list[key][0],
@@ -167,25 +166,45 @@ def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
             init   += mesh_write.vertices(coords)	# writes 'vertices.txt' global list of vertices
         ## Type II macro--element
         n_vert_graded = np.shape(fichera_coords_['points_tetra_C' + str(oc)])[0]
-        mesh_conectivity.write_elements_by_vertices_tetra(n_vert_graded, init ,'elements_by_vertices_repeated.txt')
+        mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt",n_vert_graded,init)
         init += mesh_write.vertices_macro_tetra(fichera_coords_['points_tetra_C' + str(oc)], 'vertices.txt')
     filter_repeated_faces(filter_repeated_vertices())
+    return
 
 def bBrick (levels = 3, n_vert_prism = 6, mu_ = .35):
     tau_zero = load_partition ("partition")
+    mesh_write.write_element_indices("elements.txt", levels)
+    init = 0
 
-##>>>>>>>>>>>CONTINUE HERE
+    ## CONTINNUE HERE: DICTIONARY if writing functions
+    ## headers are different!!
 
     for i, E in iter(tau_zero.items()):
-        pass
-        local_meshers[E[0]](E[1],mu_,levels) 
+        points = local_meshers[E[0]](E[1],mu_,levels)
+        if E[0] == 0:
+            mesh_conectivity.write_elements_by_vertices_hybrid("elements.txt", levels, "Octave", init)
+
+            >>>>>> poner aca write_elements_by_vertices_hybrid(arch_out-->"elements_by_vertices_repeated.txt")
+                   para que queden iguales con la "_tetra"
+                   estudiar y hacer una prueba para ver que pasa si permutamos el orden: si primero
+                   aparece un _tetra y despues un _hybrid
+
+            init += mesh_write.vertices(points) # writes 'vertices.txt' global list of vertices
+        elif E[0] == 1:
+            n_vert_graded = np.shape(points)[0]
+            mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt", n_vert_graded, init)
+            CONTINNUE: ojo que esto asume que primero se pasa por un hibrido, 
+            en el cual se escribe en el disco el "elements_by_vertices_repeated.txt"
+        else:  # E[0] == 2
+            pass
+            #mesh_conectivity.write_elements_by_vertices_prisms(f_name,n,lang,initial)
     return
 
 
 
 
 ####### SLOW (not used for now)
-# #print('mesh_conectivity.faces()')
+# print('mesh_conectivity.faces()')
 # print(time.time())
 # d = mesh_conectivity.faces('vertices_by_elements.txt', n_elem, 'Octave')
 # print(time.time())
