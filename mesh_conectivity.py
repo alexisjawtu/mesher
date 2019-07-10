@@ -60,6 +60,16 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
 
 def write_elements_by_vertices_tetra (f_name_write, n_vert_graded, lang, init):
 	"""
+	
+	>>>>>>>>< CONTINUE:  poner la cantidad_de_elementos*4, eso seria n_vert_graded
+	para que vayan quedando iguales los encabezados de las write_elements_by_vertices_tetra etc...
+
+
+
+	
+
+
+
 		here we assume that in the (Npts x 3) array of points
 		the tetrahedra appear in order taking the rows
 		four at a time. This is how it is done in
