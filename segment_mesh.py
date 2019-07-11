@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import numpy as np
 import mesh
 from mpl_toolkits.mplot3d import Axes3D
@@ -7,9 +5,9 @@ import matplotlib.pyplot as plt
 
 
 plot_function = {
-	4: pbc_tetra,
-	5: pbc_pyra,
-	6: pbc_prism
+	4: 'pbc_tetra',
+	5: 'pbc_pyramid',
+	6: 'pbc_prism'
 }
 
 def build_pill(mu,levels):
@@ -20,21 +18,9 @@ def build_pill(mu,levels):
 	nodos = macro_prism(vert_prism,mu,levels)
 	nodos.update({'t0':points})
 
-	fig = plt.figure()
-	ax  = fig.add_subplot(1,1,1,projection='3d')
-	ax.plot([],[],[],label = " ")
-	legend = ax.legend()
-	ax.set_xlabel(' X ')
-	ax.set_ylabel(' Y ')
-	ax.set_zlabel(' Z ')
+	return nodos
 
-	pbc_tetra(ax,nodos['t0'],'blue')
-	pbc_tetra(ax,nodos['t1'],'green')
-	pbc_tetra(ax,nodos['t2'],'green')
-	pbc_hybrid(ax,nodos['tp'],'black')
-	
-	plt.show()
-	#p_new = []
+
 	#for k in range(points.shape[0]):
 	#	punto = points[k,:]
 	#	if np.linalg.norm(punto)>0:
@@ -65,10 +51,6 @@ def macro_prism(vertices,mu,levels):
 	dict_out['t2'] = points_t2
 	return dict_out
 
-def pbc_prism(ax,points,prism):
-	a = np.array()
-	
-
 
 def pbc_tetra(ax,points,tetra):
 	a = np.array([0,1,2,3]+[0,2,3,1])
@@ -76,8 +58,21 @@ def pbc_tetra(ax,points,tetra):
 	y = points[a,np.array([1]*8)]
 	x = points[a,np.array([0]*8)]
 	ax.plot(x, y, z,color='blue')
-	
 
+
+def pbc_pyramid(ax,points,tetra):
+	a = np.array([0,1,2,0,3,4,0,2,4,3,1])
+	z = points[a,np.array([2]*8)]
+	y = points[a,np.array([1]*8)]
+	x = points[a,np.array([0]*8)]
+	ax.plot(x, y, z,color='black')
+
+def pbc_prism(ax,points,prism):
+	a = np.array([0,1,2,5,4,3,0,1,4,3,5])
+	x = points[a,np.array([0]*11)]
+	y = points[a,np.array([1]*11)]
+	z = points[a,np.array([2]+11)]
+	ax.plot(x,y,z,color='green')
 
 def pbc_all(file_points,file_conectivity):
 	points = np.fromfile(file_points)
