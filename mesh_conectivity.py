@@ -58,7 +58,9 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
             np.savetxt(out,line,fmt='%d')
     return len(indices)
 
-def write_elements_by_vertices_tetra (f_name_write, n_vert_graded, lang, init):
+def write_elements_by_vertices_tetra (f_name_write, >>>> CONTINUE: levels, lang, init):
+	
+	n_vert_graded = (((levels - 1) - 1)**3)*4
 	"""
 	
 	>>>>>>>>< CONTINUE:  poner la cantidad_de_elementos*4, eso seria n_vert_graded
