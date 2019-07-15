@@ -4,13 +4,16 @@ import numpy as np
 
 def vertex_global_index (n, l, i, j):
     """
+    TODO: remove --->>> DEPRECATED.
+    """
+
+
+    """
     *indices in the macro--element with sing v and sing e into naturals
     *a one by one function that maps indices of the tensor
     into naturals 
     l = level
     """
-    #return ((n+1)**2)*level + (n+1)*i + j 
-    ## TODO: CLOSED FORMULA. Do benchmark
     return sum([(n-r+1)*(n-r+2)//2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
 
 def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
@@ -53,37 +56,40 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
             line = np.zeros((1,l[0]+1),dtype=int)
             line[0] = l[0]
             for i in range (1,l[0]+1):
-                calc = vertex_global_index(n,l[3*(i-1)+1],l[3*(i-1)+2],l[3*(i-1)+3])
+                #  calc2 = vertex_global_index(n,l[3*(i-1)+1],l[3*(i-1)+2],l[3*(i-1)+3])
+                #  height, depth, width: positions in the graph of the macro--element
+
+                ## CONTINUE HERE: 
+                      # hacer muchas pruebas y corregir a mano con el papel y con vertex_global_index
+                      # ver pruebita y pruebita-old en dropbox
+
+                h = l[3*(i-1)+1] ## l
+                d = l[3*(i-1)+2] ## i
+                w = l[3*(i-1)+3] ## j
+                calc2 = vertex_global_index(n,l[3*(i-1)+1],l[3*(i-1)+2],l[3*(i-1)+3])
+                calc = int((h*(n**2+3*n+2) + h*(h-1)*(2*h-1)/6 - (2*n+3)*h*(h-1)/2) /2 + w + d*(n-h-d/2+3/2))
+                
+
+                if not (calc == calc2):
+                	print("ojo!")
+                	break
                 line[0,i] =  initial + calc + language[lang]
             np.savetxt(out,line,fmt='%d')
     return len(indices)
 
-def write_elements_by_vertices_tetra (f_name_write, >>>> CONTINUE: levels, lang, init):
-	
-	n_vert_graded = (((levels - 1) - 1)**3)*4
-	"""
-	
-	>>>>>>>>< CONTINUE:  poner la cantidad_de_elementos*4, eso seria n_vert_graded
-	para que vayan quedando iguales los encabezados de las write_elements_by_vertices_tetra etc...
+def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
+    n_vert_graded = levels**3*4
+    """ levels**3   == number of elements. levels**3*4 == number of vertices with repetitions.
+    We assume that in the (Npts x 3) array of points the tetrahedra appear in order taking the rows
+    four at a time. This is how it is done in mesh.macroel_tetrahedra().
+    """
+    arr_out = np.array(range(init + 1, init + n_vert_graded + 1)).reshape((n_vert_graded//4, 4))
+    arr_out = np.concatenate((4*np.ones((n_vert_graded//4, 1),dtype=int), arr_out), axis=1)
+    with open (f_name_out, 'ab') as tgt:
+        np.savetxt(tgt, arr_out, fmt='%d')
+    return
 
-
-
-	
-
-
-
-		here we assume that in the (Npts x 3) array of points
-		the tetrahedra appear in order taking the rows
-		four at a time. This is how it is done in
-		mesh.macroel_tetrahedra()
-	"""
-	arr_out = np.array(range(init + 1, init + n_vert_graded + 1)).reshape((n_vert_graded//4, 4))
-	arr_out	= np.concatenate((4*np.ones((n_vert_graded//4, 1),dtype=int), arr_out), axis=1)
-	with open (f_name_write, 'ab') as tgt:
-		np.savetxt(tgt, arr_out, fmt='%d')
-	return
-
-def write_elements_by_vertices_prisms (f_name,n,lang,initial):
+def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     ## TODO 
     pass
 

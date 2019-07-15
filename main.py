@@ -148,7 +148,7 @@ def filter_repeated_faces (n_elem):
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
     return 
 
-def fichera (levels = 2, mu_ = .35, n_vert_prism = 6):
+def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
     print('levels: %s\r' % levels)
     ## dictionary with the fichera mesh.
     print ('mesh.cube_mesh_2()')
@@ -165,9 +165,7 @@ def fichera (levels = 2, mu_ = .35, n_vert_prism = 6):
             mesh_conectivity.write_elements_by_vertices_hybrid("elements_by_vertices_repeated.txt", levels, 'Octave', init) # writes elements_by_vertices_repeated.txt: GLOBAL INDICES per element
             init   += mesh_write.vertices(coords)	# writes 'vertices.txt' global list of vertices
         ## Type II macro--element
-        n_vert_graded = np.shape(fichera_coords_['points_tetra_C' + str(oc)])[0]
-        print(n_vert_graded)
-        mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt",n_vert_graded, "Octave", init)
+        mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt", levels, "Octave", init)
         init += mesh_write.vertices_macro_tetra(fichera_coords_['points_tetra_C' + str(oc)], 'vertices.txt')
     filter_repeated_faces(filter_repeated_vertices())
     return
