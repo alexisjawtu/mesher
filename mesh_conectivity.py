@@ -1,20 +1,4 @@
-# TODO formulas
 import numpy as np
-#from boltons.iterutils import remap
-
-def vertex_global_index (n, l, i, j):
-    """
-    TODO: remove --->>> DEPRECATED.
-    """
-
-
-    """
-    *indices in the macro--element with sing v and sing e into naturals
-    *a one by one function that maps indices of the tensor
-    into naturals 
-    l = level
-    """
-    return sum([(n-r+1)*(n-r+2)//2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
 
 def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     """ 
@@ -56,23 +40,11 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
             line = np.zeros((1,l[0]+1),dtype=int)
             line[0] = l[0]
             for i in range (1,l[0]+1):
-                #  calc2 = vertex_global_index(n,l[3*(i-1)+1],l[3*(i-1)+2],l[3*(i-1)+3])
-                #  height, depth, width: positions in the graph of the macro--element
-
-                ## CONTINUE HERE: 
-                      # hacer muchas pruebas y corregir a mano con el papel y con vertex_global_index
-                      # ver pruebita y pruebita-old en dropbox
-
-                h = l[3*(i-1)+1] ## l
-                d = l[3*(i-1)+2] ## i
-                w = l[3*(i-1)+3] ## j
-                calc2 = vertex_global_index(n,l[3*(i-1)+1],l[3*(i-1)+2],l[3*(i-1)+3])
+                # (positions in the graph of the macro--element)
+                h = l[3*(i-1)+1] ## height    (before: l)
+                d = l[3*(i-1)+2] ## depth     (before: i)
+                w = l[3*(i-1)+3] ## with      (before: j)
                 calc = int((h*(n**2+3*n+2) + h*(h-1)*(2*h-1)/6 - (2*n+3)*h*(h-1)/2) /2 + w + d*(n-h-d/2+3/2))
-                
-
-                if not (calc == calc2):
-                	print("ojo!")
-                	break
                 line[0,i] =  initial + calc + language[lang]
             np.savetxt(out,line,fmt='%d')
     return len(indices)
@@ -321,3 +293,15 @@ def kill_repeated_faces (faces_file_name):
 	num_faces = len(faces)
 
 	return d_out, indices, num_faces
+
+
+#def vertex_global_index (n, l, i, j):
+#    """
+#    TODO: remove --->>> DEPRECATED.
+#    *indices in the macro--element with sing v and sing e into naturals
+#    *a one by one function that maps indices of the tensor
+#    into naturals 
+#    l = level
+#    """
+#    return sum([(n-r+1)*(n-r+2)//2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
+#

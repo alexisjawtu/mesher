@@ -148,7 +148,7 @@ def filter_repeated_faces (n_elem):
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
     return 
 
-def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
+def fichera (levels = 7, mu_ = .42, n_vert_prism = 6):
     print('levels: %s\r' % levels)
     ## dictionary with the fichera mesh.
     print ('mesh.cube_mesh_2()')
