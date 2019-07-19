@@ -50,11 +50,11 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     return len(indices)
 
 def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
-    n_vert_graded = levels**3*4
     """ levels**3   == number of elements. levels**3*4 == number of vertices with repetitions.
     We assume that in the (Npts x 3) array of points the tetrahedra appear in order taking the rows
     four at a time. This is how it is done in mesh.macroel_tetrahedra().
     """
+    n_vert_graded = levels**3*4
     arr_out = np.array(range(init + 1, init + n_vert_graded + 1)).reshape((n_vert_graded//4, 4))
     arr_out = np.concatenate((4*np.ones((n_vert_graded//4, 1),dtype=int), arr_out), axis=1)
     with open (f_name_out, 'ab') as tgt:
@@ -293,6 +293,10 @@ def kill_repeated_faces (faces_file_name):
 	num_faces = len(faces)
 
 	return d_out, indices, num_faces
+
+def kill_repeated_edges():
+    # TODO
+    pass
 
 
 #def vertex_global_index (n, l, i, j):

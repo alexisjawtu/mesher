@@ -59,7 +59,7 @@ def write_element_indices (file_name, levels):
 		elements.write(string)
 	return
 
-def vertices (points):
+def vertices_macro_hybrid (points, f_write):
 	""" 		
 		This only works for type I macro--element
 
@@ -73,7 +73,7 @@ def vertices (points):
 	"""
 	nVertices = 0
 	L = points.shape[0]
-	with open ('vertices.txt','ab') as out:
+	with open (f_write,'ab') as out:
 		for l in range(L):
 			for i in range(L-l):
 				for j in range(L-l-i):
@@ -89,6 +89,10 @@ def vertices_macro_tetra (points, f_write):
 	with open (f_write, 'ab') as out:
 		np.savetxt(out, points, fmt = __format__)
 	return L		
+
+def vertices_macro_prism (points, f_write):
+    return 0 # <------ local_n_vertices
+
 
 """
 TODO: deprecate this
