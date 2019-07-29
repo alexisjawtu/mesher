@@ -148,7 +148,8 @@ def filter_repeated_faces (n_elem):
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
     return 
 
-def fichera (levels = 7, mu_ = .42, n_vert_prism = 6):
+#def fichera (levels = 7, mu_ = .42, n_vert_prism = 6):
+def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
     print('levels: %s\r' % levels)
     ## dictionary with the fichera mesh.
     print ('mesh.cube_mesh_2()')
@@ -179,10 +180,16 @@ elements_by_vertices_writers = { 0 : mesh_conectivity.write_elements_by_vertices
                                  2 : mesh_conectivity.write_elements_by_vertices_prisms}
 
 def omega (levels = 3, n_vert_prism = 6, mu_ = .35):
+    CONTINUE: para probar esto contra fichera() va a haber que poner
+    acá el mismo orden en que aparecen los de fichera.
+
+    empezar por un tetra o dos, un cuadrante.. etc.
+
     """
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     global_vertices_writers:         write vertices.txt, global list of vertices
     """
+
     tau_zero = load_partition ("partition")
     mesh_write.write_element_indices("elements.txt", levels)
     init = 0
