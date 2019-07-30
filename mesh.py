@@ -3,9 +3,11 @@ import scipy.io as sio
 # import matplotlib.pyplot as plt
 # from mpl_toolkits.mplot3d import Axes3D
 
-#mu_        = .35
-p_          = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   # octant 8
-                        [-1,  0,  0, -1, -1,  0,  0, -1],   # x > 0, y < 0, z < 0
+# mu_        = .35
+# The following p_ is the octant number 8. That is: 
+#              x > 0, y < 0, z < 0
+p_          = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
+                        [-1,  0,  0, -1, -1,  0,  0, -1],   
                         [-1, -1,  0,  0, -1, -1,  0,  0]])
 
 ### organization of the 5 tetrahedra resolving a cube: 
@@ -246,9 +248,13 @@ def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,
         q = octant(o, p)
         ## TODO: fix these ugly two FORs
         for m in [z for z in macro_elems if z < 4]:
-            dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (q[:,tetrahedra[m,0:4]],mu_vec[m],n)
+            v = q[:,tetrahedra[m,0:4]]
+            dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (v,mu_vec[m],n)
+            #print("0, ", v.transpose().reshape((1,12)), ", 0.65")
         for m in [z for z in macro_elems if z == 4]: # CALCULATION FOR t = 4 (T5)
-            dict_save['points_tetra_C' + str(o)] = macroel_tetrahedra(q[:,tetrahedra[4,0:4]], mu, n)
+            v = q[:,tetrahedra[m,0:4]]
+            dict_save['points_tetra_C' + str(o)] = macroel_tetrahedra(v, mu, n)
+            #print("1, ", v.transpose().reshape((1,12)), ", 0.65")
     return dict_save
 
 ################################################################################

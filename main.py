@@ -24,14 +24,21 @@ import time
 ## Poner un txt con un diccionario con los refinamientos y el parametro de graduacion y otros,
 ## tipo los diccionarios para configurar el sublime?
 
-#    Despues deberia andar tambien desde un csv hasta
-#    dejar la malla en los txt como de fichera
+local_meshers                   = { 0 : mesh.macroel_hybrid, 
+                                    1 : mesh.macroel_tetrahedra, 
+                                    2 : mesh.macroel_prisms }
 
-local_meshers = { 0 : mesh.macroel_hybrid, 
-                  1 : mesh.macroel_tetrahedra, 
-                  2 : mesh.macroel_prisms }
+global_vertices_writers         = { 0 : mesh_write.vertices_macro_hybrid,
+                                    1 : mesh_write.vertices_macro_tetra,
+                                    2 : mesh_write.vertices_macro_prism }
+
+elements_by_vertices_writers    = { 0 : mesh_conectivity.write_elements_by_vertices_hybrid,
+                                    1 : mesh_conectivity.write_elements_by_vertices_tetra,
+                                    2 : mesh_conectivity.write_elements_by_vertices_prisms}
 
 def load_partition (in_file):
+    """ in_file is a csv with:
+        macroelement_type, macro_vertices, mu """
     with open(in_file,'r') as infile:
         inlist = infile.readlines()
     pre_list = [line.strip(' \n').split(',') for line in inlist]
@@ -148,53 +155,18 @@ def filter_repeated_faces (n_elem):
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
     return 
 
-#def fichera (levels = 7, mu_ = .42, n_vert_prism = 6):
-def fichera (levels = 3, mu_ = .35, n_vert_prism = 6):
-    print('levels: %s\r' % levels)
-    ## dictionary with the fichera mesh.
-    print ('mesh.cube_mesh_2()')
-    t0 = time.time()
-    fichera_coords_ = mesh.cube_mesh_2(levels, mu_, mesh.p_, mesh.macro_el) 
-    print (time.time() - t0)
-    print ('\r')
-    # indices only for type I macro--el. writes file: elements.txt 
-    mesh_write.write_element_indices("elements.txt", levels)
-    init     = 0
-    for oc in range(2,9):    # integers 2, 3, 4, 5, 6, 7, 8
-        for t in range(4):
-            coords 	= fichera_coords_['points_T' + str(t) + '_C' + str(oc)] 
-            mesh_conectivity.write_elements_by_vertices_hybrid("elements_by_vertices_repeated.txt", levels, 'Octave', init) # writes elements_by_vertices_repeated.txt: GLOBAL INDICES per element
-            init   += mesh_write.vertices_macro_hybrid(coords, "vertices.txt")	# writes 'vertices.txt' global list of vertices
-        ## Type II macro--element
-        mesh_conectivity.write_elements_by_vertices_tetra("elements_by_vertices_repeated.txt", levels, "Octave", init)
-        init += mesh_write.vertices_macro_tetra(fichera_coords_['points_tetra_C' + str(oc)], "vertices.txt")
-    filter_repeated_faces(filter_repeated_vertices())
-    return
-
-global_vertices_writers = { 0 : mesh_write.vertices_macro_hybrid,
-                            1 : mesh_write.vertices_macro_tetra,
-                            2 : mesh_write.vertices_macro_prism }
-
-elements_by_vertices_writers = { 0 : mesh_conectivity.write_elements_by_vertices_hybrid,
-                                 1 : mesh_conectivity.write_elements_by_vertices_tetra,
-                                 2 : mesh_conectivity.write_elements_by_vertices_prisms}
-
-def omega (levels = 3, n_vert_prism = 6, mu_ = .35):
-    CONTINUE: para probar esto contra fichera() va a haber que poner
-    acá el mismo orden en que aparecen los de fichera.
-
-    empezar por un tetra o dos, un cuadrante.. etc.
-
+def omega (in_file = "partition", levels = 4, n_vert_prism = 6):
     """
+    TODO: more test versus old fichera()
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     global_vertices_writers:         write vertices.txt, global list of vertices
     """
 
-    tau_zero = load_partition ("partition")
+    tau_zero = load_partition (in_file)
     mesh_write.write_element_indices("elements.txt", levels)
     init = 0
     for i, E in iter(tau_zero.items()):
-        points = local_meshers[E[0]](E[1],mu_,levels)
+        points = local_meshers[E[0]](E[1],E[2],levels)
         elements_by_vertices_writers[E[0]]("elements_by_vertices_repeated.txt", levels, "Octave", init)
         init += global_vertices_writers[E[0]](points, "vertices.txt")
     filter_repeated_faces(filter_repeated_vertices())
