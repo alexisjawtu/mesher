@@ -1,5 +1,5 @@
 import numpy as np
-from mesh import n_elem_macrotetra
+#from mesh import n_elem_macrotetra
 
 __format__ = '%8.5f'
 

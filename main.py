@@ -146,13 +146,12 @@ def filter_repeated_faces (n_elem):
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
     return 
 
-def omega (in_file = "partition", levels = 4, n_vert_prism = 6):
+def omega (in_file = "partition", levels = 7, n_vert_prism = 6):
     """
     TODO: more test versus old fichera()
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     global_vertices_writers:         write vertices.txt, global list of vertices
     """
-
     tau_zero = load_partition (in_file)
     mesh_write.write_element_indices("elements.txt", levels)
     init = 0

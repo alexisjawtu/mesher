@@ -118,6 +118,14 @@ def vertices_by_elements (f_name, lang):
 
 def faces (f_name, n_elem, lang):
 	""" 
+	returns shared_faces.txt as:
+	--------------------------------------------------
+	el | el | v | v | v | (v)
+	1    4    2   4   8    9
+	2    4    2   5   8
+	3    4    4   5   9
+	1    5    7   8   9
+
 	f_name == vertices_by_elements.txt
 
 	n_elem == sum of write_elements_by_vertices_hybrid (f,n) in this way it won't depend on the topology of the mesh.
@@ -128,14 +136,6 @@ def faces (f_name, n_elem, lang):
 	that is, from the input f_name == vertices_by_elements.txt
 
 	For now: tested against macroelement with both singularities
-
-	returns shared_faces.txt as:
-	--------------------------------------------------
-	el | el | v | v | v | (v)
-	1    4    2   4   8    9
-	2    4    2   5   8
-	3    4    4   5   9
-	1    5    7   8   9
 	"""
 	language  = {'C' : 0, 'Octave' : 1}
 	d = {}
@@ -158,10 +158,8 @@ def faces (f_name, n_elem, lang):
 					count += 1
 					face_vertices.append(str(int(key)))
 			if count == 3:
-				face_type = ' share triangle'
 				s += str(m) + ' ' + str(n) + ' ' + ' '.join(face_vertices) + '\n'
 			elif count == 4: 
-				face_type = ' share rect'
 				s += str(m) + ' ' + str(n) + ' ' + ' '.join(face_vertices) + '\n'
 	with open ('shared_faces.txt','w') as f:
 		f.write(s)
@@ -297,15 +295,3 @@ def kill_repeated_faces (faces_file_name):
 def kill_repeated_edges():
     # TODO
     pass
-
-
-#def vertex_global_index (n, l, i, j):
-#    """
-#    TODO: remove --->>> DEPRECATED.
-#    *indices in the macro--element with sing v and sing e into naturals
-#    *a one by one function that maps indices of the tensor
-#    into naturals 
-#    l = level
-#    """
-#    return sum([(n-r+1)*(n-r+2)//2 for r in range(l)]) + sum([n-l+1-k for k in range(i)]) + j
-#

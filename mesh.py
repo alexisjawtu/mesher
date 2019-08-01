@@ -5,37 +5,44 @@ import scipy.io as sio
 
 # The following p_ is the octant number 8. That is: 
 #              x > 0, y < 0, z < 0
-p_          = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
-                        [-1,  0,  0, -1, -1,  0,  0, -1],   
-                        [-1, -1,  0,  0, -1, -1,  0,  0]])
+
+
+
+# p_          = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
+#                         [-1,  0,  0, -1, -1,  0,  0, -1],   
+#                         [-1, -1,  0,  0, -1, -1,  0,  0]])
+
+
 
 ### organization of the 5 tetrahedra resolving a cube: 
 ### the vertices of the macro--cube are: 0 ... 7.
-macro_el    = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
+## macro_el    = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
 
-def n_elem_macrotetra (lev):
-    """ sum([sum([(2*j+1) for j in range(l)]) for l in range(1,a+1)]) 
-    this works just for the macro_element with both singularities """
-    dic = {}
-    dic['number_of_elements']   = lev*(lev+1)*(2*lev+1)//6
-    dic['number_of_prisms']     = lev*(lev*(2*lev-3)+1)//6
-    dic['number_of_tetr']       = lev*(lev+1)//2 
-    dic['number_of_pyrs']       = lev*(lev-1)//2
-    dic['number_of_vertices']   = sum([r*(r+1)//2 for r in range(lev+2)])
-    return dic
+# def n_elem_macrotetra (lev):
+#    print("n_elem_macrotetra")
+#    """ sum([sum([(2*j+1) for j in range(l)]) for l in range(1,a+1)]) 
+#    this works just for the macro_element with both singularities """
+#    dic = {}
+#    dic['number_of_elements']   = lev*(lev+1)*(2*lev+1)//6
+#    dic['number_of_prisms']     = lev*(lev*(2*lev-3)+1)//6
+#    dic['number_of_tetr']       = lev*(lev+1)//2 
+#    dic['number_of_pyrs']       = lev*(lev-1)//2
+#    dic['number_of_vertices']   = sum([r*(r+1)//2 for r in range(lev+2)])
+#    return dic
 
-def n_faces_macrotetra (lev):
-    Nel = n_elem_macrotetra(lev)['number_of_elements']
-    return 2*lev**2+lev*(lev+1)+Nel-lev**2+2*(lev-1)**2+(lev-1)*lev*(lev+1)//6
+# def n_faces_macrotetra (lev):
+#     print("def n_faces_macrotetra (lev):")
+#     Nel = n_elem_macrotetra(lev)['number_of_elements']
+#     return 2*lev**2+lev*(lev+1)+Nel-lev**2+2*(lev-1)**2+(lev-1)*lev*(lev+1)//6
 
-def octant (o, points):
-    print("mesh.octant")
-    """ takes a fixed octant [points] and affine--transforms it to the other six.
-        the last one is ones(3,1) to leave it unchanged """
-    trans = np.array([[ 0,  0, -1, -1,  1,  1, -1, -1,  1],
-                      [ 0,  0, -1,  1,  1, -1, -1,  1,  1],
-                      [ 0,  0, -1, -1, -1,  1,  1,  1,  1]])
-    return points*trans[:,o].reshape((3,1))
+# def octant (o, points):
+#     print("mesh.octant")
+#     """ takes a fixed octant [points] and affine--transforms it to the other six.
+#         the last one is ones(3,1) to leave it unchanged """
+#     trans = np.array([[ 0,  0, -1, -1,  1,  1, -1, -1,  1],
+#                       [ 0,  0, -1,  1,  1, -1, -1,  1,  1],
+#                       [ 0,  0, -1, -1, -1,  1,  1,  1,  1]])
+#     return points*trans[:,o].reshape((3,1))
 
 def lambda1 (i, j, k, n, mu):
     return float(i)/n * (float(i+j+k)/n)**((1/float(mu))-1)
@@ -46,7 +53,6 @@ def lambda2 (i, j, k, n, mu):
 def lambda3 (i, j, k, n, mu):
     return float(k)/n * (float(i+j+k)/n)**((1/float(mu))-1)
 
-#def macroel_tetrahedra (P0, P1, P2, P3, mu, n):
 def macroel_tetrahedra (vertices, mu, n):
     """ 
         OBS: the graduation is, by default, towards 'P0',
@@ -146,7 +152,6 @@ def macroel_tetrahedra (vertices, mu, n):
     points = np.delete(points, 0, 0)
     return points
 
-#def macroel_hybrid (local_origin, base_vrtx_1, base_vrtx_2, sing_vrtx, mu, n):
 def macroel_hybrid (macroel_vertices, mu, n):
     """ 
         vertices = ( local_origin | base_vrtx_1 | base_vrtx_2 | sing_vrtx )
@@ -198,59 +203,3 @@ def macroel_prisms (macroel_vertices, mu, n):
     for x in range(1,n_vertical+1): # translating level 0 to the levels above
     	points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vertical)*(macroel_vertices[:,3] - macroel_vertices[:,0]).reshape((3,1))
     return points
-
-def line (x, y, z):
-    """ (x[0], y[0], z[0]) -- ... -- (x[n-1], y[n-1], z[n-1]) """
-    s = '\n\t\\draw '
-    l = len(x)
-    for i in range (l - 1):
-        s += '('+str(x[i])[0:6]+','+str(y[i])[0:6]+','+str(z[i])[0:6]+')'+' -- '
-    s += '('+str(x[l-1])[0:6]+','+str(y[l-1])[0:6]+','+str(z[l-1])[0:6]+');'
-    return s
-
-def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,2,3,4]):
-    """ TODO: 
-        
-        this has to be an independent "hexaedral" macroelement. see point 6)
-        in the notebook
-
-        n == levels
-        mu == grading param
-        p == vertices of the cubes; the octants
-        tetrahedra ==  
-    """
-    mu_vec = [1, mu, mu, mu]            # first one is not graded!
-    dict_save = {}
-    for o in octants:
-        q = octant(o, p)
-        ## TODO: fix these ugly two FORs
-        for m in [z for z in macro_elems if z < 4]:
-            v = q[:,tetrahedra[m,0:4]]
-            dict_save['points_T'+str(m)+'_C'+str(o)] = macroel_hybrid (v,mu_vec[m],n)
-            #print("0, ", v.transpose().reshape((1,12)), ", 0.65")
-        for m in [z for z in macro_elems if z == 4]: # CALCULATION FOR t = 4 (T5)
-            v = q[:,tetrahedra[m,0:4]]
-            dict_save['points_tetra_C' + str(o)] = macroel_tetrahedra(v, mu, n)
-            #print("1, ", v.transpose().reshape((1,12)), ", 0.65")
-    return dict_save
-
-################################################################################
-################################################################################
-### not likely to be used again:
-
-#def plot_mesh (obj, elev = 30, azim = 45, colors = ['darkgreen']+['black']+['fuchsia']+['blue']):
-#   fig = plt.figure()
-#   ax  = fig.add_subplot(1,1,1, projection='3d')
-#   ax.axis('equal')
-#   ax.view_init(elev, azim)
-#   #  fix this!!
-#   ## plt.title(str(n) + ' levels.')
-#   colors = iter(colors)
-#   for tetra in obj:
-#       col = next(colors)#for te in tetra:
-#       for dr in tetra:
-#           ax.plot(dr[0],dr[1],dr[2],color = col)
-#   plt.show()
-#   return fig
-################################################################################
-################################################################################
