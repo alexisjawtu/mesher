@@ -3,7 +3,6 @@ import scipy.io as sio
 # import matplotlib.pyplot as plt
 # from mpl_toolkits.mplot3d import Axes3D
 
-# mu_        = .35
 # The following p_ is the octant number 8. That is: 
 #              x > 0, y < 0, z < 0
 p_          = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
@@ -30,6 +29,7 @@ def n_faces_macrotetra (lev):
     return 2*lev**2+lev*(lev+1)+Nel-lev**2+2*(lev-1)**2+(lev-1)*lev*(lev+1)//6
 
 def octant (o, points):
+    print("mesh.octant")
     """ takes a fixed octant [points] and affine--transforms it to the other six.
         the last one is ones(3,1) to leave it unchanged """
     trans = np.array([[ 0,  0, -1, -1,  1,  1, -1, -1,  1],
@@ -207,29 +207,6 @@ def line (x, y, z):
         s += '('+str(x[i])[0:6]+','+str(y[i])[0:6]+','+str(z[i])[0:6]+')'+' -- '
     s += '('+str(x[l-1])[0:6]+','+str(y[l-1])[0:6]+','+str(z[l-1])[0:6]+');'
     return s
-
-def cube2tex (obj, name = 'cube.tex'):
-    s = ''
-    for tetra in obj:
-        for dr in tetra:
-            s += line(dr[0],dr[1],dr[2])
-    with open (name,'w') as d:
-        d.write('\\documentclass{article}\n\\usepackage{tikz}\n\\begin{document}\n')
-        d.write('\\begin{tikzpicture}[scale=3]\n')
-        d.write(s)
-        d.write('\n\n\\end{tikzpicture}\n\\end{document}')
-    return
-
-def cube2mat (obj, file_name = 'data.mat'):
-    ## to draw in Octave with cubo.m
-    d = {}  
-    i = -1
-    for tetra in obj:
-        for dr in tetra:
-            i += 1
-            d['dr'+str(i)] = [dr[0],dr[1],dr[2]]
-    sio.savemat(file_name, d)
-    return i
 
 def cube_mesh_2 (n, mu, p, tetrahedra, octants = range(2,9), macro_elems = [0,1,2,3,4]):
     """ TODO: 

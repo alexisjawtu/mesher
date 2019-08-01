@@ -99,14 +99,12 @@ def filter_repeated_vertices (n_vert_prism = 6):
     return n_elem
 
 def filter_repeated_faces (n_elem):
-    """ general function. takes output of 
+    """ Takes the output of 
     mesh_conectivity.vertices_by_elements()	writes on disc: shared_faces.txt
     writes: faces_repeated.txt 			----> with repetitions
             faces_local_to_global.txt   ----> for macro--element of type 1 """	
-    print ('mesh_conectivity.face_enumeration')
-    t0 = time.time()
+    print ('Face Enumeration')
     mesh_conectivity.face_enumeration('elements_by_vertices.txt')
-    print (time.time() - t0)
     print ('\r')
     with open('faces_local_to_global.txt', 'r') as ent:
         stuff = ent.readlines()
@@ -117,16 +115,13 @@ def filter_repeated_faces (n_elem):
 
     ## reads repetitions in faces_repeated.txt and leaves a dictionary
     ## writes file: faces.txt -----> global unique enumeration of faces
-    print( 'mesh_conectivity.kill_repeated_faces')
-    t0 = time.time()
+    print('Killing repeated faces')
     replace_faces, indices, num_faces = mesh_conectivity.kill_repeated_faces('faces_repeated.txt')  
-    print( time.time() - t0)
     print( '\r')
     with open ('num_faces.txt','w') as n_of_faces:
         n_of_faces.write(str(num_faces))
     #### uniquifying faces:
-    print( 'faces replacement loop version 2')
-    t0 = time.time()
+    print('Face replacements loop version 2.')
     elem_faces_discnt_index = np.copy(elem_faces_repeated).reshape(n_elem*6)
     counter = 1
     for key in replace_faces:
@@ -135,18 +130,14 @@ def filter_repeated_faces (n_elem):
         for r in replace_faces[key]:
             elem_faces_discnt_index[elem_faces_discnt_index==r] = key
     print ('\r')
-    print (time.time() - t0)
-    print ('\r')
 	#elem_faces_discnt_index = elem_faces_discnt_index.reshape((n_elem,6))
     del elem_faces_repeated
     ## bijection indices ----> [1,...,n_faces]
     ## unique, continuous indices with filling zeros
     print ('loop for indexing faces with {1 ... n_faces}')
-    t0 = time.time()
     elem_faces = np.copy(elem_faces_discnt_index)
     for i in range(len(indices)):
         elem_faces[elem_faces_discnt_index==indices[i]] = i+1
-    print (time.time() - t0)
     print ('\r')
     elem_faces = np.copy(elem_faces).reshape((n_elem,6))
     del elem_faces_discnt_index
