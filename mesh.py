@@ -1,48 +1,4 @@
 import numpy as np                              
-import scipy.io as sio
-# import matplotlib.pyplot as plt
-# from mpl_toolkits.mplot3d import Axes3D
-
-# The following p_ is the octant number 8. That is: 
-#              x > 0, y < 0, z < 0
-
-
-
-# p_          = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
-#                         [-1,  0,  0, -1, -1,  0,  0, -1],   
-#                         [-1, -1,  0,  0, -1, -1,  0,  0]])
-
-
-
-### organization of the 5 tetrahedra resolving a cube: 
-### the vertices of the macro--cube are: 0 ... 7.
-## macro_el    = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
-
-# def n_elem_macrotetra (lev):
-#    print("n_elem_macrotetra")
-#    """ sum([sum([(2*j+1) for j in range(l)]) for l in range(1,a+1)]) 
-#    this works just for the macro_element with both singularities """
-#    dic = {}
-#    dic['number_of_elements']   = lev*(lev+1)*(2*lev+1)//6
-#    dic['number_of_prisms']     = lev*(lev*(2*lev-3)+1)//6
-#    dic['number_of_tetr']       = lev*(lev+1)//2 
-#    dic['number_of_pyrs']       = lev*(lev-1)//2
-#    dic['number_of_vertices']   = sum([r*(r+1)//2 for r in range(lev+2)])
-#    return dic
-
-# def n_faces_macrotetra (lev):
-#     print("def n_faces_macrotetra (lev):")
-#     Nel = n_elem_macrotetra(lev)['number_of_elements']
-#     return 2*lev**2+lev*(lev+1)+Nel-lev**2+2*(lev-1)**2+(lev-1)*lev*(lev+1)//6
-
-# def octant (o, points):
-#     print("mesh.octant")
-#     """ takes a fixed octant [points] and affine--transforms it to the other six.
-#         the last one is ones(3,1) to leave it unchanged """
-#     trans = np.array([[ 0,  0, -1, -1,  1,  1, -1, -1,  1],
-#                       [ 0,  0, -1,  1,  1, -1, -1,  1,  1],
-#                       [ 0,  0, -1, -1, -1,  1,  1,  1,  1]])
-#     return points*trans[:,o].reshape((3,1))
 
 def lambda1 (i, j, k, n, mu):
     return float(i)/n * (float(i+j+k)/n)**((1/float(mu))-1)
@@ -80,7 +36,6 @@ def macroel_tetrahedra (vertices, mu, n):
     P1 = np.array(vertices[:,1]).reshape((1,3))
     P2 = np.array(vertices[:,2]).reshape((1,3))
     P3 = np.array(vertices[:,3]).reshape((1,3))
-
 
     lambda_ = np.zeros((4, n+1, n+1, n+1))
 
