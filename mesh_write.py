@@ -59,17 +59,10 @@ def write_element_indices (file_name, levels):
     return
 
 def vertices_macro_hybrid (points, f_write):
-    """         
-        This only works for type I macro--element
-
-        writes the coordinates of the vertices of the mesh.
+    """ writes the coordinates of the vertices of the local mesh.
         the rows in the file output 'vertices.txt' define
         the global enumerations.
-
-        open ( '...', mode = 'a') for appending
-
-        return value: nmbr of vrtcs at the moment
-    """
+        return value: nmbr of vrtcs at the moment """
     nVertices = 0
     L = points.shape[0]
     with open (f_write,'ab') as out:
@@ -84,11 +77,12 @@ def vertices_macro_hybrid (points, f_write):
 def vertices_macro_tetra (points, f_write):
     """ points: dictionary with the points of the 
     tetrahedral non--hybrid macro--element """
-    L = len(points)
     with open (f_write, 'ab') as out:
         np.savetxt(out, points, fmt = __format__)
-    return L		
+    return len(points)
 
 def vertices_macro_prism (points, f_write):
     # CONTINUE HERE
-    return 0 # <------ local_n_vertices
+    with open (f_write, 'ab') as out:
+        np.savetxt(out, points, fmt = __format__)
+    return  # <------ local_n_vertices

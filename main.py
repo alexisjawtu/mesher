@@ -148,7 +148,6 @@ def filter_repeated_faces (n_elem):
 
 def omega (in_file = "partition", levels = 5, n_vert_prism = 6):
     """
-    TODO: more test versus old fichera()
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     global_vertices_writers:         write vertices.txt, global list of vertices
     """
