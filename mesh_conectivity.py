@@ -59,10 +59,12 @@ def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
     arr_out = np.concatenate((4*np.ones((n_vert_graded//4, 1),dtype=int), arr_out), axis=1)
     with open (f_name_out, 'ab') as tgt:
         np.savetxt(tgt, arr_out, fmt='%d')
-    return
+    return len(arr_out)
 
 def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
-    ## TODO 
+    # CONTINUE HERE: ver como hace write_elements_by_vertices_hybrid o tetra
+    # lo de agolpar abajo de todo la lista de elems x vert y registrar
+    # nro. de elem corresp a la listita de nros. de verts.
     pass
 
 def vertices_by_elements (f_name, lang):
