@@ -28,7 +28,7 @@ local_meshers                   = { 0 : mesh.macroel_hybrid,
                                     1 : mesh.macroel_tetrahedra, 
                                     2 : mesh.macroel_prisms }
 
-global_vertices_writers         = { 0 : mesh_write.vertices_macro_hybrid,
+physical_vertices_writers         = { 0 : mesh_write.vertices_macro_hybrid,
                                     1 : mesh_write.vertices_macro_tetra,
                                     2 : mesh_write.vertices_macro_prism }
 
@@ -149,7 +149,7 @@ def filter_repeated_faces (n_elem):
 def omega (in_file = "partition", levels = 2):
     """
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
-    global_vertices_writers:         write vertices.txt, global list of vertices
+    physical_vertices_writers:         write vertices.txt, global list of vertices
     """
     tau_zero = load_partition (in_file)
     mesh_write.write_element_indices("elements.txt", levels)
@@ -157,6 +157,6 @@ def omega (in_file = "partition", levels = 2):
     for i, E in iter(tau_zero.items()):
         points = local_meshers[E[0]](E[1],E[2],levels)
         elements_by_vertices_writers[E[0]]("elements_by_vertices_repeated.txt", levels, "Octave", init)
-        init += global_vertices_writers[E[0]](points, "vertices.txt")
+        init += physical_vertices_writers[E[0]](points, "vertices.txt")
     filter_repeated_faces(filter_repeated_vertices())
     return

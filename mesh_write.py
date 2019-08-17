@@ -75,7 +75,7 @@ def vertices_macro_hybrid (points, f_write):
     return nVertices
 
 def vertices_macro_tetra (points, f_write):
-    """ points: dictionary with the points of the 
+    """ points: np.array with the points of the 
     tetrahedral non--hybrid macro--element """
     with open (f_write, 'ab') as out:
         np.savetxt(out, points, fmt = __format__)

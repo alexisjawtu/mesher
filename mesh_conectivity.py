@@ -9,12 +9,8 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
 
     initial: tracks the number of vertices of the previous macro_element
 
-    esto es solo para el macro elemento
-    con un vertice singular y una arista singular en el np.array:
-
     Requires the file elements.txt written by
-    mesh_write.write_element_indices() to be
-    in the same directory.
+    mesh_write.write_element_indices() to be in the same directory.
 
     n == current quantity of levels
     
@@ -62,9 +58,19 @@ def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
     return len(arr_out)
 
 def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
-    # CONTINUE HERE: ver como hace write_elements_by_vertices_hybrid o tetra
+    #####################################################################
+    # CONTINUE HERE: hay que empezar por registrar la cantidad de vertices
+    # en funcion de "levels" para hacerlo directo tipo en el caso tetra
+    # y despues estudiar como leer el arreglo de vertices  para recorrer
+    # los prismas repitiendo vertices.
+    ######################################################################
+
+    # sver como hace write_elements_by_vertices_hybrid o tetra
     # lo de agolpar abajo de todo la lista de elems x vert y registrar
     # nro. de elem corresp a la listita de nros. de verts.
+
+
+
     pass
 
 def vertices_by_elements (f_name, lang):
