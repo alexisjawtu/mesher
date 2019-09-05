@@ -124,8 +124,9 @@ def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
                 drawing[t].append([x,y,z])  #  pyramidals
     return np.array(drawing)
 
-def plot(initial_partition = "fichera2", refinements = [3], angle_steps = [9], vertical_prism_refinement = 1):
-    """ initial_partition is a csv the macroelements, that is, the
+def plot(initial_partition = "fichera2", vertices_per_edge = [4], angle_steps = [9], vertical_prism_refinement = 1):
+    """ 
+    initial_partition is a csv the macroelements, that is, the
     first of the sequence of meshes. A record in initial_partition has to be:
     type_of_macro_element, np.array([P0,..,PN]), local_grading_parameter  """
     macro_elements = load_partition (initial_partition)
@@ -133,7 +134,7 @@ def plot(initial_partition = "fichera2", refinements = [3], angle_steps = [9], v
 
     trans = []
     __out__ = ''
-    for n in refinements:
+    for n in vertices_per_edge:
         fig = plt.figure()
         ax  = fig.add_subplot(1,1,1,projection='3d')
         for azim in angle_steps:

@@ -46,32 +46,43 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     return len(indices)
 
 def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
-    """ levels**3   == number of elements. levels**3*4 == number of vertices with repetitions.
+    """ levels**3   == number of elements. levels**3*4 == number of 
+     vertices WITH REPETITIONS.
     We assume that in the (Npts x 3) array of points the tetrahedra appear in order taking the rows
     four at a time. This is how it is done in mesh.macroel_tetrahedra().
     """
-    n_vert_graded = levels**3*4
-    arr_out = np.array(range(init + 1, init + n_vert_graded + 1)).reshape((n_vert_graded//4, 4))
-    arr_out = np.concatenate((4*np.ones((n_vert_graded//4, 1),dtype=int), arr_out), axis=1)
+    n_vert_repeated = levels**3*4
+    arr_out = np.array(range(init + 1, init + n_vert_repeated + 1)).reshape((n_vert_repeated//4, 4))
+    arr_out = np.concatenate((4*np.ones((n_vert_repeated//4, 1),dtype=int), arr_out), axis=1)
     with open (f_name_out, 'ab') as tgt:
         np.savetxt(tgt, arr_out, fmt='%d')
     return len(arr_out)
 
 def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     #####################################################################
-    # CONTINUE HERE: hay que empezar por registrar la cantidad de vertices
-    # en funcion de "levels" para hacerlo directo tipo en el caso tetra
     # y despues estudiar como leer el arreglo de vertices  para recorrer
     # los prismas repitiendo vertices.
     ######################################################################
 
-    # sver como hace write_elements_by_vertices_hybrid o tetra
-    # lo de agolpar abajo de todo la lista de elems x vert y registrar
-    # nro. de elem corresp a la listita de nros. de verts.
+    # TODO: we should write an algorithm that passes just one time per vertex
+    # recording every element that vertex belongs to in the correct order,
+    # then mark wich are the vertices in the frontier of macroelements and
+    # so reduce the complexity of the kill_repeated from cubic to quadratic.
+    
+    n_vert_repeated = 3*(levels+1)**2*(levels+2)  # i.e.: 6*(levels+1)**2*(levels+2)//2
+    arr_out = np.array(range(init + 1, init + 1 + n_vert_repeated)).reshape((n_vert_repeated//6, 6))
+    arr_out = np.concatenate((6*np.ones((n_vert_repeated//6, 1),dtype=int), arr_out), axis=1)
+    with open (f_name_out, 'ab') as tgt:
+        np.savetxt(tgt, arr_out, fmt='%d')
+    return len(arr_out)
+    
+    # ver como hace write_elements_by_vertices_hybrid o tetra
+    
+    # write_elements_by_vertices_tetra pone los numeros seguidos desde el 
+    # primero posible hasta (primero posible) + n_vert_graded
+    
 
-
-
-    pass
+    return len(arr_out)
 
 def vertices_by_elements (f_name, lang):
 	""" 

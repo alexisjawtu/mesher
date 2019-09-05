@@ -146,7 +146,7 @@ def filter_repeated_faces (n_elem):
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
     return 
 
-def omega (in_file = "partition", levels = 2):
+def omega (in_file = "partition4", levels = 3):
     """
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     physical_vertices_writers:         write vertices.txt, global list of vertices
@@ -155,8 +155,18 @@ def omega (in_file = "partition", levels = 2):
     mesh_write.write_element_indices("elements.txt", levels)
     init = 0
     for i, E in iter(tau_zero.items()):
-        points = local_meshers[E[0]](E[1],E[2],levels)
+        # for case E[0] == 1: the following writes contiguous indices with repetitions on 
+        # shared faces.
         elements_by_vertices_writers[E[0]]("elements_by_vertices_repeated.txt", levels, "Octave", init)
+
+        # for case E[0] == 1: the following calculates coordinates with repetitions on shared 
+        # faces, with the backtracking for tetrahedra. 
+        points = local_meshers[E[0]](E[1],E[2],levels)
+
+        # for case E[0] = 1: the following writes coordinates with repetitions on shared 
+        # faces, with the backtracking for tetrahedra. 
+        # Maybe we can overlap nicely the elements_by_vertices_writers and 
+        # the local_meshers for this case.
         init += physical_vertices_writers[E[0]](points, "vertices.txt")
     filter_repeated_faces(filter_repeated_vertices())
     return

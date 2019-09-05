@@ -82,10 +82,12 @@ def vertices_macro_tetra (points, f_write):
     return len(points)
 
 def vertices_macro_prism (points, f_write):
-    # CONTINUE in mesh_conectivity.write_elements_by_vertices_prisms()
-    print(points)
-    print(points[0])
-    print("2 ",points.dtype)
+    L = points.shape[0]
     with open (f_write, 'ab') as out:
+        for x in range(1,L):
+            for y in range(L):
+                for z in range(L-y):
+                    pass
+                    #points[x,y,:,z], points[x,] 
         np.savetxt(out, points, fmt = __format__)
     return  len(points) ## ACA NO ES ESTO PORQUE ESTAN ANIDADOS Y POR NIVELES
