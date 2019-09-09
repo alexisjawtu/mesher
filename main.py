@@ -157,7 +157,7 @@ def omega (in_file = "partition4", levels = 3):
     for i, E in iter(tau_zero.items()):
         # for case E[0] == 1: the following writes contiguous indices with repetitions on 
         # shared faces.
-        elements_by_vertices_writers[E[0]]("elements_by_vertices_repeated.txt", levels, "Octave", init)
+        elements_by_vertices_writers[E[0]](in_file+".ebv", levels, "Octave", init)
 
         # for case E[0] == 1: the following calculates coordinates with repetitions on shared 
         # faces, with the backtracking for tetrahedra. 
@@ -167,6 +167,6 @@ def omega (in_file = "partition4", levels = 3):
         # faces, with the backtracking for tetrahedra. 
         # Maybe we can overlap nicely the elements_by_vertices_writers and 
         # the local_meshers for this case.
-        init += physical_vertices_writers[E[0]](points, "vertices.txt")
+        init += physical_vertices_writers[E[0]](points, in_file+".ver")
     filter_repeated_faces(filter_repeated_vertices())
     return
