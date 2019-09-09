@@ -62,8 +62,8 @@ def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
 
 def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     #####################################################################
-    # y despues estudiar como leer el arreglo de vertices  para recorrer
-    # los prismas repitiendo vertices.
+    # Estudiar como leer el arreglo de vertices fisicos para recorrer
+    # los prismas respetando el experimento del papel
     ######################################################################
 
     # TODO: we should write an algorithm that passes just one time per vertex
@@ -71,7 +71,17 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     # then mark wich are the vertices in the frontier of macroelements and
     # so reduce the complexity of the kill_repeated from cubic to quadratic.
     
-    n_vert_repeated = 3*(levels+1)**2*(levels+2)  # i.e.: 6*(levels+1)**2*(levels+2)//2
+
+
+    """ in f_name_out we append the elements represented
+    by lists of six vertex indices. """
+
+    # the sum of the first k odd numbers is k**2
+    n_elems         = levels**3 
+    # only the vertices in the boundary of the macro--element will be repeated
+    n_vert_repeated = levels**2*(levels+1)//2    
+
+
     arr_out = np.array(range(init + 1, init + 1 + n_vert_repeated)).reshape((n_vert_repeated//6, 6))
     arr_out = np.concatenate((6*np.ones((n_vert_repeated//6, 1),dtype=int), arr_out), axis=1)
     with open (f_name_out, 'ab') as tgt:

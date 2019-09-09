@@ -11,6 +11,9 @@ def lambda3 (i, j, k, n, mu):
 
 def macroel_tetrahedra (vertices, mu, n):
     """ 
+        n == number of levels, i.e. n + 1 == number of nodes per edge of 
+        the macro--element.
+
         OBS: the graduation is, by default, towards 'P0',
         so we have to put the corresponding permutation of vertices when 
         calling the function.
@@ -23,14 +26,7 @@ def macroel_tetrahedra (vertices, mu, n):
                     Lambda_[l,i,j,k,:] <--- lambda_[l,i,j,k]*P_l
 
             and then call it. Make sure the dimension is the most comfortable.
-
-    P0 = np.array(P0).reshape((1,3))
-    P1 = np.array(P1).reshape((1,3))
-    P2 = np.array(P2).reshape((1,3))
-    P3 = np.array(P3).reshape((1,3))
-
     """
-
     ## TODO: remove this reshape() thing
     P0 = np.array(vertices[:,0]).reshape((1,3))
     P1 = np.array(vertices[:,1]).reshape((1,3))

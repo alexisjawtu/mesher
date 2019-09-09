@@ -65,8 +65,9 @@ def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "blue")
             plt_axes.plot(local_grid_points[:,j,0,i],local_grid_points[:,j,1,i],local_grid_points[:,j,2,i], color=color_name)
     return local_grid_points
 
-def plot_tetra_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "red"):
-    points = macroel_tetrahedra(vertices, local_mu, n)
+def plot_tetra_macroel(plt_axes, vertices, levels, local_mu = 1, color_name = "red"):
+    """ levels == (number of nodes per macro--element edge) - 1. """
+    points = macroel_tetrahedra(vertices, local_mu, levels)
     for i in [4*nn for nn in range(points.shape[0]//4)]:
         a = np.array([0,1,2,3]+[0,2,3,1])+i*np.ones(8,dtype=int)
         z = points[a,np.array([2]*8)]
@@ -124,8 +125,11 @@ def cube_drawing (coord, oct_range = range(2,9), macro_elems = [0,1,2,3]):
                 drawing[t].append([x,y,z])  #  pyramidals
     return np.array(drawing)
 
-def plot(initial_partition = "fichera2", vertices_per_edge = [4], angle_steps = [9], vertical_prism_refinement = 1):
+def plot(initial_partition = "fichera2", levels = [4], angle_steps = [9], vertical_prism_refinement = 1):
     """ 
+    
+    levels + 1 = number of nodes per macro--element edge
+
     initial_partition is a csv the macroelements, that is, the
     first of the sequence of meshes. A record in initial_partition has to be:
     type_of_macro_element, np.array([P0,..,PN]), local_grading_parameter  """
@@ -134,7 +138,7 @@ def plot(initial_partition = "fichera2", vertices_per_edge = [4], angle_steps = 
 
     trans = []
     __out__ = ''
-    for n in vertices_per_edge:
+    for n in levels:
         fig = plt.figure()
         ax  = fig.add_subplot(1,1,1,projection='3d')
         for azim in angle_steps:
