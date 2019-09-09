@@ -135,8 +135,8 @@ def macroel_prisms (macroel_vertices, mu, n):
     TODO: In a future version we will have n_vertical independent of n
 
     order of the columns in M := macroel_vertices:
-        (M[0], M[1], M[2]) == a triangle
-        (M[3], M[4], M[5]) == the other triangle
+        (M[:,0], M[:,1], M[:,2]) == a triangle
+        (M[:,3], M[:,4], M[:,5]) == the other triangle
     
         edges perpendicular to the triangles:
             edge in the singular direction == [M[0],M[3]]

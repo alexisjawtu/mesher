@@ -46,8 +46,10 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     return len(indices)
 
 def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
-    """ levels**3   == number of elements. levels**3*4 == number of 
-     vertices WITH REPETITIONS.
+    """ 
+        Writes rows of repeated indices, one row per element.
+        levels**3   == number of elements. 
+        levels**3*4 == number of vertices WITH REPETITIONS.
     We assume that in the (Npts x 3) array of points the tetrahedra appear in order taking the rows
     four at a time. This is how it is done in mesh.macroel_tetrahedra().
     """
