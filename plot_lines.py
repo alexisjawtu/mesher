@@ -1,7 +1,3 @@
-# Author: Gael Varoquaux <gael dot varoquaux at normalesup dot org>
-# Copyright (c) 2010, Enthought
-# License: BSD style
-
 import numpy as np
 from mayavi import mlab
 
