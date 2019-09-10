@@ -54,7 +54,7 @@ def load_partition (in_file):
                        for key in range(len(pre_list)) }
     return macro_elements
 
-def filter_repeated_vertices (n_vert_prism = 6):
+def filter_repeated_vertices (in_file,n_vert_prism = 6):
     """	look for repetitions of vertices
     ###########################################################################
     at this point the program is already general:
@@ -62,7 +62,7 @@ def filter_repeated_vertices (n_vert_prism = 6):
     writes on disc: vertices_by_elements.txt
     mesh_conectivity.vertices_by_elements('elements_by_vertices.txt', 'Octave')
     ########################################################################"""
-    with open('elements_by_vertices_repeated.txt','r') as inp:
+    with open(in_file+'.ebvr','r') as inp:
         things = inp.readlines()
     
     n_elem = len(things)
@@ -74,7 +74,7 @@ def filter_repeated_vertices (n_vert_prism = 6):
     
     print ('mesh_conectivity.kill_repeated()')
     t0 = time.time()
-    replace_verts = mesh_conectivity.kill_repeated('vertices.txt')  ## repetitions in vertices.txt leave a dictionary
+    replace_verts = mesh_conectivity.kill_repeated(in_file+'.ver')  ## repetitions in vertices.txt leave a dictionary
     print (time.time() - t0)
     print ('\n')
     
@@ -93,20 +93,20 @@ def filter_repeated_vertices (n_vert_prism = 6):
     elem_vert_dscnt_indcs = elem_vert_dscnt_indcs.reshape((n_elem,7))
     del elem_vert_repeated
     ## <--- whithout repetitions
-    with open('elements_by_vertices.txt','wb') as out:
+    with open(in_file+'.ebv','wb') as out:
         for e in elem_vert_dscnt_indcs:
             np.savetxt(out, e[0:e[0]+1].reshape((1,e[0]+1)), fmt='%d')
     return n_elem
 
-def filter_repeated_faces (n_elem):
+def filter_repeated_faces (in_file,n_elem):
     """ Takes the output of 
     mesh_conectivity.vertices_by_elements()	writes on disc: shared_faces.txt
     writes: faces_repeated.txt 			----> with repetitions
             faces_local_to_global.txt   ----> for macro--element of type 1 """	
     print ('Face Enumeration')
-    mesh_conectivity.face_enumeration('elements_by_vertices.txt')
+    mesh_conectivity.face_enumeration(in_file)
     print ('\r')
-    with open('faces_local_to_global.txt', 'r') as ent:
+    with open(in_file+'.fltg', 'r') as ent:
         stuff = ent.readlines()
     elem_faces_repeated = np.zeros((n_elem, 6),dtype=int)
     for elem in range(len(stuff)):
@@ -116,7 +116,7 @@ def filter_repeated_faces (n_elem):
     ## reads repetitions in faces_repeated.txt and leaves a dictionary
     ## writes file: faces.txt -----> global unique enumeration of faces
     print('Killing repeated faces')
-    replace_faces, indices, num_faces = mesh_conectivity.kill_repeated_faces('faces_repeated.txt')  
+    replace_faces, indices, num_faces = mesh_conectivity.kill_repeated_faces(in_file)  
     print( '\r')
     with open ('num_faces.txt','w') as n_of_faces:
         n_of_faces.write(str(num_faces))
@@ -141,7 +141,7 @@ def filter_repeated_faces (n_elem):
     print ('\r')
     elem_faces = np.copy(elem_faces).reshape((n_elem,6))
     del elem_faces_discnt_index
-    with open('elements_by_faces.txt','ab') as ex:
+    with open(in_file+'.ebf','ab') as ex:
         for elem in elem_faces:
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
     return 
@@ -152,12 +152,12 @@ def omega (in_file = "partition4", levels = 3):
     physical_vertices_writers:         write vertices.txt, global list of vertices
     """
     tau_zero = load_partition (in_file)
-    mesh_write.write_element_indices("elements.txt", levels)
+    mesh_write.write_element_indices(in_file+".elem", levels)
     init = 0
     for i, E in iter(tau_zero.items()):
         # for case E[0] == 1: the following writes contiguous indices with repetitions on 
         # shared faces.
-        elements_by_vertices_writers[E[0]](in_file+".ebv", levels, "Octave", init)
+        elements_by_vertices_writers[E[0]](in_file, levels, "Octave", init)
 
         # for case E[0] == 1: the following calculates coordinates with repetitions on shared 
         # faces, with the backtracking for tetrahedra. 
@@ -168,5 +168,5 @@ def omega (in_file = "partition4", levels = 3):
         # Maybe we can overlap nicely the elements_by_vertices_writers and 
         # the local_meshers for this case.
         init += physical_vertices_writers[E[0]](points, in_file+".ver")
-    filter_repeated_faces(filter_repeated_vertices())
+    filter_repeated_faces(in_file,filter_repeated_vertices(in_file))
     return

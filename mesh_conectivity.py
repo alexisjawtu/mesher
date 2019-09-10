@@ -28,9 +28,9 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     etc...
     """
     language  = {'C' : 0, 'Octave' : 1}
-    with open ("elements.txt", 'r') as inp:
+    with open (f_name_out+".elem", 'r') as inp:
         indices = inp.readlines()
-    with open (f_name_out, 'ab') as out:
+    with open (f_name_out+".ebvr", 'ab') as out:
         for j in range(len(indices)):
             l = [int(c) for c in indices[j].rstrip().split(' ')]
             line = np.zeros((1,l[0]+1),dtype=int)
@@ -56,7 +56,7 @@ def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
     n_vert_repeated = levels**3*4
     arr_out = np.array(range(init + 1, init + n_vert_repeated + 1)).reshape((n_vert_repeated//4, 4))
     arr_out = np.concatenate((4*np.ones((n_vert_repeated//4, 1),dtype=int), arr_out), axis=1)
-    with open (f_name_out, 'ab') as tgt:
+    with open (f_name_out+".ebvr", 'ab') as tgt:
         np.savetxt(tgt, arr_out, fmt='%d')
     return len(arr_out)
 
@@ -93,7 +93,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
 
     arr_out = np.array(range(init + 1, init + 1 + n_vert_repeated)).reshape((n_vert_repeated//6, 6))
     arr_out = np.concatenate((6*np.ones((n_vert_repeated//6, 1),dtype=int), arr_out), axis=1)
-    with open (f_name_out, 'ab') as tgt:
+    with open (f_name_out+".ebvr", 'ab') as tgt:
         np.savetxt(tgt, arr_out, fmt='%d')
     return len(arr_out)
     
@@ -143,14 +143,14 @@ def vertices_by_elements (f_name, lang):
 	"""
 	language  = {'C' : 0, 'Octave' : 1}
 	elem_vert = {}
-	with open (f_name, 'r') as elements:
+	with open (f_name+".elem", 'r') as elements:
 		elem = elements.readlines()
 	for j in range(len(elem)):
 		e = [int(x) for x in elem[j].rstrip().split(' ')]
 		for v_index in e[1:len(e)]:  ## con .get()
 			if v_index in elem_vert: elem_vert[v_index].append(j+language[lang])
 			else 				   : elem_vert[v_index] = [j+language[lang]] 
-	with open ('vertices_by_elements.txt','w') as out:
+	with open (f_name+'.vbe','w') as out:
 		for vertex in elem_vert:
 			out.write(str(vertex) + ' ' + ' '.join([str(r) for r in elem_vert[vertex]]) + '\n')
 			#out.write(' '.join([str(r) for r in elem_vert[vertex]]) + '\n')
@@ -179,7 +179,7 @@ def faces (f_name, n_elem, lang):
 	"""
 	language  = {'C' : 0, 'Octave' : 1}
 	d = {}
-	with open (f_name,'r') as inp:	
+	with open (f_name+".elem",'r') as inp:	
 		lines = inp.readlines()
 	n_lines = len(lines)
 	
@@ -241,7 +241,7 @@ def face_enumeration (file_name):
 	global_string 			= ''
 	local_to_global_string 	= ''
 
-	with open (file_name, 'r') as data:
+	with open (file_name+".ebv", 'r') as data:
 		elem_by_vert = data.readlines()
 	n_el = len(elem_by_vert)
 	
@@ -253,9 +253,9 @@ def face_enumeration (file_name):
 		global_string 			+= writers[vertices[0]](vertices)
 		face_index 				+= nr_face
 
-	with open ('faces_repeated.txt', 'w') as out_global:
+	with open (file_name+'.faces_rep', 'w') as out_global:
 		out_global.write(global_string)
-	with open ('faces_local_to_global.txt', 'w') as out_loc_to_global:
+	with open (file_name+'.fltg', 'w') as out_loc_to_global:
 		out_loc_to_global.write(local_to_global_string)
 	return
 
@@ -284,7 +284,7 @@ def kill_repeated (vertices_file_name):
 	return d_out
 
 def kill_repeated_faces (faces_file_name):
-	with open(faces_file_name,'r') as inp:
+	with open(faces_file_name+".faces_rep",'r') as inp:
 		faces = inp.readlines()
 
 	face_dict = {}
@@ -321,7 +321,7 @@ def kill_repeated_faces (faces_file_name):
 		if i in indices:
 			indices.remove(i)
 
-	with open ('faces.txt', 'w') as face_list:
+	with open (faces_file_name+'.faces', 'w') as face_list:
 		for x in range(len(faces)):
 			face_list.write(faces[x])
 
