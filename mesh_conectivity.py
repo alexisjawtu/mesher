@@ -76,20 +76,27 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     """ f_name_out: we append the elements represented
     by lists of six vertex indices. 
     
-    the sum of the first k odd numbers is k**2, so
-    levels**3 equals the number of elements of the present macro--element.
+    The sum of the first k odd numbers is k**2.
+
+    Levels**3 equals the number of elements of the present macro--element.
     only the vertices in the boundary of the macro--element will be repeated,
     so we have:      
                     n_vert_repeated == (levels+1)**2*(levels+2)//2    
 
     layer_nodes: number of nodes in each layer
     """
-    layer_nodes     =   (levels+1)*(levels+2)//2    
+    n_loc_elem  = levels**2
+    layer_nodes = (levels+1)*(levels+2)//2    
     local_elements_by_vertices = np.zeros((levels**3,6))
-    local_elements_by_vertices[0:9,3:6]=local_elements_by_vertices[0:9,0:3] + layer_nodes 
-    for l in range(levels):
-        local_elements_by_vertices[9:18,:]=local_elements_by_vertices[0:9,:] + l*layer_nodes   
 
+    ### CONTINE HERE
+    ### These are the key entries to calculate
+    #### ------->>  local_elements_by_vertices[0:n_loc_elem,0:3]
+    ####
+    
+    local_elements_by_vertices[0:n_loc_elem,3:6]=local_elements_by_vertices[0:n_loc_elem,0:3] + layer_nodes 
+    for l in range(levels-1):
+        local_elements_by_vertices[(l+1)*(n_loc_elem):(l+2)*(n_loc_elem),:] = local_elements_by_vertices[0:n_loc_elem,:] + (l+1)*layer_nodes   
 
     arr_out = np.array(range(init + 1, init + 1 + n_vert_repeated)).reshape((n_vert_repeated//6, 6))
     arr_out = np.concatenate((6*np.ones((n_vert_repeated//6, 1),dtype=int), arr_out), axis=1)
