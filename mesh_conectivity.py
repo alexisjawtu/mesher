@@ -83,20 +83,30 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     so we have:      
                     n_vert_repeated == (levels+1)**2*(levels+2)//2    
 
-    layer_nodes: number of nodes in each layer
+    nodes_per_layer: number of nodes in each layer
     """
-    n_loc_elem  = levels**2
-    layer_nodes = (levels+1)*(levels+2)//2    
+    elems_per_level  = levels**2
+    nodes_per_layer  = (levels+1)*(levels+2)//2    
     local_elements_by_vertices = np.zeros((levels**3,6))
 
     ### CONTINE HERE
     ### These are the key entries to calculate
-    #### ------->>  local_elements_by_vertices[0:n_loc_elem,0:3]
-    ####
+    #### ------->>  
+    #### 
+    #levels+1, 
+    #levels, 
+    #levels-1, 
+    #levels-2,
+    #...,
+    #2,
+    #1  ver dibujo en hoja grande
+
+    for node in range(init+1,init+1+nodes_per_layer):
+        nada = local_elements_by_vertices[0:elems_per_level,0:3]
     
-    local_elements_by_vertices[0:n_loc_elem,3:6]=local_elements_by_vertices[0:n_loc_elem,0:3] + layer_nodes 
+    local_elements_by_vertices[0:elems_per_level,3:6]=local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer 
     for l in range(levels-1):
-        local_elements_by_vertices[(l+1)*(n_loc_elem):(l+2)*(n_loc_elem),:] = local_elements_by_vertices[0:n_loc_elem,:] + (l+1)*layer_nodes   
+        local_elements_by_vertices[(l+1)*(elems_per_level):(l+2)*(elems_per_level),:] = local_elements_by_vertices[0:elems_per_level,:] + (l+1)*nodes_per_layer   
 
     arr_out = np.array(range(init + 1, init + 1 + n_vert_repeated)).reshape((n_vert_repeated//6, 6))
     arr_out = np.concatenate((6*np.ones((n_vert_repeated//6, 1),dtype=int), arr_out), axis=1)
