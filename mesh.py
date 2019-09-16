@@ -134,11 +134,11 @@ def macroel_prisms (macroel_vertices, mu, n):
         (M[:,0], M[:,1], M[:,2]) == a triangle
         (M[:,3], M[:,4], M[:,5]) == the other triangle
     
-        edges perpendicular to the triangles:
-            edge in the singular direction == [M[0],M[3]]
-            the others:                       [M[1],M[4]], [M[2],M[5]]
+    edges perpendicular to the triangles:
+        singular edge (if it is singular) == [M[0],M[3]] 
+        the others:             [M[1],M[4]], [M[2],M[5]]
 
-    obs: to sum faster, the levels in the points array which are 
+    OBS: to sum faster, in the array of points, the levels
     greater than zero end up filled as a rectangle of points. 
     Be careful not to use that coordinates. 
     """
@@ -151,5 +151,5 @@ def macroel_prisms (macroel_vertices, mu, n):
             points[0,y,:,z] = temp + macroel_vertices[:,0]
 
     for x in range(1,n_vertical+1): # translating level 0 to the levels above
-    	points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vertical)*(macroel_vertices[:,3] - macroel_vertices[:,0]).reshape((3,1))
+        points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vertical)*(macroel_vertices[:,3] - macroel_vertices[:,0]).reshape((3,1))
     return points

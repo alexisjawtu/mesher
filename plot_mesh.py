@@ -61,7 +61,7 @@ def plot_prism_macroel(plt_axes, vertices, n, local_mu = 1, color_name = "blue")
             plt_axes.plot(x[:,0],x[:,1],x[:,2],color=color_name)
     
     for j in range(n+1):  # <<
-        for i in range(n+1-j):  # verticals: TODO FIX PLOTTING BUG when setting independent horix and vertic. refinements
+        for i in range(n+1-j):  # verticals: TODO FIX PLOTTING BUG when setting independent horiz and vertic refinements
             plt_axes.plot(local_grid_points[:,j,0,i],local_grid_points[:,j,1,i],local_grid_points[:,j,2,i], color=color_name)
     return local_grid_points
 

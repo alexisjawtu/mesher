@@ -102,7 +102,18 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     #1  ver dibujo en hoja grande
 
     for node in range(init+1,init+1+nodes_per_layer):
-        nada = local_elements_by_vertices[0:elems_per_level,0:3]
+        local_elements_by_vertices[0:0] = 1
+        local_elements_by_vertices[0:1] = 2
+        local_elements_by_vertices[1:0] = 2
+        local_elements_by_vertices[2:0] = 2
+
+arreglar estos indices:
+        node 1 -----> row 0
+
+        1 <= i <= levels-1:
+            node i -----> row 2*(i-1)-1 == 2*i-3
+
+        local_elements_by_vertices[0:elems_per_level,0:3]
     
     local_elements_by_vertices[0:elems_per_level,3:6]=local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer 
     for l in range(levels-1):
