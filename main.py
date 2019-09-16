@@ -62,12 +62,16 @@ def filter_repeated_vertices (n_vert_prism = 6):
     writes on disc: vertices_by_elements.txt
     mesh_conectivity.vertices_by_elements('elements_by_vertices.txt', 'Octave')
     ########################################################################"""
+
+### CONTINUE HERE! OJO QUE ESTOY REEMPLAZANDO LAS CANTIDADES DE NODOS TAMBIEN!
+
     with open('elements_by_vertices_repeated.txt','r') as inp:
         things = inp.readlines()
     
     n_elem = len(things)
     
     elem_vert_repeated = np.zeros((n_elem,n_vert_prism+1),dtype=int)
+
     for k in range(len(things)):
         ele                     = np.fromstring(things[k],dtype=int,sep=' ')
         elem_vert_repeated[k]   = np.concatenate((ele,np.zeros((n_vert_prism+1-len(ele)),dtype=int)))

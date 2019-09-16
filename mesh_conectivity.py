@@ -106,18 +106,39 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     #    local_elements_by_vertices[0:1] = 2
     #    local_elements_by_vertices[1:0] = 2
     #    local_elements_by_vertices[2:0] = 2
-    #    
-    #arreglar estos indices:
-    #    node 1 -----> row 0
-    #    
-    #    1 <= i <= levels-1:
-    #        node i -----> row 2*(i-1)-1 == 2*i-3
-    #        
-    #    local_elements_by_vertices[0:elems_per_level,0:3]
-    #
-    #local_elements_by_vertices[0:elems_per_level,3:6]=local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer 
-    #for l in range(levels-1):
-    #    local_elements_by_vertices[(l+1)*(elems_per_level):(l+2)*(elems_per_level),:] = local_elements_by_vertices[0:elems_per_level,:] + (l+1)*nodes_per_layer
+
+    arreglar estos indices:
+
+    1...(levels+1)
+        node 1 -----> elem 1
+        
+        2 <= i <= (levels):
+            node i -----> elems 2*i-3, 2*i-2, 2*i-1
+        
+        node levels+1 -----> elem 2*levels-1
+
+    (levels+2)...(2*levels+1)
+
+        node levels+2 -----> elems 1, 2, 2*levels 
+
+        levels+3 <= i <= (levels+1) + (levels) - 1: ### de a 6
+            seis funciones afines:
+                1
+                2
+                3
+                4
+                5
+                6
+
+        node 2*levels+1 ----->    
+
+
+
+        local_elements_by_vertices[0:elems_per_level,0:3]
+    
+    local_elements_by_vertices[0:elems_per_level,3:6]=local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer 
+    for l in range(levels-1):
+        local_elements_by_vertices[(l+1)*(elems_per_level):(l+2)*(elems_per_level),:] = local_elements_by_vertices[0:elems_per_level,:] + (l+1)*nodes_per_layer
 
     
     # ver como hace write_elements_by_vertices_hybrid o tetra
