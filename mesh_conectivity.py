@@ -107,8 +107,6 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     #    local_elements_by_vertices[1:0] = 2
     #    local_elements_by_vertices[2:0] = 2
 
-    arreglar estos indices:
-
     1...(levels+1)
         node 1 -----> elem 1
         
@@ -121,7 +119,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
 
         node levels+2 -----> elems 1, 2, 2*levels 
 
-        levels+3 <= i <= (levels+1) + (levels) - 1: ### de a 6
+        levels+3 <= i <= 2*levels # == (levels+1) + (levels) - 1: ### de a 6
             seis funciones afines: nodos ---> elems
               
             #    -----------
@@ -132,12 +130,13 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
                 1:  i ---> 2*(i-levels-2)
                 2:  i ---> 2*(i-levels-2)+1
                 3:  i ---> 2*(i-levels-2)+2
-                4:  
-                5
-                6
+                4:  i ---> 2*i-6 == 2*l+2*(i-l-3)
+                5:  i ---> 2*i-5
+                6:  i ---> 2*i-4
 
         node 2*levels+1 ----->    
 
+IR PASANDO EN LIMPIO
 
 
         local_elements_by_vertices[0:elems_per_level,0:3]
