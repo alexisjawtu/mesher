@@ -122,11 +122,17 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
         node levels+2 -----> elems 1, 2, 2*levels 
 
         levels+3 <= i <= (levels+1) + (levels) - 1: ### de a 6
-            seis funciones afines:
-                1
-                2
-                3
-                4
+            seis funciones afines: nodos ---> elems
+              
+            #    -----------
+            #   / 4 \ 5 / 6 \
+            #   \ 1 / 2 \ 3 /
+            #    -----------
+
+                1:  i ---> 2*(i-levels-2)
+                2:  i ---> 2*(i-levels-2)+1
+                3:  i ---> 2*(i-levels-2)+2
+                4:  
                 5
                 6
 
