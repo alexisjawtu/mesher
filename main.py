@@ -81,7 +81,7 @@ def filter_repeated_vertices (in_file,n_vert_prism = 6):
     print ('vertices replacement loop version 2')
     t0      = time.time()
     counter = 1
-    elem_vert_dscnt_indcs = np.copy(elem_vert_repeated).reshape(n_elem*7)
+    elem_vert_dscnt_indcs = np.copy(elem_vert_repeated[:,1:]).reshape(n_elem*6)
     for key in replace_verts:
         print ('progress: {}/{}\r'.format(counter,len(replace_verts)),sep=' ',end='',flush=True)
         counter += 1
@@ -90,7 +90,9 @@ def filter_repeated_vertices (in_file,n_vert_prism = 6):
     print ('\r')
     print (time.time() - t0)
     print ('\n')
-    elem_vert_dscnt_indcs = elem_vert_dscnt_indcs.reshape((n_elem,7))
+    elem_vert_dscnt_indcs = elem_vert_dscnt_indcs.reshape((n_elem,6))
+    col = elem_vert_repeated[:,0].reshape(elem_vert_repeated.shape[0],1)
+    elem_vert_dscnt_indcs = np.concatenate((col,elem_vert_dscnt_indcs),axis=1)
     del elem_vert_repeated
     ## <--- whithout repetitions
     with open(in_file+'.ebv','wb') as out:
@@ -118,7 +120,7 @@ def filter_repeated_faces (in_file,n_elem):
     print('Killing repeated faces')
     replace_faces, indices, num_faces = mesh_conectivity.kill_repeated_faces(in_file)  
     print( '\r')
-    with open ('num_faces.txt','w') as n_of_faces:
+    with open (in_file+'.nf','w') as n_of_faces:
         n_of_faces.write(str(num_faces))
     #### uniquifying faces:
     print('Face replacements loop version 2.')

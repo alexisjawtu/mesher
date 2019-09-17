@@ -259,6 +259,7 @@ def face_enumeration (file_name):
 		out_loc_to_global.write(local_to_global_string)
 	return
 
+
 def kill_repeated (vertices_file_name):
 	""" 
 		searches: 		repeated vertices
@@ -325,7 +326,7 @@ def kill_repeated_faces (faces_file_name):
 		for x in range(len(faces)):
 			face_list.write(faces[x])
 
-	with open('arch_indices.txt', 'w') as idx_file:
+	with open(faces_file_name+'.aidx', 'w') as idx_file:
 		idx_file.write(str(indices))
 
 	num_faces = len(faces)
