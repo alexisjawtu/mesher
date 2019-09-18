@@ -46,10 +46,14 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     return len(indices)
 
 def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
-    """ 
-        Writes rows of repeated indices, one row per element.
-        levels**3   == number of elements. 
-        levels**3*4 == number of vertices WITH REPETITIONS.
+    """ TODO: we should write an algorithm that passes just one time per vertex
+        recording every element that vertex belongs to in the correct order,
+        then mark wich are the vertices in the frontier of macroelements and
+        so reduce the complexity of the kill_repeated from cubic to quadratic.
+ 
+    Writes rows of repeated indices, one row per element.
+    levels**3   == number of elements. 
+    levels**3*4 == number of vertices WITH REPETITIONS.
     We assume that in the (Npts x 3) array of points the tetrahedra appear in order taking the rows
     four at a time. This is how it is done in mesh.macroel_tetrahedra().
     """
@@ -61,18 +65,7 @@ def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
     return len(arr_out)
 
 def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
-    #####################################################################
-    # Estudiar como leer el arreglo de vertices fisicos para recorrer
-    # los prismas respetando el experimento del papel
-    ######################################################################
-
-    # TODO: we should write an algorithm that passes just one time per vertex
-    # recording every element that vertex belongs to in the correct order,
-    # then mark wich are the vertices in the frontier of macroelements and
-    # so reduce the complexity of the kill_repeated from cubic to quadratic.
     
-
-
     """ f_name_out: we append the elements represented
     by lists of six vertex indices. 
     
@@ -89,10 +82,6 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     nodes_per_layer  = (levels+1)*(levels+2)//2    
     local_elements_by_vertices = np.zeros((levels**3,6))
 
-    ### CONTINE HERE
-    ### These are the key entries to calculate
-    #### ------->>  
-    #### 
     #levels+1, 
     #levels, 
     #levels-1, 
@@ -102,18 +91,13 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     #1  ver dibujo en hoja grande
 
     #for node in range(init+1,init+1+nodes_per_layer):
-    #    local_elements_by_vertices[0:0] = 1
-    #    local_elements_by_vertices[0:1] = 2
-    #    local_elements_by_vertices[1:0] = 2
-    #    local_elements_by_vertices[2:0] = 2
 
+## DRAFT
     1...(levels+1)
-        1 -----> elem 1
         
         2 <= i <= (levels):
             node i -----> elems 2*i-3, 2*i-2, 2*i-1
         
-        node levels+1 -----> elem 2*levels-1
 
     (levels+2)...(2*levels+1):
 
@@ -135,15 +119,43 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
                 6:  i ---> 2*i-4
 
         2*levels+1 ---> elems 2*l-2, 2*l-1, 4*l-4
+###################
 
-IR PASANDO EN LIMPIO
+## CLEAN:
+    # dict with the (now empty) 3-lists to append the first
+    # nodes_per_layer nodes
+    local_3_lists = dict(zip(list(range(elems_per_level)),elems_per_level*[[]]))
+    # FIRST ROW
+    # head and tail base cases
+    local_elements_by_vertices[0:0]             = init
+    local_elements_by_vertices[2*levels-1:1]    = levels+1
+    # inductive middle cases:
+    current_node = 2
+    while current_node<levels+1:
+        # 3 affine transfs
+        local_3_lists[2*current_node-3] += [current_node]
+        local_3_lists[2*current_node-2] += [current_node]
+        local_3_lists[2*current_node-1] += [current_node]
+        current_node=current_node+1
 
+    current_last_node = levels
+    while current_last_node > 2:
+        LAYER HEAD base case.
+        current_node = 2
+        while current_node < current_last_node:
+            ## here the magic
+            current_node = current_node + 1
+        LAYER TAIL base case
+        current_last_node = current_last_node - 1
 
-        local_elements_by_vertices[0:elems_per_level,0:3]
-    
-    local_elements_by_vertices[0:elems_per_level,3:6]=local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer 
+    LAST TWO ROWS
+
+    local_elements_by_vertices[0:elems_per_level,3:6] \
+        = local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer
     for l in range(levels-1):
-        local_elements_by_vertices[(l+1)*(elems_per_level):(l+2)*(elems_per_level),:] = local_elements_by_vertices[0:elems_per_level,:] + (l+1)*nodes_per_layer
+        local_elements_by_vertices[(l+1)*(elems_per_level):(l+2)*(elems_per_level),:] \
+            = local_elements_by_vertices[0:elems_per_level,:] 
+              + (l+1)*nodes_per_layer
 
     
     # ver como hace write_elements_by_vertices_hybrid o tetra
