@@ -125,30 +125,41 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     # dict with the (now empty) 3-lists to append the first
     # nodes_per_layer nodes
     local_3_lists = dict(zip(list(range(elems_per_level)),elems_per_level*[[]]))
+    
+
+    # if number of layers >= 4
     # FIRST ROW
     # head and tail base cases
-    local_elements_by_vertices[0:0]             = init
-    local_elements_by_vertices[2*levels-1:1]    = levels+1
+    local_elements_by_vertices[0:0]             = init+1
+    local_elements_by_vertices[2*levels-1:1]    = init+1+levels
     # inductive middle cases:
-    current_node = 2
-    while current_node<levels+1:
+    current_node = init+2
+    while current_node < levels+1:
         # 3 affine transfs
+        hay que restar uno mas para los arreglos C
         local_3_lists[2*current_node-3] += [current_node]
         local_3_lists[2*current_node-2] += [current_node]
         local_3_lists[2*current_node-1] += [current_node]
-        current_node=current_node+1
+        current_node = current_node+1
 
-    current_last_node = levels
-    while current_last_node > 2:
-        LAYER HEAD base case.
-        current_node = 2
-        while current_node < current_last_node:
-            ## here the magic
+    # ROWS with the hexagonal affin transforms
+    add_to = levels-1 #    current_last_node = levels
+    while add_to > 2  #current_last_node > 2:
+        # HEAD base case in each row
+        add = 1
+        while add < add_to:
             current_node = current_node + 1
-        LAYER TAIL base case
-        current_last_node = current_last_node - 1
+            local_3_lists[aff_trnsf_1]     += [current_node]
+            local_3_lists[aff_trnsf_1 + 1] += [current_node]
+            local_3_lists[aff_trnsf_1 + 2] += [current_node]
+            local_3_lists[aff_trnsf_4]     += [current_node]
+            local_3_lists[aff_trnsf_4 + 1] += [current_node]
+            local_3_lists[aff_trnsf_4 + 2] += [current_node]
+            add = add + 1
+         TAIL base cas in each LAYER
+        add_to = add_to-1 # current_last_node = current_last_node - 1
 
-    LAST TWO ROWS
+    # LAST TWO ROWS
 
     local_elements_by_vertices[0:elems_per_level,3:6] \
         = local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer
