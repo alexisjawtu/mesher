@@ -153,12 +153,13 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     LAST TWO ROWS
     
     ### new stuff
-    layer = levels 
+    layer = levels #it also works as the odd sum limit
     while layer > 2:
-        left_below = sum([2*k-1 for k in ])
-        left_above = 
-        
-        layer = layer - 1 
+        step = 1
+        while step < layer:  # layer 'layer' has 'layer' nodes
+            left_below = sum([2*k-1 for k in range(levels,layer,-1)]) + step*2
+            left_above = sum([2*k-1 for k in range(levels,layer-1,-1)]) + step
+        layer           = layer - 1
 
     ### end new stuff
 
