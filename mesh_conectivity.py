@@ -92,6 +92,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
 
     #for node in range(init+1,init+1+nodes_per_layer):
 
+"""
 ## DRAFT
     1...(levels+1)
         
@@ -120,6 +121,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
 
         2*levels+1 ---> elems 2*l-2, 2*l-1, 4*l-4
 ###################
+"""
 
 ## CLEAN:
     # dict with the (now empty) 3-lists to append the first
@@ -130,7 +132,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     local_elements_by_vertices[0:0]             = init
     local_elements_by_vertices[2*levels-1:1]    = levels+1
     # inductive middle cases:
-    current_node = 2
+    current_node = init+2
     while current_node<levels+1:
         # 3 affine transfs
         local_3_lists[2*current_node-3] += [current_node]
@@ -149,6 +151,16 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
         current_last_node = current_last_node - 1
 
     LAST TWO ROWS
+    
+    ### new stuff
+    layer = levels 
+    while layer > 2:
+        left_below = sum([2*k-1 for k in ])
+        left_above = 
+        
+        layer = layer - 1 
+
+    ### end new stuff
 
     local_elements_by_vertices[0:elems_per_level,3:6] \
         = local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer
