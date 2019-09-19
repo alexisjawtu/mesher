@@ -110,21 +110,27 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     # INDUCTIVE MIDDLE LAYERS
     layer = levels #it also works as the odd sum limit
     while layer > 2:
-        # LAYER HEAD BASE CASE REMAINING
-        
-        
-        
+        extra_odd = 2*layer-1
+        # LAYER HEAD BASE CASE
+        below 	    = sum([2*k-1 for k in range(levels,layer,-1)]) + 1
+        right_below = below + 1
+        right_above = below + extra_odd
+        # INDUCTIVE MIDDLE STEPS
         step = 1
         while step < layer:  # layer 'layer' has 'layer' nodes
             left_below  = sum([2*k-1 for k in range(levels,layer,-1)]) + step*2
             below       = left_below + 1
             right_below = below + 1
-            left_above  = sum([2*k-1 for k in range(levels,layer-1,-1)]) + step
+            left_above  = sum([2*k-1 for k in range(levels,layer,-1)]) + extra_odd + step
             above       = left_above + 1
             right_above = above + 1
-        # LAYER TAIL BASE CASE REMAINING
-        layer           = layer - 1
+        # LAYER TAIL BASE CASE
+        below = sum([2*k-1 for k in range(levels,layer,-1)]) + extra_odd
+        left_below = below - 1
+        left_above = 
+        layer = layer - 1
     # UPPER TWO BASE CASE LAYERS REMAINIG
+    # ARRAY local_elements_by_vertices ASSIGNMENT REMAINING
 
     local_elements_by_vertices[0:elems_per_level,3:6] \
         = local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer
