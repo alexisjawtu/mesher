@@ -94,28 +94,38 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     local_elements_by_vertices = np.zeros((levels**3,6))
     # dict with the (now empty) 3-lists to append the first
     # nodes_per_layer nodes
-    local_3_lists = dict(zip(list(range(elems_per_level)),elems_per_level*[[]]))
+    local_3_lists = dict(zip(list(range(1,elems_per_level+1)),elems_per_level*[[]]))
+    
     # LOWER LAYER
-    #  head and tail base cases
-    local_elements_by_vertices[0:0]             = init
-    local_elements_by_vertices[2*levels-1:1]    = levels+1
-    #  inductive middle cases:
+    #  head base step
+    local_3_lists[1]             += [init]
+    
+    #  inductive middle steps:
     current_node = init+2
     while current_node<levels+1:
         # 3 affine transfs
         local_3_lists[2*current_node-3] += [current_node]
         local_3_lists[2*current_node-2] += [current_node]
         local_3_lists[2*current_node-1] += [current_node]
-        current_node=current_node+1 
+        current_node += 1
+    #  tail base step
+    local_3_lists[2*levels-1]           += [current_node]
+    
     # INDUCTIVE MIDDLE LAYERS
     layer = levels #it also works as the odd sum limit
     while layer > 2:
         extra_odd = 2*layer-1
         # LAYER HEAD BASE CASE
-        below 	    = sum([2*k-1 for k in range(levels,layer,-1)]) + 1
-        right_below = below + 1
-        right_above = below + extra_odd
+        current_node += 1
+        below 	     = sum([2*k-1 for k in range(levels,layer,-1)]) + 1
+        local_3_lists[below]             += [current_node]
+        local_3_lists[below + 1]         += [current_node] # right_below
+        local_3_lists[below + extra_odd] += [current_node] # right_above
         # INDUCTIVE MIDDLE STEPS
+        
+        CONTINUE HERE: sigo bien con el current_node?
+            hacer las siguientes asignaciones a las 3-listas
+        
         step = 1
         while step < layer:  # layer 'layer' has 'layer' nodes
             left_below  = sum([2*k-1 for k in range(levels,layer,-1)]) + step*2
@@ -124,12 +134,23 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
             left_above  = sum([2*k-1 for k in range(levels,layer,-1)]) + extra_odd + step
             above       = left_above + 1
             right_above = above + 1
+            step += 1
         # LAYER TAIL BASE CASE
         below = sum([2*k-1 for k in range(levels,layer,-1)]) + extra_odd
         left_below = below - 1
         left_above = 
-        layer = layer - 1
+        layer -= 1
     # UPPER TWO BASE CASE LAYERS REMAINIG
+    # antepenultimate
+    local_3_lists[elems_per_level-3] += [nodes_per_layer-2]
+    local_3_lists[elems_per_level-2] += [nodes_per_layer-2]
+    local_3_lists[levels**2]         += [nodes_per_layer-2]
+    # penultimate
+    local_3_lists[levels**2-2] += [nodes_per_layer-1]
+    local_3_lists[levels**2-1] += [nodes_per_layer-1]
+    local_3_lists[levels**2]   += [nodes_per_layer-1]
+    # last
+    local_3_lists[levels**2] += [nodes_per_layer]
     # ARRAY local_elements_by_vertices ASSIGNMENT REMAINING
 
     local_elements_by_vertices[0:elems_per_level,3:6] \
