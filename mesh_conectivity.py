@@ -76,92 +76,55 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     so we have:      
                     n_vert_repeated == (levels+1)**2*(levels+2)//2    
 
-    nodes_per_layer: number of nodes in each layer
+    nodes_per_layer: number of nodes in each layer 
+    
+    The algorithm implements six Node --> Element affine transforms
+    according to this hexagon:
+              
+                 . ----- .
+               / 4 \ 5 / 6 \
+               ----- . -----
+               \ 1 / 2 \ 3 /
+                 . ----- . 
+                 
     """
+    
     elems_per_level  = levels**2
     nodes_per_layer  = (levels+1)*(levels+2)//2    
     local_elements_by_vertices = np.zeros((levels**3,6))
-
-    #levels+1, 
-    #levels, 
-    #levels-1, 
-    #levels-2,
-    #...,
-    #2,
-    #1  ver dibujo en hoja grande
-
-    #for node in range(init+1,init+1+nodes_per_layer):
-
-"""
-## DRAFT
-    1...(levels+1)
-        
-        2 <= i <= (levels):
-            node i -----> elems 2*i-3, 2*i-2, 2*i-1
-        
-
-    (levels+2)...(2*levels+1):
-
-        levels+2 -----> elems 1, 2, 2*levels 
-
-        levels+3 <= i <= 2*levels # == (levels+1) + (levels) - 1: ### de a 6
-            seis funciones afines: nodos ---> elems
-              
-            #    -----------
-            #   / 4 \ 5 / 6 \
-            #   \ 1 / 2 \ 3 /
-            #    -----------
-
-                1:  i ---> 2*(i-levels-2)
-                2:  i ---> 2*(i-levels-2)+1
-                3:  i ---> 2*(i-levels-2)+2
-                4:  i ---> 2*i-6            == 2*l+2*(i-l-3)
-                5:  i ---> 2*i-5
-                6:  i ---> 2*i-4
-
-        2*levels+1 ---> elems 2*l-2, 2*l-1, 4*l-4
-###################
-"""
-
-## CLEAN:
     # dict with the (now empty) 3-lists to append the first
     # nodes_per_layer nodes
     local_3_lists = dict(zip(list(range(elems_per_level)),elems_per_level*[[]]))
-    # FIRST ROW
-    # head and tail base cases
+    # LOWER LAYER
+    #  head and tail base cases
     local_elements_by_vertices[0:0]             = init
     local_elements_by_vertices[2*levels-1:1]    = levels+1
-    # inductive middle cases:
+    #  inductive middle cases:
     current_node = init+2
     while current_node<levels+1:
         # 3 affine transfs
         local_3_lists[2*current_node-3] += [current_node]
         local_3_lists[2*current_node-2] += [current_node]
         local_3_lists[2*current_node-1] += [current_node]
-        current_node=current_node+1
-
-    current_last_node = levels
-    while current_last_node > 2:
-        LAYER HEAD base case.
-        current_node = 2
-        while current_node < current_last_node:
-            ## here the magic
-            current_node = current_node + 1
-        LAYER TAIL base case
-        current_last_node = current_last_node - 1
-
-    LAST TWO ROWS
-    
-    ### new stuff
+        current_node=current_node+1 
+    # INDUCTIVE MIDDLE LAYERS
     layer = levels #it also works as the odd sum limit
     while layer > 2:
+        # LAYER HEAD BASE CASE REMAINING
+        
+        
+        
         step = 1
         while step < layer:  # layer 'layer' has 'layer' nodes
-            left_below = sum([2*k-1 for k in range(levels,layer,-1)]) + step*2
-            left_above = sum([2*k-1 for k in range(levels,layer-1,-1)]) + step
+            left_below  = sum([2*k-1 for k in range(levels,layer,-1)]) + step*2
+            below       = left_below + 1
+            right_below = below + 1
+            left_above  = sum([2*k-1 for k in range(levels,layer-1,-1)]) + step
+            above       = left_above + 1
+            right_above = above + 1
+        # LAYER TAIL BASE CASE REMAINING
         layer           = layer - 1
-
-    ### end new stuff
+    # UPPER TWO BASE CASE LAYERS REMAINIG
 
     local_elements_by_vertices[0:elems_per_level,3:6] \
         = local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer
