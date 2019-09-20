@@ -110,7 +110,6 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     #  tail base step
     local_3_lists[2*levels-1]           += [current_node]
     
----->>###########DEBUG
     # INDUCTIVE MIDDLE LAYERS
     layer = levels #it also works as the odd sum limit
     while layer > 2:
@@ -121,25 +120,41 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
         local_3_lists[below]             += [current_node]
         local_3_lists[below + 1]         += [current_node] # right_below
         local_3_lists[below + extra_odd] += [current_node] # right_above
-        # INDUCTIVE MIDDLE STEPS
-        
-        CONTINUE HERE: sigo bien con el current_node?
-            hacer las siguientes asignaciones a las 3-listas
-        
+        # INDUCTIVE MIDDLE STEPS. START HEXAGONS
         step = 1
-        while step < layer:  # layer 'layer' has 'layer' nodes
+        while step < layer - 1:  # layer 'layer' has 'layer' nodes
+            current_node += 1
             left_below  = sum([2*k-1 for k in range(levels,layer,-1)]) + step*2
             below       = left_below + 1
             right_below = below + 1
-            left_above  = sum([2*k-1 for k in range(levels,layer,-1)]) + extra_odd + step
+            left_above  = sum([2*k-1 for k in range(levels,layer,-1)]) \
+                          + extra_odd + (2*step-1)
             above       = left_above + 1
             right_above = above + 1
+            for k in [left_below,below,right_below,left_above,above,right_above]:
+                local_3_lists[k] += current_node
             step += 1
+
         # LAYER TAIL BASE CASE
         below = sum([2*k-1 for k in range(levels,layer,-1)]) + extra_odd
         left_below = below - 1
-        left_above = 
+        left_above = left_below + extra_odd - 2
         layer -= 1
+---->>  #########DEBUG
+        for k in [left_below,below,left_above]:
+            local_3_lists[k] += current_node
+        
+
+
+
+
+
+
+
+
+
+
+
     # UPPER TWO BASE CASE LAYERS REMAINIG
     # antepenultimate
     local_3_lists[elems_per_level-3] += [nodes_per_layer-2]
