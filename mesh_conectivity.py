@@ -45,7 +45,7 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
             np.savetxt(out,line,fmt='%d')
     return len(indices)
 
-def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
+def write_elements_by_vertices_tetra (f_name_out, levels, lang, initial):
     """ TODO: we should write an algorithm that passes just one time per vertex
         recording every element that vertex belongs to in the correct order,
         then mark wich are the vertices in the frontier of macroelements and
@@ -95,10 +95,9 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     # dict with the (now empty) 3-lists to append the first
     # nodes_per_layer nodes
     local_3_lists = dict(zip(list(range(1,elems_per_level+1)),elems_per_level*[[]]))
-    
     # LOWER LAYER
     #  head base step
-    local_3_lists[1]             += [init]
+    local_3_lists[1]             += [init+1]
     
     #  inductive middle steps:
     current_node = init+2
@@ -111,6 +110,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     #  tail base step
     local_3_lists[2*levels-1]           += [current_node]
     
+---->>###########DEBUG
     # INDUCTIVE MIDDLE LAYERS
     layer = levels #it also works as the odd sum limit
     while layer > 2:
