@@ -81,35 +81,40 @@ def many_balls(_levels,_mu,folder=''):
             name = folder+'/ball_'+str(levels)+'_'+str(mu)
             ball(name,levels,mu,False)
 
-def pill(file_name,levels,mu,plotear=True):
+
+def ellipsoid(file_name,levels,mu,plotear=True):
     with open(file_name,'w') as inp:
-        inp.write('1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 2, '+str(mu)+'\n')
+        inp.write('1, 0, 0, 1, 1.5, 0, 1, 0, 1.5, 1, 0, 0, 2, '+str(mu)+'\n')
         #inp.write('1, 0, 0, 1, 0, 1, 1,-1, 0, 1, 0, 0, 2, '+str(mu)+'\n')
-        #inp.write('1, 0, 0, 1,-1, 0, 1, 0,-1, 1, 0, 0, 2, '+str(mu)+'\n')
-        #inp.write('1, 0, 0, 1, 1, 0, 1, 0,-1, 1, 0, 0, 2, '+str(mu)+'\n')
+        
         # Cilindro superior:
-        inp.write('0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, '+str(mu)+'\n')
-        #inp.write('1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0,-1, '+str(mu)+'\n')
-        #inp.write('1, 0, 0, 0, 0, 1, 0,-1, 0, 0, 0, 0,-1, '+str(mu)+'\n')
-        #inp.write('1, 0, 0, 0,-1, 0, 0, 0,-1, 0, 0, 0,-1, '+str(mu)+'\n')
-        #inp.write('1, 0, 0, 0, 1, 0, 0, 0,-1, 0, 0, 0,-1, '+str(mu)+'\n')
+        inp.write('0, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1, '+str(mu)+'\n')
+        inp.write('1, 0, 0, 1, 1.5, 0, 1, 1.5, 0, 0, 0, 1.5, 0, '+str(mu)+'\n')
+        inp.write('1, 0, 0, 1, 1.5, 0, 1, 0, 1.5, 1, 0, 1.5, 0, '+str(mu)+'\n')
+        #inp.write('0, 0, 0, 0,-1, 0, 0, 0, 1, 0, 0, 0, 1, '+str(mu)+'\n')
+        #inp.write('1, 0, 0, 1,-1, 0, 1,-1, 0, 0, 0, 1, 0, '+str(mu)+'\n')
+        #inp.write('1, 0, 0, 1,-1, 0, 1, 0, 1, 1, 0, 1, 0, '+str(mu)+'\n')
 
     main.omega(file_name,levels)
     p = np.loadtxt(file_name+'.ver')    
-    oct1 = 1*((p[:,0]>=0)*(p[:,1]>=0)*(p[:,2]>1))#-1*((p[:,0]<=0)*(p[:,1]<=0)*(p[:,2]<=-1))
-    polo = np.nonzero(oct1)[0]
+    oct1 = 1*((p[:,0]>=0)*(p[:,1]>=0)*(p[:,2]>1))
+    oct2 = 1*((p[:,0]<0)*(p[:,1]>=0)*(p[:,2]>1))
     
+    polo = np.nonzero(oct1+oct2)[0]
     ref = np.repeat(np.array([0,0,1]).reshape((1,3)),len(polo),0).reshape((len(polo),3))
-    s1 = np.sum(p[polo,:]-ref,1)
+    s1 = 0.666666*np.sum(p[polo,:2],1)+p[polo,2]-np.ones(len(polo))
+    s2 = -p[polo,0]+p[polo,1]+p[polo,2]-np.sum(ref,1)
     norma = np.sqrt(np.sum((p[polo,:]-ref)**2,1))
-    p[polo,:] = (p[polo,:]-ref)*((oct1[polo]*s1)/norma).reshape((len(polo),1))+ref
-    cil1 = 1*((p[:,0]>0)*(p[:,1]>0)*(p[:,2]>-1)*(p[:,2]<=1))#-1*((p[:,0]<0)*(p[:,1]<0)*(p[:,2]>-1)*(p[:,2]<1))
-    cilin = np.nonzero(cil1)[0]
-    t1 = np.sum(p[cilin,:2],1)
+    escala = np.array([np.sqrt(3),np.sqrt(3),2])
+    p[polo,:] = ((p[polo,:]-ref)*escala)*((oct1[polo]*s1+oct2[polo]*s2)/norma).reshape((len(polo),1))#+ref
+
+    c1 = 1*((p[:,0]>=0)*(p[:,1]>0)*(p[:,2]>=-1)*(p[:,2]<=1))
+    c2 = 1*((p[:,0]<0)*(p[:,1]>0)*(p[:,2]>=-1)*(p[:,2]<=1))
+    cilin = np.nonzero(c1+c2)[0]
+    t1 = np.sqrt(np.sum(p[cilin,:2],1)**2-p[cilin,2]**2)
+    t2 = -p[cilin,0]+p[cilin,1]
     norm2 = np.sqrt(np.sum(p[cilin,:2]**2,1))
-    p[cilin,:2] = p[cilin,:2]*(cil1[cilin]*t1/norm2).reshape((len(cilin),1))
+    p[cilin,:2] = p[cilin,:2]*((c1[cilin]*t1*np.sqrt(3)+c2[cilin]*t2)/norm2).reshape((len(cilin),1))
     np.savetxt(file_name+'.ver',p)
     if plotear:
         plot(file_name+'.ver',file_name+'.ebv')    
