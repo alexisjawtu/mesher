@@ -91,7 +91,6 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     
     elems_per_level  = levels**2
     nodes_per_layer  = (levels+1)*(levels+2)//2    
-    local_elements_by_vertices = np.zeros((levels**3,6))
     # dict with the (now empty) 3-lists to append the first
     # nodes_per_layer nodes
     #local_3_lists = dict(zip(list(range(1,elems_per_level+1)),elems_per_level*[[]]))
@@ -104,7 +103,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     
     #  inductive middle steps:
     current_node = init+2
-    while current_node<levels+1:
+    while current_node < levels+1:
         # 3 affine transfs
         # hay que restar uno mas para los arreglos C
         local_3_lists[2*current_node-3] += [current_node]
@@ -161,19 +160,22 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     # last
     local_3_lists[elems_per_level]   += [nodes_per_layer]
 
+    local_elements_by_vertices = np.array(list(local_3_lists.values()))
 
-    ## assignments to local_elements_by_vertices PENDING
+
+
     for d in local_3_lists:
         print(local_3_lists[d])
-    print(len(local_3_lists))
+    
+
     local_elements_by_vertices[0:elems_per_level,3:6] \
         = local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer
     for l in range(levels-1):
         local_elements_by_vertices[(l+1)*(elems_per_level):(l+2)*(elems_per_level),:] \
             = local_elements_by_vertices[0:elems_per_level,:] \
               + (l+1)*nodes_per_layer
-    return levels**3 # number of elements in the prismatic macro--element
-    
+    #return levels**3 # number of elements in the prismatic macro--element
+    return local_elements_by_vertices
 
 def vertices_by_elements (f_name, lang):
 	""" 
