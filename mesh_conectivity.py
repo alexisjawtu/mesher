@@ -84,6 +84,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
                  . ----- . 
                  
     """
+    
     if levels==1:
         local_elements_by_vertices = np.array(range(init+1,init+7))
     else:    
@@ -94,10 +95,12 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
         local_3_lists = dict()
         for k in range(1,elems_per_level+1):
             local_3_lists[k] = []
+        def assign (node, elements):
+            for element in elements:
+                local_3_lists[element]+=[node]
         # LOWEST ROW
         #  head base step
-        local_3_lists[1] += [init+1]
-        
+        assign(node=init+1, elements=[1]) ### local_3_lists[1] += [init+1]
         #  inductive middle steps:
         current_node = init+2
         while current_node < levels+1:
@@ -105,9 +108,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
             left_above  = 2*current_node-3
             above       = left_above + 1
             right_above = above + 1
-            local_3_lists[left_above]   += [current_node]
-            local_3_lists[above]        += [current_node]
-            local_3_lists[right_above]  += [current_node]
+            assign(current_node, elements=[left_above,above,right_above]) # local_3_lists[left_above]   += [current_node] # local_3_lists[above]        += [current_node] # local_3_lists[right_above]  += [current_node]
             current_node += 1
         #  tail base step
         left_above = 2*levels-1
@@ -144,17 +145,16 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
             for k in [left_below,below,left_above]:
                 local_3_lists[k] += [current_node]
             row -= 1
-        # UPPER TWO BASE CASE ROWS
-        # antepenultimate
-        current_node += 1
+        # TWO UPPER ROWS
+        # antepenultimate node
         local_3_lists[elems_per_level-3] += [nodes_per_layer-2]
         local_3_lists[elems_per_level-2] += [nodes_per_layer-2]
         local_3_lists[elems_per_level]   += [nodes_per_layer-2]
-        # penultimate
+        # penultimate node
         local_3_lists[elems_per_level-2] += [nodes_per_layer-1]
         local_3_lists[elems_per_level-1] += [nodes_per_layer-1]
         local_3_lists[elems_per_level]   += [nodes_per_layer-1]
-        # last
+        # last node
         local_3_lists[elems_per_level]   += [nodes_per_layer]
         local_elements_by_vertices = np.array(list(local_3_lists.values()))
         local_elements_by_vertices = np.concatenate((local_elements_by_vertices,
