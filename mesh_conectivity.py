@@ -148,7 +148,6 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
             layer -= 1
         # UPPER TWO BASE CASE LAYERS
         # antepenultimate
-        # TODO PUT THIS IN TERMS OF current_node INSTEAD OF elems_per_level
         current_node += 1
         local_3_lists[elems_per_level-3] += [nodes_per_layer-2]
         local_3_lists[elems_per_level-2] += [nodes_per_layer-2]
@@ -159,15 +158,6 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
         local_3_lists[elems_per_level]   += [nodes_per_layer-1]
         # last
         local_3_lists[elems_per_level]   += [nodes_per_layer]
-        #local_3_lists[elems_per_level-3] += [nodes_per_layer-2]
-        #local_3_lists[elems_per_level-2] += [nodes_per_layer-2]
-        #local_3_lists[elems_per_level]   += [nodes_per_layer-2]
-        ## penultimate
-        #local_3_lists[elems_per_level-2] += [nodes_per_layer-1]
-        #local_3_lists[elems_per_level-1] += [nodes_per_layer-1]
-        #local_3_lists[elems_per_level]   += [nodes_per_layer-1]
-        ## last
-        #local_3_lists[elems_per_level]   += [nodes_per_layer]
         local_elements_by_vertices = np.array(list(local_3_lists.values()))
         local_elements_by_vertices = np.concatenate((local_elements_by_vertices,
                                      local_elements_by_vertices + nodes_per_layer),
@@ -176,54 +166,9 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
             local_elements_by_vertices = np.concatenate((local_elements_by_vertices,
                                          local_elements_by_vertices[0:elems_per_level]
                                          +l*nodes_per_layer),axis=0)
-        """CONTROLAR CNTRA LOS PAPELES
-        In [25]: a=write_elements_by_vertices_prisms("exper1",2,"Octave",0)
-        
-        In [26]: a
-        Out[26]: 
-        array([[ 1,  2,  4,  7,  8, 10],
-               [ 2,  4,  5,  8, 10, 11],
-               [ 2,  3,  5,  8,  9, 11],
-               [ 4,  5,  6, 10, 11, 12],
-               [ 7,  8, 10, 13, 14, 16],
-               [ 8, 10, 11, 14, 16, 17],
-               [ 8,  9, 11, 14, 15, 17],
-               [10, 11, 12, 16, 17, 18]])
-
-        In [27]: a=write_elements_by_vertices_prisms("exper1",3,"Octave",0)
-        
-        In [28]: a
-        Out[28]: 
-        array([[ 1,  2,  5, 11, 12, 15],
-               [ 2,  5,  6, 12, 15, 16],
-               [ 2,  3,  6, 12, 13, 16],
-               [ 3,  6,  7, 13, 16, 17],
-               [ 3,  4,  7, 13, 14, 17],
-               [ 5,  6,  8, 15, 16, 18],
-               [ 6,  8,  9, 16, 18, 19],
-               [ 6,  7,  9, 16, 17, 19],
-               [ 8,  9, 10, 18, 19, 20],
-               [11, 12, 15, 21, 22, 25],
-               [12, 15, 16, 22, 25, 26],
-               [12, 13, 16, 22, 23, 26],
-               [13, 16, 17, 23, 26, 27],
-               [13, 14, 17, 23, 24, 27],
-               [15, 16, 18, 25, 26, 28],
-               [16, 18, 19, 26, 28, 29],
-               [16, 17, 19, 26, 27, 29],
-               [18, 19, 20, 28, 29, 30],
-               [21, 22, 25, 31, 32, 35],
-               [22, 25, 26, 32, 35, 36],
-               [22, 23, 26, 32, 33, 36],
-               [23, 26, 27, 33, 36, 37],
-               [23, 24, 27, 33, 34, 37],
-               [25, 26, 28, 35, 36, 38],
-               [26, 28, 29, 36, 38, 39],
-               [26, 27, 29, 36, 37, 39],
-               [28, 29, 30, 38, 39, 40]])
-        """
-    ##--> CONTINUE HERE: FILE WRITING
-    print( local_elements_by_vertices)
+    print(local_elements_by_vertices)
+    with open (f_name_out,'ab') as target:
+        np.savetxt(target,local_elements_by_vertices,fmt='%d')
     return levels**3 # number of elements in the prismatic macro--element
 
 def vertices_by_elements (f_name, lang):
