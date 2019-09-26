@@ -112,7 +112,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
             current_node += 1
         #  tail base step
         left_above = 2*levels-1
-        local_3_lists[left_above]       += [current_node]
+        assign(current_node, elements=[left_above]) # local_3_lists[left_above]       += [current_node]
         # INDUCTIVE MIDDLE ROWS
         row = levels #it also works as the odd sum limit
         while row > 2:
@@ -122,8 +122,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
             below 	    = sum([2*k-1 for k in range(levels,row,-1)]) + 1
             right_below = below + 1
             right_above = below + extra_odd
-            for k in [below,right_below,right_above]:
-                local_3_lists[k] += [current_node]
+            assign(current_node, [below,right_below,right_above]) # for k in [below,right_below,right_above]: local_3_lists[k] += [current_node]
             # INDUCTIVE MIDDLE STEPS. START HEXAGONS
             step = 1
             while step < row - 1:  # row 'row' has 'row' nodes
@@ -134,28 +133,35 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
                 left_above  = sum([2*k-1 for k in range(levels,row,-1)]) + extra_odd + (2*step-1)
                 above       = left_above + 1
                 right_above = above + 1
-                for k in [left_below,below,right_below,left_above,above,right_above]:
-                    local_3_lists[k] += [current_node]
+                assign(current_node, [left_below,below,right_below,left_above,above,right_above])
+                #for k in [left_below,below,right_below,left_above,above,right_above]:
+                #    local_3_lists[k] += [current_node]
                 step += 1
             # ROW TAIL BASE CASE
             current_node += 1
             below      = sum([2*k-1 for k in range(levels,row,-1)]) + extra_odd
             left_below = below - 1
             left_above = left_below + extra_odd - 1
-            for k in [left_below,below,left_above]:
-                local_3_lists[k] += [current_node]
+            assign(current_node, [left_below,below,left_above])
+            #for k in [left_below,below,left_above]:
+            #    local_3_lists[k] += [current_node]
             row -= 1
         # TWO UPPER ROWS
         # antepenultimate node
-        local_3_lists[elems_per_level-3] += [nodes_per_layer-2]
-        local_3_lists[elems_per_level-2] += [nodes_per_layer-2]
-        local_3_lists[elems_per_level]   += [nodes_per_layer-2]
+        assign(nodes_per_layer-2, [elems_per_level-3,elems_per_level-2,elems_per_level])
+        # local_3_lists[elems_per_level-3] += [nodes_per_layer-2]
+        # local_3_lists[elems_per_level-2] += [nodes_per_layer-2]
+        # local_3_lists[elems_per_level]   += [nodes_per_layer-2]
+        
         # penultimate node
-        local_3_lists[elems_per_level-2] += [nodes_per_layer-1]
-        local_3_lists[elems_per_level-1] += [nodes_per_layer-1]
-        local_3_lists[elems_per_level]   += [nodes_per_layer-1]
+        assign(nodes_per_layer-1, [elems_per_level-2,elems_per_level-1,elems_per_level])
+        # local_3_lists[elems_per_level-2] += [nodes_per_layer-1]
+        # local_3_lists[elems_per_level-1] += [nodes_per_layer-1]
+        # local_3_lists[elems_per_level]   += [nodes_per_layer-1]
+        
         # last node
-        local_3_lists[elems_per_level]   += [nodes_per_layer]
+        assign(nodes_per_layer, [elems_per_level]) # local_3_lists[elems_per_level]   += [nodes_per_layer]
+        # INDEX REFLECTIONS
         local_elements_by_vertices = np.array(list(local_3_lists.values()))
         local_elements_by_vertices = np.concatenate((local_elements_by_vertices,
                                      local_elements_by_vertices + nodes_per_layer),
