@@ -69,12 +69,8 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     """ f_name_out: we append the elements represented
     by lists of six vertex indices. 
     
-    The sum of the first k odd numbers is k**2.
-
-    Levels**3 equals the number of elements of the present macro--element.
-    only the vertices in the boundary of the macro--element will be repeated,
-    so we have:      
-                    n_vert_repeated == (levels+1)**2*(levels+2)//2    
+    The sum of the first k odd numbers is k**2, then
+    levels**3 equals the number of elements of the present macro--element.
 
     nodes_per_layer: number of nodes in each layer 
     
@@ -98,55 +94,57 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
         local_3_lists = dict()
         for k in range(1,elems_per_level+1):
             local_3_lists[k] = []
-        # LOWER LAYER
+        # LOWEST ROW
         #  head base step
-        local_3_lists[1]             += [init+1]
+        local_3_lists[1] += [init+1]
         
         #  inductive middle steps:
         current_node = init+2
         while current_node < levels+1:
-            # 3 affine transfs
-            # hay que restar uno mas para los arreglos C
-            local_3_lists[2*current_node-3] += [current_node]
-            local_3_lists[2*current_node-2] += [current_node]
-            local_3_lists[2*current_node-1] += [current_node]
+            # 3 affine transforms
+            left_above  = 2*current_node-3
+            above       = left_above + 1
+            right_above = above + 1
+            local_3_lists[left_above]   += [current_node]
+            local_3_lists[above]        += [current_node]
+            local_3_lists[right_above]  += [current_node]
             current_node += 1
         #  tail base step
-        local_3_lists[2*levels-1]           += [current_node]
-        # INDUCTIVE MIDDLE LAYERS
-        layer = levels #it also works as the odd sum limit
-        while layer > 2:
-            extra_odd = 2*layer-1
-            # LAYER HEAD BASE CASE
+        left_above = 2*levels-1
+        local_3_lists[left_above]       += [current_node]
+        # INDUCTIVE MIDDLE ROWS
+        row = levels #it also works as the odd sum limit
+        while row > 2:
+            extra_odd = 2*row-1
+            # ROW HEAD BASE CASE
             current_node += 1
-            below 	     = sum([2*k-1 for k in range(levels,layer,-1)]) + 1
+            below 	    = sum([2*k-1 for k in range(levels,row,-1)]) + 1
             right_below = below + 1
             right_above = below + extra_odd
             for k in [below,right_below,right_above]:
                 local_3_lists[k] += [current_node]
             # INDUCTIVE MIDDLE STEPS. START HEXAGONS
             step = 1
-            while step < layer - 1:  # layer 'layer' has 'layer' nodes
+            while step < row - 1:  # row 'row' has 'row' nodes
                 current_node += 1
-                left_below  = sum([2*k-1 for k in range(levels,layer,-1)]) + step*2
+                left_below  = sum([2*k-1 for k in range(levels,row,-1)]) + step*2
                 below       = left_below + 1
                 right_below = below + 1
-                left_above  = sum([2*k-1 for k in range(levels,layer,-1)]) + extra_odd + (2*step-1)
+                left_above  = sum([2*k-1 for k in range(levels,row,-1)]) + extra_odd + (2*step-1)
                 above       = left_above + 1
                 right_above = above + 1
                 for k in [left_below,below,right_below,left_above,above,right_above]:
                     local_3_lists[k] += [current_node]
                 step += 1
-            # LAYER TAIL BASE CASE
+            # ROW TAIL BASE CASE
             current_node += 1
-            below = sum([2*k-1 for k in range(levels,layer,-1)]) + extra_odd
+            below      = sum([2*k-1 for k in range(levels,row,-1)]) + extra_odd
             left_below = below - 1
             left_above = left_below + extra_odd - 1
-            # assignments
             for k in [left_below,below,left_above]:
                 local_3_lists[k] += [current_node]
-            layer -= 1
-        # UPPER TWO BASE CASE LAYERS
+            row -= 1
+        # UPPER TWO BASE CASE ROWS
         # antepenultimate
         current_node += 1
         local_3_lists[elems_per_level-3] += [nodes_per_layer-2]
