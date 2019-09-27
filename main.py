@@ -16,7 +16,7 @@ has to be changed to: -np.ones( whatever , dtype=int) etc
 import numpy as np
 import mesh
 import mesh_write
-import mesh_conectivity
+import mesh_connectivity
 import time
 
 ## TODO: como hacer el flujo de ejecucion. 
@@ -32,9 +32,9 @@ physical_vertices_writers         = { 0 : mesh_write.vertices_macro_hybrid,
                                     1 : mesh_write.vertices_macro_tetra,
                                     2 : mesh_write.vertices_macro_prism }
 
-elements_by_vertices_writers    = { 0 : mesh_conectivity.write_elements_by_vertices_hybrid,
-                                    1 : mesh_conectivity.write_elements_by_vertices_tetra,
-                                    2 : mesh_conectivity.write_elements_by_vertices_prisms}
+elements_by_vertices_writers    = { 0 : mesh_connectivity.write_elements_by_vertices_hybrid,
+                                    1 : mesh_connectivity.write_elements_by_vertices_tetra,
+                                    2 : mesh_connectivity.write_elements_by_vertices_prisms}
 
 def load_partition (in_file):
     """ in_file is a csv with:
@@ -60,7 +60,7 @@ def filter_repeated_vertices (n_vert_prism = 6):
     at this point the program is already general:
     this 'inverts' the table of elements_by_vertices.txt
     writes on disc: vertices_by_elements.txt
-    mesh_conectivity.vertices_by_elements('elements_by_vertices.txt', 'Octave')
+    mesh_connectivity.vertices_by_elements('elements_by_vertices.txt', 'Octave')
     ########################################################################"""
 
 ### CONTINUE HERE! OJO QUE ESTOY REEMPLAZANDO LAS CANTIDADES DE NODOS TAMBIEN!
@@ -76,9 +76,9 @@ def filter_repeated_vertices (n_vert_prism = 6):
         ele                     = np.fromstring(things[k],dtype=int,sep=' ')
         elem_vert_repeated[k]   = np.concatenate((ele,np.zeros((n_vert_prism+1-len(ele)),dtype=int)))
     
-    print ('mesh_conectivity.kill_repeated()')
+    print ('mesh_connectivity.kill_repeated()')
     t0 = time.time()
-    replace_verts = mesh_conectivity.kill_repeated('vertices.txt')  ## repetitions in vertices.txt leave a dictionary
+    replace_verts = mesh_connectivity.kill_repeated('vertices.txt')  ## repetitions in vertices.txt leave a dictionary
     print (time.time() - t0)
     print ('\n')
     
@@ -104,11 +104,11 @@ def filter_repeated_vertices (n_vert_prism = 6):
 
 def filter_repeated_faces (n_elem):
     """ Takes the output of 
-    mesh_conectivity.vertices_by_elements()	writes on disc: shared_faces.txt
+    mesh_connectivity.vertices_by_elements()	writes on disc: shared_faces.txt
     writes: faces_repeated.txt 			----> with repetitions
             faces_local_to_global.txt   ----> for macro--element of type 1 """	
     print ('Face Enumeration')
-    mesh_conectivity.face_enumeration('elements_by_vertices.txt')
+    mesh_connectivity.face_enumeration('elements_by_vertices.txt')
     print ('\r')
     with open('faces_local_to_global.txt', 'r') as ent:
         stuff = ent.readlines()
@@ -120,7 +120,7 @@ def filter_repeated_faces (n_elem):
     ## reads repetitions in faces_repeated.txt and leaves a dictionary
     ## writes file: faces.txt -----> global unique enumeration of faces
     print('Killing repeated faces')
-    replace_faces, indices, num_faces = mesh_conectivity.kill_repeated_faces('faces_repeated.txt')  
+    replace_faces, indices, num_faces = mesh_connectivity.kill_repeated_faces('faces_repeated.txt')  
     print( '\r')
     with open ('num_faces.txt','w') as n_of_faces:
         n_of_faces.write(str(num_faces))
