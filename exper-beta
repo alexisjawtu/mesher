@@ -1,4 +1,5 @@
- """CONTROLAR CNTRA LOS PAPELES
+ """CONTROLAR CONTRA LA SALIDA DE LA CONSOLA
+ 
         In [25]: a=write_elements_by_vertices_prisms("exper1",2,"Octave",0)
         
         In [26]: a
@@ -12,8 +13,12 @@
                [ 8,  9, 11, 14, 15, 17],
                [10, 11, 12, 16, 17, 18]])
 
+
+
         In [27]: a=write_elements_by_vertices_prisms("exper1",3,"Octave",0)
         
+        
+
         In [28]: a
         Out[28]: 
         array([[ 1,  2,  5, 11, 12, 15],
@@ -44,3 +49,4 @@
                [26, 27, 29, 36, 37, 39],
                [28, 29, 30, 38, 39, 40]])
         """
+

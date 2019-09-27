@@ -86,7 +86,8 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     """
     
     if levels==1:
-        local_elements_by_vertices = np.array(range(init+1,init+7))
+        local_elmnts_by_vertices = np.array([6] \
+                                    +list(range(init+1,init+7))).reshape(1,6)
     else:    
         elems_per_level  = levels**2
         nodes_per_layer  = (levels+1)*(levels+2)//2    
@@ -162,18 +163,19 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
         # last node
         assign(nodes_per_layer, [elems_per_level]) # local_3_lists[elems_per_level]   += [nodes_per_layer]
         # INDEX REFLECTIONS
-        local_elements_by_vertices = np.array(list(local_3_lists.values()))
-        local_elements_by_vertices = np.concatenate((local_elements_by_vertices,
-                                     local_elements_by_vertices + nodes_per_layer),
+        local_elmnts_by_vertices = np.array(list(local_3_lists.values()))
+        local_elmnts_by_vertices = np.concatenate((local_elmnts_by_vertices,
+                                     local_elmnts_by_vertices + nodes_per_layer),
                                      axis=1)
         for l in range(1,levels):
-            local_elements_by_vertices = np.concatenate((local_elements_by_vertices,
-                                         local_elements_by_vertices[0:elems_per_level]
+            local_elmnts_by_vertices = np.concatenate((local_elmnts_by_vertices,
+                                         local_elmnts_by_vertices[0:elems_per_level]
                                          +l*nodes_per_layer),axis=0)
-    print(local_elements_by_vertices)
+        local_elmnts_by_vertices = np.concatenate((6*np.ones((levels**3,1)),
+                                     local_elmnts_by_vertices),axis=1)
     with open (f_name_out,'ab') as target:
-        np.savetxt(target,local_elements_by_vertices,fmt='%d')
-    return levels**3 # number of elements in the prismatic macro--element
+        np.savetxt(target,local_elmnts_by_vertices,fmt='%d')
+    return local_elmnts_by_vertices  ##levels**3 # number of elements in the prismatic macro--element
 
 def vertices_by_elements (f_name, lang):
 	""" 
