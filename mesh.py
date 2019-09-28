@@ -27,11 +27,12 @@ def macroel_tetrahedra (vertices, mu, n):
 
             and then call it. Make sure the dimension is the most comfortable.
     """
-    ## TODO: remove this reshape() thing
-    P0 = np.array(vertices[:,0]).reshape((1,3))
-    P1 = np.array(vertices[:,1]).reshape((1,3))
-    P2 = np.array(vertices[:,2]).reshape((1,3))
-    P3 = np.array(vertices[:,3]).reshape((1,3))
+    vertices = vertices.transpose()
+
+    P0 = vertices[0,:]
+    P1 = vertices[1,:]
+    P2 = vertices[2,:]
+    P3 = vertices[3,:]
 
     lambda_ = np.zeros((4, n+1, n+1, n+1))
 
@@ -45,16 +46,21 @@ def macroel_tetrahedra (vertices, mu, n):
                 lambda_[1,i,j,k] = lambda1(i,j,k,n,mu)
                 lambda_[2,i,j,k] = lambda2(i,j,k,n,mu)
                 lambda_[3,i,j,k] = lambda3(i,j,k,n,mu)
-                lambda_[0,i,j,k] = 1 - lambda_[1,i,j,k] - lambda_[2,i,j,k] - lambda_[3,i,j,k]
+                lambda_[0,i,j,k] = 1 - lambda_[1,i,j,k] \
+                                   - lambda_[2,i,j,k] - lambda_[3,i,j,k]
 
     # now: element vertices
     for k in range(n):
         for j in range(n-k):
             for i in range(n-j-k):
-                q0 = lambda_[0,i,j,k]  *P0 + lambda_[1,i,j,k]  *P1 + lambda_[2,i,j,k]*P2 + lambda_[3,i,j,k]*P3
-                q1 = lambda_[0,i+1,j,k]*P0 + lambda_[1,i+1,j,k]*P1 + lambda_[2,i+1,j,k]*P2 + lambda_[3,i+1,j,k]*P3
-                q2 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
-                q3 = lambda_[0,i,j,k+1]*P0 + lambda_[1,i,j,k+1]*P1 + lambda_[2,i,j,k+1]*P2 + lambda_[3,i,j,k+1]*P3
+                q0 = lambda_[0,i,j,k]  *P0 + lambda_[1,i,j,k]  *P1 \
+                     + lambda_[2,i,j,k]*P2 + lambda_[3,i,j,k]*P3
+                q1 = lambda_[0,i+1,j,k]*P0 + lambda_[1,i+1,j,k]*P1 \
+                     + lambda_[2,i+1,j,k]*P2 + lambda_[3,i+1,j,k]*P3
+                q2 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 \
+                     + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
+                q3 = lambda_[0,i,j,k+1]*P0 + lambda_[1,i,j,k+1]*P1 \
+                     + lambda_[2,i,j,k+1]*P2 + lambda_[3,i,j,k+1]*P3
 
                 points = np.concatenate((points,q0,q1,q2,q3))
                 del(q0,q1,q2,q3)
@@ -62,41 +68,61 @@ def macroel_tetrahedra (vertices, mu, n):
     for k in range(n-1):
         for j in range(n-1-k):
             for i in range(n-1-j-k):
-                q0 = lambda_[0,i+1,j,k]*P0 + lambda_[1,i+1,j,k]*P1 + lambda_[2,i+1,j,k]*P2 + lambda_[3,i+1,j,k]*P3
-                q1 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
-                q2 = lambda_[0,i,j,k+1]*P0 + lambda_[1,i,j,k+1]*P1 + lambda_[2,i,j,k+1]*P2 + lambda_[3,i,j,k+1]*P3
-                q3 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
+                q0 = lambda_[0,i+1,j,k]*P0 + lambda_[1,i+1,j,k]*P1 \
+                     + lambda_[2,i+1,j,k]*P2 + lambda_[3,i+1,j,k]*P3
+                q1 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 \
+                     + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
+                q2 = lambda_[0,i,j,k+1]*P0 + lambda_[1,i,j,k+1]*P1 \
+                     + lambda_[2,i,j,k+1]*P2 + lambda_[3,i,j,k+1]*P3
+                q3 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 \
+                     + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
 
                 points = np.concatenate((points,q0,q1,q2,q3))
 
-                q0 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
-                q1 = lambda_[0,i,j,k+1]*P0 + lambda_[1,i,j,k+1]*P1 + lambda_[2,i,j,k+1]*P2 + lambda_[3,i,j,k+1]*P3
-                q2 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
-                q3 = lambda_[0,i,j+1,k+1]*P0 + lambda_[1,i,j+1,k+1]*P1 + lambda_[2,i,j+1,k+1]*P2 + lambda_[3,i,j+1,k+1]*P3
+                q0 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 \
+                     + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
+                q1 = lambda_[0,i,j,k+1]*P0 + lambda_[1,i,j,k+1]*P1 \
+                     + lambda_[2,i,j,k+1]*P2 + lambda_[3,i,j,k+1]*P3
+                q2 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 \
+                     + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
+                q3 = lambda_[0,i,j+1,k+1]*P0 + lambda_[1,i,j+1,k+1]*P1 \
+                     + lambda_[2,i,j+1,k+1]*P2 + lambda_[3,i,j+1,k+1]*P3
 
                 points = np.concatenate((points,q0,q1,q2,q3))
                 
-                q0 = lambda_[0,i+1,j,k]*P0 + lambda_[1,i+1,j,k]*P1 + lambda_[2,i+1,j,k]*P2 + lambda_[3,i+1,j,k]*P3
-                q1 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
-                q2 = lambda_[0,i+1,j+1,k]*P0 + lambda_[1,i+1,j+1,k]*P1 + lambda_[2,i+1,j+1,k]*P2 + lambda_[3,i+1,j+1,k]*P3
-                q3 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
+                q0 = lambda_[0,i+1,j,k]*P0 + lambda_[1,i+1,j,k]*P1 \
+                     + lambda_[2,i+1,j,k]*P2 + lambda_[3,i+1,j,k]*P3
+                q1 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 \
+                     + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
+                q2 = lambda_[0,i+1,j+1,k]*P0 + lambda_[1,i+1,j+1,k]*P1 \
+                     + lambda_[2,i+1,j+1,k]*P2 + lambda_[3,i+1,j+1,k]*P3
+                q3 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 \
+                     + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
 
                 points = np.concatenate((points,q0,q1,q2,q3))
                 
-                q0 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
-                q1 = lambda_[0,i+1,j+1,k]*P0 + lambda_[1,i+1,j+1,k]*P1 + lambda_[2,i+1,j+1,k]*P2 + lambda_[3,i+1,j+1,k]*P3
-                q2 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
-                q3 = lambda_[0,i,j+1,k+1]*P0 + lambda_[1,i,j+1,k+1]*P1 + lambda_[2,i,j+1,k+1]*P2 + lambda_[3,i,j+1,k+1]*P3
+                q0 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 \
+                     + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
+                q1 = lambda_[0,i+1,j+1,k]*P0 + lambda_[1,i+1,j+1,k]*P1 \
+                     + lambda_[2,i+1,j+1,k]*P2 + lambda_[3,i+1,j+1,k]*P3
+                q2 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 \
+                     + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
+                q3 = lambda_[0,i,j+1,k+1]*P0 + lambda_[1,i,j+1,k+1]*P1 \
+                     + lambda_[2,i,j+1,k+1]*P2 + lambda_[3,i,j+1,k+1]*P3
                 
                 points = np.concatenate((points,q0,q1,q2,q3))
 
     for k in range(n-2):
         for j in range(n-2-k):
             for i in range(n-2-j-k):
-                q0 = lambda_[0,i+1,j+1,k]*P0 + lambda_[1,i+1,j+1,k]*P1 + lambda_[2,i+1,j+1,k]*P2 + lambda_[3,i+1,j+1,k]*P3
-                q1 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
-                q2 = lambda_[0,i,j+1,k+1]*P0 + lambda_[1,i,j+1,k+1]*P1 + lambda_[2,i,j+1,k+1]*P2 + lambda_[3,i,j+1,k+1]*P3
-                q3 = lambda_[0,i+1,j+1,k+1]*P0 + lambda_[1,i+1,j+1,k+1]*P1 + lambda_[2,i+1,j+1,k+1]*P2 + lambda_[3,i+1,j+1,k+1]*P3
+                q0 = lambda_[0,i+1,j+1,k]*P0 + lambda_[1,i+1,j+1,k]*P1 \
+                     + lambda_[2,i+1,j+1,k]*P2 + lambda_[3,i+1,j+1,k]*P3
+                q1 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 \
+                     + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
+                q2 = lambda_[0,i,j+1,k+1]*P0 + lambda_[1,i,j+1,k+1]*P1 \
+                     + lambda_[2,i,j+1,k+1]*P2 + lambda_[3,i,j+1,k+1]*P3
+                q3 = lambda_[0,i+1,j+1,k+1]*P0 + lambda_[1,i+1,j+1,k+1]*P1 \
+                     + lambda_[2,i+1,j+1,k+1]*P2 + lambda_[3,i+1,j+1,k+1]*P3
 
                 points = np.concatenate((points,q0,q1,q2,q3))
 
@@ -117,8 +143,10 @@ def macroel_hybrid (macroel_vertices, mu, n):
                 # it can be done with much lesser calls to these lambda
                 coef = (lambda1 (i,j,0,n,mu), lambda2 (i,j,0,n,mu))
                 # the sub-mesh is just the following two lines
-                points[k,i,:,j] = coef[0]*(macroel_vertices[:,1]-macroel_vertices[:,0]) + coef[1]*(macroel_vertices[:,2]-macroel_vertices[:,0])
-                points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu))*(macroel_vertices[:,3]-macroel_vertices[:,0]) + macroel_vertices[:,0]
+                points[k,i,:,j] = coef[0]*(macroel_vertices[:,1]-macroel_vertices[:,0]) \
+                                  + coef[1]*(macroel_vertices[:,2]-macroel_vertices[:,0])
+                points[k,i,:,j] += (1-(float(n-k)/n)**(1/mu))*(macroel_vertices[:,3]-macroel_vertices[:,0]) \
+                                  + macroel_vertices[:,0]
     return points
 
 def macroel_prisms (macroel_vertices, mu, n):
