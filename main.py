@@ -83,7 +83,8 @@ def filter_repeated_vertices (n_vert_prism = 6):
     counter = 1
     elem_vert_dscnt_indcs = np.copy(elem_vert_repeated).reshape(n_elem*7)
     for key in replace_verts:
-        print ('progress: {}/{}\r'.format(counter,len(replace_verts)),sep=' ',end='',flush=True)
+        print('progress: {}/{}\r'.format(counter,len(replace_verts)),sep=' ',\
+                end='',flush=True)
         counter += 1
         for r in replace_verts[key]:
             elem_vert_dscnt_indcs[elem_vert_dscnt_indcs == r+1] = (key +1)
