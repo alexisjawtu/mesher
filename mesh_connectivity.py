@@ -76,34 +76,55 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     """ f_name_out: we append the elements represented
     by lists of six vertex indices. 
     
-    the sum of the first k odd numbers is k**2, so
-    levels**3 equals the number of elements of the present macro--element.
+    The sum of the first k odd numbers is k**2.
+
+    Levels**3 equals the number of elements of the present macro--element.
     only the vertices in the boundary of the macro--element will be repeated,
     so we have:      
                     n_vert_repeated == (levels+1)**2*(levels+2)//2    
 
-    layer_nodes: number of nodes in each layer
+    nodes_per_layer: number of nodes in each layer
     """
-    layer_nodes     =   (levels+1)*(levels+2)//2    
+    elems_per_level  = levels**2
+    nodes_per_layer  = (levels+1)*(levels+2)//2    
     local_elements_by_vertices = np.zeros((levels**3,6))
-    local_elements_by_vertices[0:9,3:6]=local_elements_by_vertices[0:9,0:3] + layer_nodes 
-    for l in range(levels):
-        local_elements_by_vertices[9:18,:]=local_elements_by_vertices[0:9,:] + l*layer_nodes   
 
+    ### CONTINE HERE
+    ### These are the key entries to calculate
+    #### ------->>  
+    #### 
+    #levels+1, 
+    #levels, 
+    #levels-1, 
+    #levels-2,
+    #...,
+    #2,
+    #1  ver dibujo en hoja grande
 
-    arr_out = np.array(range(init + 1, init + 1 + n_vert_repeated)).reshape((n_vert_repeated//6, 6))
-    arr_out = np.concatenate((6*np.ones((n_vert_repeated//6, 1),dtype=int), arr_out), axis=1)
-    with open (f_name_out+".ebvr", 'ab') as tgt:
-        np.savetxt(tgt, arr_out, fmt='%d')
-    return len(arr_out)
-    
+    #for node in range(init+1,init+1+nodes_per_layer):
+    #    local_elements_by_vertices[0:0] = 1
+    #    local_elements_by_vertices[0:1] = 2
+    #    local_elements_by_vertices[1:0] = 2
+    #    local_elements_by_vertices[2:0] = 2
+    #    
+    #arreglar estos indices:
+    #    node 1 -----> row 0
+    #    
+    #    1 <= i <= levels-1:
+    #        node i -----> row 2*(i-1)-1 == 2*i-3
+    #        
+    #    local_elements_by_vertices[0:elems_per_level,0:3]
+    #
+    #local_elements_by_vertices[0:elems_per_level,3:6]=local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer 
+    #for l in range(levels-1):
+    #    local_elements_by_vertices[(l+1)*(elems_per_level):(l+2)*(elems_per_level),:] = local_elements_by_vertices[0:elems_per_level,:] + (l+1)*nodes_per_layer
+  
     # ver como hace write_elements_by_vertices_hybrid o tetra
     
     # write_elements_by_vertices_tetra pone los numeros seguidos desde el 
     # primero posible hasta (primero posible) + n_vert_graded
+    return levels**3
     
-
-    return len(arr_out)
 
 def vertices_by_elements (f_name, lang):
 	""" 
@@ -132,14 +153,6 @@ def vertices_by_elements (f_name, lang):
 	e1|
 
 	etc
-
-	In [2]: elem
-	Out[2]: 
-	['6 1 4 2 7 9 8\n',
-	 '4 2 5 3 8\n',
-	 '4 4 6 5 9\n',
-	 '5 2 4 9 8 5\n',
-	 '4 7 9 8 10\n']
 	"""
 	language  = {'C' : 0, 'Octave' : 1}
 	elem_vert = {}
