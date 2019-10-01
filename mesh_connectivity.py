@@ -154,14 +154,6 @@ def vertices_by_elements (f_name, lang):
 	e1|
 
 	etc
-
-	In [2]: elem
-	Out[2]: 
-	['6 1 4 2 7 9 8\n',
-	 '4 2 5 3 8\n',
-	 '4 4 6 5 9\n',
-	 '5 2 4 9 8 5\n',
-	 '4 7 9 8 10\n']
 	"""
 	language  = {'C' : 0, 'Octave' : 1}
 	elem_vert = {}
