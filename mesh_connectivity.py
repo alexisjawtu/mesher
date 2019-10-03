@@ -161,7 +161,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
                                          +l*nodes_per_layer),axis=0)
         local_elmnts_by_vertices = np.concatenate((6*np.ones((levels**3,1)),
                                      local_elmnts_by_vertices),axis=1)
-    with open (f_name_out,'ab') as target:
+    with open (f_name_out+".ebvr",'ab') as target:
         np.savetxt(target,local_elmnts_by_vertices.astype(int),fmt='%d')
     return levels**3 # number of elements in the prismatic macro--element
 
