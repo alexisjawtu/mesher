@@ -152,7 +152,7 @@ def filter_repeated_faces (in_file,n_elem):
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
     return 
 
-def omega (in_file = "partition4", levels = 3):
+def omega (in_file = "partition4", levels = 7):
     """
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     physical_vertices_writers:         write vertices.txt, global list of vertices
