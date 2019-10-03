@@ -16,3 +16,4 @@ macroTetraedro.py
 *.faces
 *.nf
 *.ver
+change-names.sh

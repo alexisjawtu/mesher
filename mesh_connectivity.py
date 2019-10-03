@@ -45,11 +45,15 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
             np.savetxt(out,line,fmt='%d')
     return len(indices)
 
-def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
-    """ 
-        Writes rows of repeated indices, one row per element.
-        levels**3   == number of elements. 
-        levels**3*4 == number of vertices WITH REPETITIONS.
+def write_elements_by_vertices_tetra (f_name_out, levels, lang, initial):
+    """ TODO: we should write an algorithm that passes just one time per vertex
+        recording every element that vertex belongs to in the correct order,
+        then mark wich are the vertices in the frontier of macroelements and
+        so reduce the complexity of the kill_repeated from cubic to quadratic.
+ 
+    Writes rows of repeated indices, one row per element.
+    levels**3   == number of elements. 
+    levels**3*4 == number of vertices WITH REPETITIONS.
     We assume that in the (Npts x 3) array of points the tetrahedra appear in order taking the rows
     four at a time. This is how it is done in mesh.macroel_tetrahedra().
     """
@@ -61,70 +65,105 @@ def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
     return len(arr_out)
 
 def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
-    #####################################################################
-    # Estudiar como leer el arreglo de vertices fisicos para recorrer
-    # los prismas respetando el experimento del papel
-    ######################################################################
-
-    # TODO: we should write an algorithm that passes just one time per vertex
-    # recording every element that vertex belongs to in the correct order,
-    # then mark wich are the vertices in the frontier of macroelements and
-    # so reduce the complexity of the kill_repeated from cubic to quadratic.
     
-
-
     """ f_name_out: we append the elements represented
     by lists of six vertex indices. 
     
-    The sum of the first k odd numbers is k**2.
+    The sum of the first k odd numbers is k**2, then
+    levels**3 equals the number of elements of the present macro--element.
 
-    Levels**3 equals the number of elements of the present macro--element.
-    only the vertices in the boundary of the macro--element will be repeated,
-    so we have:      
-                    n_vert_repeated == (levels+1)**2*(levels+2)//2    
-
-    nodes_per_layer: number of nodes in each layer
+    nodes_per_layer: number of nodes in each layer 
+    
+    The algorithm implements six Node --> Element affine transforms
+    according to this hexagon:
+              
+                 . ----- .
+               / 4 \ 5 / 6 \
+               ----- . -----
+               \ 1 / 2 \ 3 /
+                 . ----- . 
+                 
     """
-    elems_per_level  = levels**2
-    nodes_per_layer  = (levels+1)*(levels+2)//2    
-    local_elements_by_vertices = np.zeros((levels**3,6))
-
-    ### CONTINE HERE
-    ### These are the key entries to calculate
-    #### ------->>  
-    #### 
-    #levels+1, 
-    #levels, 
-    #levels-1, 
-    #levels-2,
-    #...,
-    #2,
-    #1  ver dibujo en hoja grande
-
-    #for node in range(init+1,init+1+nodes_per_layer):
-    #    local_elements_by_vertices[0:0] = 1
-    #    local_elements_by_vertices[0:1] = 2
-    #    local_elements_by_vertices[1:0] = 2
-    #    local_elements_by_vertices[2:0] = 2
-    #    
-    #arreglar estos indices:
-    #    node 1 -----> row 0
-    #    
-    #    1 <= i <= levels-1:
-    #        node i -----> row 2*(i-1)-1 == 2*i-3
-    #        
-    #    local_elements_by_vertices[0:elems_per_level,0:3]
-    #
-    #local_elements_by_vertices[0:elems_per_level,3:6]=local_elements_by_vertices[0:elems_per_level,0:3] + nodes_per_layer 
-    #for l in range(levels-1):
-    #    local_elements_by_vertices[(l+1)*(elems_per_level):(l+2)*(elems_per_level),:] = local_elements_by_vertices[0:elems_per_level,:] + (l+1)*nodes_per_layer
-  
-    # ver como hace write_elements_by_vertices_hybrid o tetra
     
-    # write_elements_by_vertices_tetra pone los numeros seguidos desde el 
-    # primero posible hasta (primero posible) + n_vert_graded
-    return levels**3
-    
+    if levels==1:
+        local_elmnts_by_vertices = np.array([6] \
+                                    +list(range(init+1,init+7))).reshape(1,6)
+    else:    
+        elems_per_level  = levels**2
+        nodes_per_layer  = (levels+1)*(levels+2)//2    
+        # Dictionary of 3-lists to append the first
+        # nodes_per_layer nodes
+        local_3_lists = dict()
+        for k in range(1,elems_per_level+1):
+            local_3_lists[k] = []
+        def assign (node, elements):
+            for element in elements:
+                local_3_lists[element]+=[node]
+        # LOWEST ROW
+        #  head base step
+        assign(node=init+1, elements=[1])
+        #  inductive middle steps:
+        current_node = init+2
+        while current_node < levels+1:
+            # 3 affine transforms
+            left_above  = 2*current_node-3
+            above       = left_above + 1
+            right_above = above + 1
+            assign(current_node, elements=[left_above,above,right_above]) 
+            current_node += 1
+        #  tail base step
+        left_above = 2*levels-1
+        assign(current_node, elements=[left_above])
+        # INDUCTIVE MIDDLE ROWS
+        row = levels #it also works as the odd sum limit
+        while row > 2:
+            extra_odd = 2*row-1
+            # ROW HEAD BASE CASE
+            current_node += 1
+            below 	    = sum([2*k-1 for k in range(levels,row,-1)]) + 1
+            right_below = below + 1
+            right_above = below + extra_odd
+            assign(current_node, [below,right_below,right_above])
+            # INDUCTIVE MIDDLE STEPS. START HEXAGONS
+            step = 1
+            while step < row - 1:  # row 'row' has 'row' nodes
+                current_node += 1
+                left_below  = sum([2*k-1 for k in range(levels,row,-1)]) + step*2
+                below       = left_below + 1
+                right_below = below + 1
+                left_above  = sum([2*k-1 for k in range(levels,row,-1)]) + extra_odd + (2*step-1)
+                above       = left_above + 1
+                right_above = above + 1
+                assign(current_node, [left_below,below,right_below,left_above,above,right_above])
+                step += 1
+            # ROW TAIL BASE CASE
+            current_node += 1
+            below      = sum([2*k-1 for k in range(levels,row,-1)]) + extra_odd
+            left_below = below - 1
+            left_above = left_below + extra_odd - 1
+            assign(current_node, [left_below,below,left_above])
+            row -= 1
+        # TWO UPPER ROWS
+        # antepenultimate node
+        assign(nodes_per_layer-2, [elems_per_level-3,elems_per_level-2,elems_per_level])
+        # penultimate node
+        assign(nodes_per_layer-1, [elems_per_level-2,elems_per_level-1,elems_per_level])
+        # last node
+        assign(nodes_per_layer, [elems_per_level])
+        # INDEX REFLECTIONS
+        local_elmnts_by_vertices = np.array(list(local_3_lists.values()))
+        local_elmnts_by_vertices = np.concatenate((local_elmnts_by_vertices,
+                                     local_elmnts_by_vertices + nodes_per_layer),
+                                     axis=1)
+        for l in range(1,levels):
+            local_elmnts_by_vertices = np.concatenate((local_elmnts_by_vertices,
+                                         local_elmnts_by_vertices[0:elems_per_level]
+                                         +l*nodes_per_layer),axis=0)
+        local_elmnts_by_vertices = np.concatenate((6*np.ones((levels**3,1)),
+                                     local_elmnts_by_vertices),axis=1)
+    with open (f_name_out+".ebvr",'ab') as target:
+        np.savetxt(target,local_elmnts_by_vertices.astype(int),fmt='%d')
+    return levels**3 # number of elements in the prismatic macro--element
 
 def vertices_by_elements (f_name, lang):
 	""" 

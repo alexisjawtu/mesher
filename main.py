@@ -68,6 +68,7 @@ def filter_repeated_vertices (in_file,n_vert_prism = 6):
     n_elem = len(things)
     
     elem_vert_repeated = np.zeros((n_elem,n_vert_prism+1),dtype=int)
+
     for k in range(len(things)):
         ele                     = np.fromstring(things[k],dtype=int,sep=' ')
         elem_vert_repeated[k]   = np.concatenate((ele,np.zeros((n_vert_prism+1-len(ele)),dtype=int)))
