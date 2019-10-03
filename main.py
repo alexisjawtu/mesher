@@ -125,6 +125,9 @@ def filter_repeated_faces (in_file,n_elem):
         n_of_faces.write(str(num_faces))
     #### uniquifying faces:
     print('Face replacements loop version 2.')
+    ## TODO: the following line has the same bug--->
+    ## ---> we are replacing the element--type column
+    ## perhaps solution is: elem_faces_discnt_index = np.copy(elem_faces_repeated[:,1:]).reshape(n_elem*>>5<<) ETC.
     elem_faces_discnt_index = np.copy(elem_faces_repeated).reshape(n_elem*6)
     counter = 1
     for key in replace_faces:
