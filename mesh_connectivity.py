@@ -91,7 +91,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     else:    
         elems_per_level  = levels**2
         nodes_per_layer  = (levels+1)*(levels+2)//2    
-        # dict with the (now empty) 3-lists to append the first
+        # Dictionary of 3-lists to append the first
         # nodes_per_layer nodes
         local_3_lists = dict()
         for k in range(1,elems_per_level+1):
@@ -101,7 +101,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
                 local_3_lists[element]+=[node]
         # LOWEST ROW
         #  head base step
-        assign(node=init+1, elements=[1]) ### local_3_lists[1] += [init+1]
+        assign(node=init+1, elements=[1])
         #  inductive middle steps:
         current_node = init+2
         while current_node < levels+1:
@@ -109,11 +109,11 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
             left_above  = 2*current_node-3
             above       = left_above + 1
             right_above = above + 1
-            assign(current_node, elements=[left_above,above,right_above]) # local_3_lists[left_above]   += [current_node] # local_3_lists[above]        += [current_node] # local_3_lists[right_above]  += [current_node]
+            assign(current_node, elements=[left_above,above,right_above]) 
             current_node += 1
         #  tail base step
         left_above = 2*levels-1
-        assign(current_node, elements=[left_above]) # local_3_lists[left_above]       += [current_node]
+        assign(current_node, elements=[left_above])
         # INDUCTIVE MIDDLE ROWS
         row = levels #it also works as the odd sum limit
         while row > 2:
@@ -123,7 +123,7 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
             below 	    = sum([2*k-1 for k in range(levels,row,-1)]) + 1
             right_below = below + 1
             right_above = below + extra_odd
-            assign(current_node, [below,right_below,right_above]) # for k in [below,right_below,right_above]: local_3_lists[k] += [current_node]
+            assign(current_node, [below,right_below,right_above])
             # INDUCTIVE MIDDLE STEPS. START HEXAGONS
             step = 1
             while step < row - 1:  # row 'row' has 'row' nodes
@@ -135,8 +135,6 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
                 above       = left_above + 1
                 right_above = above + 1
                 assign(current_node, [left_below,below,right_below,left_above,above,right_above])
-                #for k in [left_below,below,right_below,left_above,above,right_above]:
-                #    local_3_lists[k] += [current_node]
                 step += 1
             # ROW TAIL BASE CASE
             current_node += 1
@@ -144,24 +142,14 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
             left_below = below - 1
             left_above = left_below + extra_odd - 1
             assign(current_node, [left_below,below,left_above])
-            #for k in [left_below,below,left_above]:
-            #    local_3_lists[k] += [current_node]
             row -= 1
         # TWO UPPER ROWS
         # antepenultimate node
         assign(nodes_per_layer-2, [elems_per_level-3,elems_per_level-2,elems_per_level])
-        # local_3_lists[elems_per_level-3] += [nodes_per_layer-2]
-        # local_3_lists[elems_per_level-2] += [nodes_per_layer-2]
-        # local_3_lists[elems_per_level]   += [nodes_per_layer-2]
-        
         # penultimate node
         assign(nodes_per_layer-1, [elems_per_level-2,elems_per_level-1,elems_per_level])
-        # local_3_lists[elems_per_level-2] += [nodes_per_layer-1]
-        # local_3_lists[elems_per_level-1] += [nodes_per_layer-1]
-        # local_3_lists[elems_per_level]   += [nodes_per_layer-1]
-        
         # last node
-        assign(nodes_per_layer, [elems_per_level]) # local_3_lists[elems_per_level]   += [nodes_per_layer]
+        assign(nodes_per_layer, [elems_per_level])
         # INDEX REFLECTIONS
         local_elmnts_by_vertices = np.array(list(local_3_lists.values()))
         local_elmnts_by_vertices = np.concatenate((local_elmnts_by_vertices,
@@ -174,8 +162,8 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
         local_elmnts_by_vertices = np.concatenate((6*np.ones((levels**3,1)),
                                      local_elmnts_by_vertices),axis=1)
     with open (f_name_out,'ab') as target:
-        np.savetxt(target,local_elmnts_by_vertices,fmt='%d')
-    return local_elmnts_by_vertices  ##levels**3 # number of elements in the prismatic macro--element
+        np.savetxt(target,local_elmnts_by_vertices.astype(int),fmt='%d')
+    return levels**3 # number of elements in the prismatic macro--element
 
 def vertices_by_elements (f_name, lang):
 	""" 
