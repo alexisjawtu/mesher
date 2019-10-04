@@ -5,3 +5,15 @@
 !partition.txt
 !translations.txt
 macroTetraedro.py
+.DS_Store
+*.aidx
+*.ebf
+*.ebvr
+*.ebv
+*.elem
+*.fltg
+*.faces_rep
+*.faces
+*.nf
+*.ver
+change-names.sh

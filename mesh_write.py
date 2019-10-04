@@ -82,6 +82,10 @@ def vertices_macro_tetra (points, f_write):
     return len(points)
 
 def vertices_macro_prism (points, f_write):
+
+    ### >>> CONTINUE HERE and with the bug in killing faces
+    ## after finishing the talk to pyBr
+
     L = points.shape[0]
     with open (f_write, 'ab') as out:
         for x in range(1,L):

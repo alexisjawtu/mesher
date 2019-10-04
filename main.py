@@ -68,6 +68,7 @@ def filter_repeated_vertices (in_file,n_vert_prism = 6):
     n_elem = len(things)
     
     elem_vert_repeated = np.zeros((n_elem,n_vert_prism+1),dtype=int)
+
     for k in range(len(things)):
         ele                     = np.fromstring(things[k],dtype=int,sep=' ')
         elem_vert_repeated[k]   = np.concatenate((ele,np.zeros((n_vert_prism+1-len(ele)),dtype=int)))
@@ -125,6 +126,9 @@ def filter_repeated_faces (in_file,n_elem):
         n_of_faces.write(str(num_faces))
     #### uniquifying faces:
     print('Face replacements loop version 2.')
+    ## TODO: the following line has the same bug--->
+    ## ---> we are replacing the element--type column
+    ## perhaps solution is: elem_faces_discnt_index = np.copy(elem_faces_repeated[:,1:]).reshape(n_elem*>>5<<) ETC.
     elem_faces_discnt_index = np.copy(elem_faces_repeated).reshape(n_elem*6)
     counter = 1
     for key in replace_faces:
@@ -149,7 +153,7 @@ def filter_repeated_faces (in_file,n_elem):
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
     return 
 
-def omega (in_file = "partition4", levels = 3):
+def omega (in_file = "experiments/partition4", levels = 3):
     """
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     physical_vertices_writers:         write vertices.txt, global list of vertices
