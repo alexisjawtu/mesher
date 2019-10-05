@@ -181,3 +181,7 @@ def macroel_prisms (macroel_vertices, mu, n):
     for x in range(1,n_vertical+1): # translating level 0 to the levels above
         points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vertical)*(macroel_vertices[:,3] - macroel_vertices[:,0]).reshape((3,1))
     return points
+
+def macroel_more_flexible_tending_more_generality ():
+    ## TODO
+    pass
