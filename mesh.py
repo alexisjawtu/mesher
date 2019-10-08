@@ -29,10 +29,10 @@ def macroel_tetrahedra (vertices, mu, n):
     """
     vertices = vertices.transpose()
 
-    P0 = vertices[0,:]
-    P1 = vertices[1,:]
-    P2 = vertices[2,:]
-    P3 = vertices[3,:]
+    P0 = vertices[0,:].reshape(1,3)
+    P1 = vertices[1,:].reshape(1,3)
+    P2 = vertices[2,:].reshape(1,3)
+    P3 = vertices[3,:].reshape(1,3)
 
     lambda_ = np.zeros((4, n+1, n+1, n+1))
 
