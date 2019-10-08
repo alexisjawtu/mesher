@@ -45,7 +45,7 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
             np.savetxt(out,line,fmt='%d')
     return len(indices)
 
-def write_elements_by_vertices_tetra (f_name_out, levels, lang, initial):
+def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
     """ TODO: we should write an algorithm that passes just one time per vertex
         recording every element that vertex belongs to in the correct order,
         then mark wich are the vertices in the frontier of macroelements and
