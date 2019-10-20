@@ -79,7 +79,7 @@ def many_balls(_levels,_mu,folder=''):
     for levels in _levels:
         for mu in _mu:
             name = folder+'/ball_'+str(levels)+'_'+str(mu)
-            ball(name,levels,mu,False)
+            ball(name,levels,mu,True)
 
 
 def ellipsoid(file_name,levels,mu,plotear=True):
