@@ -83,8 +83,11 @@ def vertices_macro_tetra (points, f_write):
 
 def vertices_macro_prism (points, f_write):
 
-    ### >>> CONTINUE HERE and with the bug in killing faces
-    ## after finishing the talk to pyBr
+    ## >>> CONTINUE HERE and with the bug in killing faces
+    ##
+    ##         in the BRANCH 'bug-killing-faces'
+    ##
+    ## after finishing the talk to pyBr. REMOVE prisms-branch
 
 
     ## to delete branch
