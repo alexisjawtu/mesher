@@ -134,7 +134,7 @@ def plot(initial_partition = "fichera2", levels = [4], angle_steps = [9], vertic
     first of the sequence of meshes. A record in initial_partition has to be:
     type_of_macro_element, np.array([P0,..,PN]), local_grading_parameter  """
     macro_elements = load_partition (initial_partition)
-    elev    = 55
+    elev    = 82
 
     trans = []
     __out__ = ''
@@ -143,7 +143,7 @@ def plot(initial_partition = "fichera2", levels = [4], angle_steps = [9], vertic
         ax  = fig.add_subplot(1,1,1,projection='3d')
         for azim in angle_steps:
             #ax.view_init(elev,49+15*(azim-1))
-            ax.view_init(elev,0)
+            ax.view_init(elev,-39)
 
             for k, m in iter(macro_elements.items()):
                 plot_functions[m[0]](ax, m[1], n, m[2], m[3])
@@ -153,7 +153,7 @@ def plot(initial_partition = "fichera2", levels = [4], angle_steps = [9], vertic
             ax.set_xlabel(' X ')
             ax.set_ylabel(' Y ')
             ax.set_zlabel(' Z ')
-            fig.savefig('bbrick-script-' + str(n) + '.png')
+            fig.savefig('borisbrick-' + str(n) + '.png')
             plt.show()
     return
 

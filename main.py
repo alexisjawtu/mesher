@@ -42,6 +42,7 @@ def load_partition (in_file):
     with open(in_file,'r') as infile:
         inlist = infile.readlines()
     pre_list = [line.strip(' \n').split(',') for line in inlist]
+    ## TODO: isolating the last float in st seems not necessary
     pre_list = [[int(st[0])] + [float(st[k]) for k in range(1,len(st)-1)]+[float(st[-1])] for st in pre_list]
     colors = [ "green", "red", "blue"]
     macro_elements = { key : 
