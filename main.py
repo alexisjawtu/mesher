@@ -38,12 +38,11 @@ elements_by_vertices_writers    = { 0 : mesh_connectivity.write_elements_by_vert
 
 def load_partition (in_file):
     """ in_file is a csv with:
-        macroelement_type, macro_vertices, mu """
+        macroelement_type, macro_vertices, local_mu """
     with open(in_file,'r') as infile:
         inlist = infile.readlines()
     pre_list = [line.strip(' \n').split(',') for line in inlist]
-    ## TODO: isolating the last float in st seems not necessary
-    pre_list = [[int(st[0])] + [float(st[k]) for k in range(1,len(st)-1)]+[float(st[-1])] for st in pre_list]
+    pre_list = [[int(st[0])] + [float(st[k]) for k in range(1,len(st))] for st in pre_list]
     colors = [ "green", "red", "blue"]
     macro_elements = { key : 
                         { 
