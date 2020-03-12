@@ -20,6 +20,9 @@ import mesh_connectivity
 import time
 
 ## TODO: como hacer el flujo de ejecucion. 
+## TODO: donde esta documentado como son los ordenes y posiciones 
+##       de los vertices de cada elemento. Por ejemplo: en una piramide es 
+##       siempre el ultimo la punta?
 ## Dejar para que ande con $ python module.py?
 ## Poner un txt con un diccionario con los refinamientos y el parametro de graduacion y otros,
 ## tipo los diccionarios para configurar el sublime?
@@ -128,9 +131,10 @@ def filter_repeated_faces (in_file,n_elem):
     print('Face replacements loop version 2.')
     ## TODO: the following line has the same bug--->
     ## ---> we are replacing the element--type column
-    ## perhaps solution is: elem_faces_discnt_index = np.copy(elem_faces_repeated[:,1:]).reshape(n_elem*>>5<<) ETC.
-    elem_faces_discnt_index = np.copy(elem_faces_repeated).reshape(n_elem*6)
+    ## elem_faces_discnt_index = np.copy(elem_faces_repeated[:,1:]).reshape(n_elem*>>5<<) ETC.
     counter = 1
+    elem_faces_discnt_index = np.copy(elem_faces_repeated[:,1:]).reshape(n_elem*5)
+    first_col = elem_faces_repeated[:,0].reshape(elem_faces_repeated.shape[0],1)
     for key in replace_faces:
         print('progress: {0}/{1}\r'.format(counter,len(replace_faces)), sep = ' ', end = '', flush = True)
         counter += 1
@@ -146,7 +150,9 @@ def filter_repeated_faces (in_file,n_elem):
     for i in range(len(indices)):
         elem_faces[elem_faces_discnt_index==indices[i]] = i+1
     print ('\r')
-    elem_faces = np.copy(elem_faces).reshape((n_elem,6))
+    #elem_faces = np.copy(elem_faces).reshape((n_elem,6))
+    elem_faces = np.copy(elem_faces).reshape((n_elem,5))
+    elem_faces = np.concatenate((first_col,elem_faces),axis=1)
     del elem_faces_discnt_index
     with open(in_file+'.ebf','ab') as ex:
         for elem in elem_faces:
