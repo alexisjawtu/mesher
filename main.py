@@ -129,9 +129,6 @@ def filter_repeated_faces (in_file,n_elem):
         n_of_faces.write(str(num_faces))
     #### uniquifying faces:
     print('Face replacements loop version 2.')
-    ## TODO: the following line has the same bug--->
-    ## ---> we are replacing the element--type column
-    ## elem_faces_discnt_index = np.copy(elem_faces_repeated[:,1:]).reshape(n_elem*>>5<<) ETC.
     counter = 1
     elem_faces_discnt_index = np.copy(elem_faces_repeated[:,1:]).reshape(n_elem*5)
     first_col = elem_faces_repeated[:,0].reshape(elem_faces_repeated.shape[0],1)
@@ -141,7 +138,6 @@ def filter_repeated_faces (in_file,n_elem):
         for r in replace_faces[key]:
             elem_faces_discnt_index[elem_faces_discnt_index==r] = key
     print ('\r')
-	#elem_faces_discnt_index = elem_faces_discnt_index.reshape((n_elem,6))
     del elem_faces_repeated
     ## bijection indices ----> [1,...,n_faces]
     ## unique, continuous indices with filling zeros
@@ -150,7 +146,8 @@ def filter_repeated_faces (in_file,n_elem):
     for i in range(len(indices)):
         elem_faces[elem_faces_discnt_index==indices[i]] = i+1
     print ('\r')
-    #elem_faces = np.copy(elem_faces).reshape((n_elem,6))
+    ###### CONTINUE HERE: following line should vanish and the after
+    #### should be elem_faces = np.hstack((first_col,elem_faces.reshape(n_elem,5))) DO AND TEST
     elem_faces = np.copy(elem_faces).reshape((n_elem,5))
     elem_faces = np.hstack((first_col,elem_faces))
     del elem_faces_discnt_index
