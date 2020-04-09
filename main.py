@@ -97,7 +97,7 @@ def filter_repeated_vertices (in_file,n_vert_prism = 6):
     print ('\n')
     elem_vert_dscnt_indcs = elem_vert_dscnt_indcs.reshape((n_elem,6))
     col = elem_vert_repeated[:,0].reshape(elem_vert_repeated.shape[0],1)
-    elem_vert_dscnt_indcs = np.concatenate((col,elem_vert_dscnt_indcs),axis=1)
+    elem_vert_dscnt_indcs = np.hstack((col,elem_vert_dscnt_indcs))
     del elem_vert_repeated
     ## <--- whithout repetitions
     with open(in_file+'.ebv','wb') as out:
@@ -152,7 +152,7 @@ def filter_repeated_faces (in_file,n_elem):
     print ('\r')
     #elem_faces = np.copy(elem_faces).reshape((n_elem,6))
     elem_faces = np.copy(elem_faces).reshape((n_elem,5))
-    elem_faces = np.concatenate((first_col,elem_faces),axis=1)
+    elem_faces = np.hstack((first_col,elem_faces))
     del elem_faces_discnt_index
     with open(in_file+'.ebf','ab') as ex:
         for elem in elem_faces:
