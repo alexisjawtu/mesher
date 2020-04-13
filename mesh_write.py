@@ -83,21 +83,7 @@ def vertices_macro_tetra (points, f_write):
 
 def vertices_macro_prism (points, f_write):
 
-    ## >>> CONTINUE HERE and with the bug in killing faces
-    ##
-    ##         in the BRANCH 'bug-killing-faces'
-    ##
-    ## after finishing the talk to pyBr. REMOVE prisms-branch
-
-
-    ## to delete branch
-    # $ git branch -d iss53
-    
-    ## to delete remote branch
-    # $ git push origin --delete serverfix
-    # To https://github.com/schacon/simplegit
-    # - [deleted]    serverfix
-
+    ## >>> CONTINUE HERE,
     #L = points.shape[0]
     #with open (f_write, 'ab') as out:
     #    for x in range(1,L):

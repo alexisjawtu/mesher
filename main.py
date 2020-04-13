@@ -180,3 +180,10 @@ def omega (in_file, levels):
         init += physical_vertices_writers[E[0]](points, in_file+".ver")
     filter_repeated_faces(in_file,filter_repeated_vertices(in_file))
     return
+
+def number_of_elements (levels = 0, type = 0):
+    if type == 0:
+        n = levels*(levels+1)*(2*levels+1)/6
+    else:
+        n = l**3
+    return n
