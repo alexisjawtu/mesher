@@ -2,7 +2,7 @@ import numpy as np
 
 def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     """ 
-    This funtion is at the beggining in the program, for the case
+    This funtion is at the beginning in the program, for the case
     we start with the mesh we proposed. For a general mesh, the algorithm
     starts directly in the next step (with element_by_vertices.txt given 
     somehow).
@@ -37,9 +37,9 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
             line[0] = l[0]
             for i in range (1,l[0]+1):
                 # (positions in the graph of the macro--element)
-                h = l[3*(i-1)+1] ## height    (before: l)
-                d = l[3*(i-1)+2] ## depth     (before: i)
-                w = l[3*(i-1)+3] ## with      (before: j)
+                h = l[3*(i-1)+1] ## height  
+                d = l[3*(i-1)+2] ## depth   
+                w = l[3*(i-1)+3] ## with    
                 calc = int((h*(n**2+3*n+2) + h*(h-1)*(2*h-1)/6 - (2*n+3)*h*(h-1)/2) /2 + w + d*(n-h-d/2+3/2))
                 line[0,i] =  initial + calc + language[lang]
             np.savetxt(out,line,fmt='%d')
@@ -77,12 +77,13 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
     The algorithm implements six Node --> Element affine transforms
     according to this hexagon:
               
-                 . ----- .
-               / 4 \ 5 / 6 \
+                 ---------
+                . .  5  . .
+               . 4 .   . 6 .
                ----- . -----
-               \ 1 / 2 \ 3 /
-                 . ----- . 
-                 
+               . 1 .   . 3 .
+                . .  2  . .
+                 --------- 
     """
     
     if levels==1:

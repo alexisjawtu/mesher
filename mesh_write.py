@@ -61,7 +61,7 @@ def write_element_indices (file_name, levels):
 def vertices_macro_hybrid (points, f_write):
     """ Writes the coordinates of the vertices of the local mesh in f_write.
         The file being constructed has the repeated physical vertices.
-        Return value: nmbr of vrtcs in this macroelement. """
+        Return value: number of vertices in this macroelement. """
     nVertices = 0
     L = points.shape[0]
     with open (f_write,'ab') as out:
@@ -81,18 +81,8 @@ def vertices_macro_tetra (points, f_write):
     return len(points)
 
 def vertices_macro_prism (points, f_write):
-    ## >>> CONTINUE HERE,
-    # objective:  Writes the coordinates of the vertices of the local mesh in f_write.
-    # The file being constructed has the repeated physical vertices.
-    # Return value: nmbr of vrtcs in this macroelement.  
-
-    #L = points.shape[0]
-    #with open (f_write, 'ab') as out:
-    #    for x in range(1,L):
-    #        for y in range(L):
-    #            for z in range(L-y):
-    #                pass
-    #                #points[x,y,:,z], points[x,] 
-    #    np.savetxt(out, points, fmt = __format__)
-    # return  len(points) ## ACA NO ES ESTO PORQUE ESTAN ANIDADOS Y POR NIVELES
-    raise ValueError("Not yet implemented!")
+    """ points: np.array with the points of the 
+    nested--prismatic macro--element """
+    with open (f_write, 'ab') as out:
+        np.savetxt(out, points, fmt = __format__)
+    return len(points)

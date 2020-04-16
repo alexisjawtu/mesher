@@ -161,10 +161,10 @@ def omega (in_file, levels):
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     physical_vertices_writers:         write vertices.txt, global list of vertices
     """
-    tau_zero = load_partition (in_file)
+    initial_partition = load_partition (in_file)
     mesh_write.write_element_indices(in_file+".elem", levels)
     init = 0
-    for i, E in iter(tau_zero.items()):
+    for i, E in iter(initial_partition.items()):
         # for case E[0] == 1: the following writes contiguous indices with repetitions on 
         # shared faces.
         elements_by_vertices_writers[E[0]](in_file, levels, "Octave", init)
