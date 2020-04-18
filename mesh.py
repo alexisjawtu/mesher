@@ -170,7 +170,8 @@ def macroel_prisms (macroel_vertices, mu, levels):
     greater than zero end up filled as a rectangle of points. 
     Be careful not to use that coordinates. 
 
-    At the end we translate level 0 to the levels above.
+    At the end we translate level 0 to the levels above and make a stack
+    with the "upper triangle" of the points array in each level.
     """
     n_vertical = levels 
     points = np.zeros((n_vertical+1,levels+1,3,levels+1))
@@ -180,13 +181,13 @@ def macroel_prisms (macroel_vertices, mu, levels):
             lambda_1, lambda_2 = lambda1 (y,z,0,levels,mu), lambda2 (y,z,0,levels,mu)
             temp = lambda_1*(macroel_vertices[:,1] - macroel_vertices[:,0]) + lambda_2*(macroel_vertices[:,2] - macroel_vertices[:,0])
             points[0,y,:,y+z] = temp + macroel_vertices[:,0]
+            ## CONTINUE: todo muy lindo lo del triu_indices pero es al pedo porque se puede tomar directamente
+            ## el orden en que aparecen en la siguente linea, y despues sumarles la traslacion haciendo crecer
+            ## la lista para abajo
     for x in range(1,n_vertical+1):
         points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vertical)*(macroel_vertices[:,3] - macroel_vertices[:,0]).reshape((3,1))
-    
-    ## CONTINUE HERE: 
-    ## *use:    vstack((first_level[np.triu_indices(levels+1)], scnd_level[np.triu_indices(levels+1)], ...))
-    ## to make the (local_nvert x 3) shaped output
-    ## return points
+    points = np.vstack(tuple([points[i,np.triu_indices(levels+1)[0],:,np.triu_indices(levels+1)[1]] for i in range(levels+1)]))
+    return points
 
 def macroel_more_flexible_tending_more_generality ():
     ## TODO
