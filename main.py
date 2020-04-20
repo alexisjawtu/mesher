@@ -19,13 +19,15 @@ import mesh_write
 import mesh_connectivity
 import time
 
-## TODO: como hacer el flujo de ejecucion. 
-## TODO: donde esta documentado como son los ordenes y posiciones 
-##       de los vertices de cada elemento. Por ejemplo: en una piramide es 
-##       siempre el ultimo la punta?
-## Dejar para que ande con $ python module.py?
-## Poner un txt con un diccionario con los refinamientos y el parametro de graduacion y otros,
-## tipo los diccionarios para configurar el sublime?
+## CONTINUE HERE:
+## 0: test the writing in write_elements_by_vertices_prisms() and with
+##    a mesh that includes macro--elements of all types
+## 1: como hacer el flujo de ejecucion. Dejar para que ande con $ python module.py?
+## 2: donde esta documentado como son los ordenes y posiciones 
+##    de los vertices de cada elemento. Por ejemplo: en una piramide es 
+##    siempre el ultimo la punta?
+## 3: start overall documentation and also do the markup file in github.
+## 4: choose a name for the project
 
 local_meshers                   = { 0 : mesh.macroel_hybrid, 
                                     1 : mesh.macroel_tetrahedra, 
@@ -130,27 +132,23 @@ def filter_repeated_faces (in_file,n_elem):
     #### uniquifying faces:
     print('Face replacements loop version 2.')
     counter = 1
-    elem_faces_discnt_index = np.copy(elem_faces_repeated[:,1:]).reshape(n_elem*5)
+    # discontinuous indices
+    elem_faces = np.copy(elem_faces_repeated[:,1:]).reshape(n_elem*5)
     first_col = elem_faces_repeated[:,0].reshape(elem_faces_repeated.shape[0],1)
     for key in replace_faces:
         print('progress: {0}/{1}\r'.format(counter,len(replace_faces)), sep = ' ', end = '', flush = True)
         counter += 1
         for r in replace_faces[key]:
-            elem_faces_discnt_index[elem_faces_discnt_index==r] = key
+            elem_faces[elem_faces==r] = key
     print ('\r')
     del elem_faces_repeated
     ## bijection indices ----> [1,...,n_faces]
     ## unique, continuous indices with filling zeros
-    print ('loop for indexing faces with {1 ... n_faces}')
-    elem_faces = np.copy(elem_faces_discnt_index)
+    print ('loop for indexing faces with {1 ... n_faces}')    
     for i in range(len(indices)):
-        elem_faces[elem_faces_discnt_index==indices[i]] = i+1
+        elem_faces[elem_faces==indices[i]] = i+1
     print ('\r')
-    ###### CONTINUE HERE: following line should vanish and the after
-    #### should be elem_faces = np.hstack((first_col,elem_faces.reshape(n_elem,5))) DO AND TEST
-    elem_faces = np.copy(elem_faces).reshape((n_elem,5))
-    elem_faces = np.hstack((first_col,elem_faces))
-    del elem_faces_discnt_index
+    elem_faces = np.hstack((first_col,elem_faces.reshape(n_elem,5)))
     with open(in_file+'.ebf','ab') as ex:
         for elem in elem_faces:
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
@@ -180,10 +178,3 @@ def omega (in_file, levels):
         init += physical_vertices_writers[E[0]](points, in_file+".ver")
     filter_repeated_faces(in_file,filter_repeated_vertices(in_file))
     return
-
-def number_of_elements (levels = 0, type = 0):
-    if type == 0:
-        n = levels*(levels+1)*(2*levels+1)/6
-    else:
-        n = l**3
-    return n
