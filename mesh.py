@@ -174,15 +174,15 @@ def macroel_prisms (macroel_vertices, mu, levels):
     At the end we translate level 0 to the levels above and make a stack
     with the "upper triangle" of the points array in each level.
     """
-    n_vertical = levels 
-    top_layer  = np.zeros((3,))
+    n_vertical  = levels 
+    top_layer   = []
     for y in range(levels+1):
         for z in range(levels+1-y):
             lambda_1, lambda_2 = lambda1 (y,z,0,levels,mu), lambda2 (y,z,0,levels,mu)
-            temp               = lambda_1*(macroel_vertices[:,1] - macroel_vertices[:,0]) \
+            convex_sum         = lambda_1*(macroel_vertices[:,1] - macroel_vertices[:,0]) \
                                  + lambda_2*(macroel_vertices[:,2] - macroel_vertices[:,0])
-            top_layer          = np.vstack((top_layer,temp + macroel_vertices[:,0]))
-    top_layer   = top_layer[1:,:]
+            top_layer         += [convex_sum + macroel_vertices[:,0]]
+    top_layer   = np.vstack(tuple(top_layer))
     points      = np.vstack(tuple([top_layer+(x/n_vertical)*(macroel_vertices[:,3] \
                     - macroel_vertices[:,0]).T for x in range(n_vertical+1)]))
     return points
