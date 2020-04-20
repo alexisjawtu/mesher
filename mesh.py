@@ -62,7 +62,7 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i,j,k+1]*P0 + lambda_[1,i,j,k+1]*P1 \
                      + lambda_[2,i,j,k+1]*P2 + lambda_[3,i,j,k+1]*P3
 
-                points = np.concatenate((points,q0,q1,q2,q3))
+                points = np.vstack((points,q0,q1,q2,q3))
                 del(q0,q1,q2,q3)
 
     for k in range(n-1):
@@ -77,7 +77,7 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 \
                      + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
 
-                points = np.concatenate((points,q0,q1,q2,q3))
+                points = np.vstack((points,q0,q1,q2,q3))
 
                 q0 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 \
                      + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
@@ -88,7 +88,7 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i,j+1,k+1]*P0 + lambda_[1,i,j+1,k+1]*P1 \
                      + lambda_[2,i,j+1,k+1]*P2 + lambda_[3,i,j+1,k+1]*P3
 
-                points = np.concatenate((points,q0,q1,q2,q3))
+                points = np.vstack((points,q0,q1,q2,q3))
                 
                 q0 = lambda_[0,i+1,j,k]*P0 + lambda_[1,i+1,j,k]*P1 \
                      + lambda_[2,i+1,j,k]*P2 + lambda_[3,i+1,j,k]*P3
@@ -99,7 +99,7 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i+1,j,k+1]*P0 + lambda_[1,i+1,j,k+1]*P1 \
                      + lambda_[2,i+1,j,k+1]*P2 + lambda_[3,i+1,j,k+1]*P3
 
-                points = np.concatenate((points,q0,q1,q2,q3))
+                points = np.vstack((points,q0,q1,q2,q3))
                 
                 q0 = lambda_[0,i,j+1,k]*P0 + lambda_[1,i,j+1,k]*P1 \
                      + lambda_[2,i,j+1,k]*P2 + lambda_[3,i,j+1,k]*P3
@@ -110,7 +110,7 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i,j+1,k+1]*P0 + lambda_[1,i,j+1,k+1]*P1 \
                      + lambda_[2,i,j+1,k+1]*P2 + lambda_[3,i,j+1,k+1]*P3
                 
-                points = np.concatenate((points,q0,q1,q2,q3))
+                points = np.vstack((points,q0,q1,q2,q3))
 
     for k in range(n-2):
         for j in range(n-2-k):
@@ -124,7 +124,8 @@ def macroel_tetrahedra (vertices, mu, n):
                 q3 = lambda_[0,i+1,j+1,k+1]*P0 + lambda_[1,i+1,j+1,k+1]*P1 \
                      + lambda_[2,i+1,j+1,k+1]*P2 + lambda_[3,i+1,j+1,k+1]*P3
 
-                points = np.concatenate((points,q0,q1,q2,q3))
+                points = np.vstack((points,q0,q1,q2,q3))
+                ## TODO sefuir aca continuo 
 
     points = np.delete(points, 0, 0)
     return points
@@ -174,19 +175,16 @@ def macroel_prisms (macroel_vertices, mu, levels):
     with the "upper triangle" of the points array in each level.
     """
     n_vertical = levels 
-    points = np.zeros((n_vertical+1,levels+1,3,levels+1))
-
+    top_layer  = np.zeros((3,))
     for y in range(levels+1):
         for z in range(levels+1-y):
             lambda_1, lambda_2 = lambda1 (y,z,0,levels,mu), lambda2 (y,z,0,levels,mu)
-            temp = lambda_1*(macroel_vertices[:,1] - macroel_vertices[:,0]) + lambda_2*(macroel_vertices[:,2] - macroel_vertices[:,0])
-            points[0,y,:,y+z] = temp + macroel_vertices[:,0]
-            ## CONTINUE: todo muy lindo lo del triu_indices pero es al pedo porque se puede tomar directamente
-            ## el orden en que aparecen en la siguente linea, y despues sumarles la traslacion haciendo crecer
-            ## la lista para abajo
-    for x in range(1,n_vertical+1):
-        points[x,:,:,:] = points[0,:,:,:] + (float(x)/n_vertical)*(macroel_vertices[:,3] - macroel_vertices[:,0]).reshape((3,1))
-    points = np.vstack(tuple([points[i,np.triu_indices(levels+1)[0],:,np.triu_indices(levels+1)[1]] for i in range(levels+1)]))
+            temp               = lambda_1*(macroel_vertices[:,1] - macroel_vertices[:,0]) \
+                                 + lambda_2*(macroel_vertices[:,2] - macroel_vertices[:,0])
+            top_layer          = np.vstack((top_layer,temp + macroel_vertices[:,0]))
+    top_layer   = top_layer[1:,:]
+    points      = np.vstack(tuple([top_layer+(x/n_vertical)*(macroel_vertices[:,3] \
+                    - macroel_vertices[:,0]).T for x in range(n_vertical+1)]))
     return points
 
 def macroel_more_flexible_tending_more_generality ():
