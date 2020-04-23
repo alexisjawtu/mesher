@@ -20,14 +20,15 @@ import mesh_connectivity
 import time
 
 ## CONTINUE HERE:
-## 0: test the writing in write_elements_by_vertices_prisms() and with
-##    a mesh that includes macro--elements of all types
+## 0: test by hand and example with prism macroels and an example
+##    that includes macro--elements of all types
 ## 1: como hacer el flujo de ejecucion. Dejar para que ande con $ python module.py?
 ## 2: donde esta documentado como son los ordenes y posiciones 
 ##    de los vertices de cada elemento. Por ejemplo: en una piramide es 
 ##    siempre el ultimo la punta?
 ## 3: start overall documentation and also do the markup file in github.
 ## 4: choose a name for the project
+## 5: joss?
 
 local_meshers                   = { 0 : mesh.macroel_hybrid, 
                                     1 : mesh.macroel_tetrahedra, 
