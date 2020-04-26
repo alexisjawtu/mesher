@@ -19,3 +19,7 @@ macroTetraedro.py
 change-names.sh
 git-commands
 experiments/*
+!fichera1
+!ellipsoid
+!ellipse.py
+!bbrick
