@@ -18,3 +18,4 @@ macroTetraedro.py
 *.ver
 change-names.sh
 git-commands
+experiments/*
