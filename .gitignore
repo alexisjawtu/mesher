@@ -21,5 +21,4 @@ git-commands
 experiments/*
 !fichera
 !ellipsoid
-!ellipse.py
 !bbrick
