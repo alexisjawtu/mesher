@@ -1,34 +1,8 @@
-"""
-1st: set levels (if levels == 1, then only macro--elements)
-
-searching repeated vertices:
-take from second column in file elem_by_vert.txt because 6,5 y 4 are not 
-things to replace. the analogue for faces repetitions
-another option is to put -3 -2 y -1 etc ...
-
-Obs: write_elements_by_vertices_tetra() has 4*ones 
-has to be changed to: -np.ones( whatever , dtype=int) etc
-## macro_elements type 1: prisms, pyrs and tetra
-## macro_elements type 2: prisms
-## macro_elements type 3: tetra
-"""
-
 import numpy as np
 import mesh
 import mesh_write
 import mesh_connectivity
 import time
-
-## CONTINUE HERE:
-## 0: test by hand and example with prism macroels and an example
-##    that includes macro--elements of all types
-## 1: como hacer el flujo de ejecucion. Dejar para que ande con $ python module.py?
-## 2: donde esta documentado como son los ordenes y posiciones 
-##    de los vertices de cada elemento. Por ejemplo: en una piramide es 
-##    siempre el ultimo la punta?
-## 3: start overall documentation and also do the markup file in github.
-## 4: choose a name for the project
-## 5: joss?
 
 local_meshers                   = { 0 : mesh.macroel_hybrid, 
                                     1 : mesh.macroel_tetrahedra, 
@@ -61,13 +35,12 @@ def load_partition (in_file):
     return macro_elements
 
 def filter_repeated_vertices (in_file,n_vert_prism = 6):
-    """	look for repetitions of vertices
-    ###########################################################################
+    """	look for repetitions of vertices.
     at this point the program is already general:
     this 'inverts' the table of elements_by_vertices.txt
     writes on disc: vertices_by_elements.txt
     mesh_connectivity.vertices_by_elements('elements_by_vertices.txt', 'Octave')
-    ########################################################################"""
+    """
     with open(in_file+'.ebvr','r') as inp:
         things = inp.readlines()
     
@@ -157,6 +130,7 @@ def filter_repeated_faces (in_file,n_elem):
 
 def omega (in_file, levels):
     """
+    1st: set levels (if levels == 1, then only macro--elements).
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     physical_vertices_writers:         write vertices.txt, global list of vertices
     """

@@ -14,4 +14,3 @@ This software implements the meshing procedure proposed in chapter five of this 
    plot("experiments/fichera.ver","experiments/fichera.ebv")`
    ```
 4. Repeat with any of the example domain files in experiments, or with any initial partition you write for the polihedral domain you want, and with the levels of refinement you want.
-
