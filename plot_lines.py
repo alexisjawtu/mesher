@@ -1,7 +1,7 @@
 import numpy as np
 from mayavi import mlab
 import main
-import ellipse
+#import ellipse
 
 def plot(vertices_file,connectivity_file,col=(0.5,0,0.5)):
     # Reads .ver and .ebv files. col is a color definition. 
@@ -82,7 +82,7 @@ def many_balls(_levels,_mu,folder=''):
             name = folder+'/ball_'+str(levels)+'_'+str(mu)
             ball(name,levels,mu,False)
 
-
+"""
 def ellipsoid(file_name,levels,mu,plotear=True):
     with open(file_name,'w') as inp:
         # Polo Sur
@@ -132,4 +132,5 @@ def ellipsoid(file_name,levels,mu,plotear=True):
     #q = np.vstack((q,np.zeros(q.shape[1])))
     np.savetxt(file_name+'.ver',q.T)
     if plotear:
-        plot(file_name+'.ver',file_name+'.ebv')    
+        plot(file_name+'.ver',file_name+'.ebv')
+"""

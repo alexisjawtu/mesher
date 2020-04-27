@@ -155,4 +155,4 @@ def omega (in_file, levels):
         # the local_meshers for this case.
         init += physical_vertices_writers[E[0]](points, in_file+".ver")
     filter_repeated_faces(in_file,filter_repeated_vertices(in_file))
-    return initial_partition
+    return
