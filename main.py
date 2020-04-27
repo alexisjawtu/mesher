@@ -82,10 +82,12 @@ def filter_repeated_vertices (in_file,n_vert_prism = 6):
     return n_elem
 
 def filter_repeated_faces (in_file,n_elem):
-    """ Takes the output of 
-    mesh_connectivity.vertices_by_elements()	writes on disc: shared_faces.txt
-    writes: faces_repeated.txt 			----> with repetitions
-            faces_local_to_global.txt   ----> for macro--element of type 1 """	
+    """ Takes the output of mesh_connectivity.vertices_by_elements().
+    writes on disc: in_file.nf          ----> number of faces
+                    in_file.faces_rep 	----> faces indices with repetitions
+                    in_file.fltg        ----> fltg stands for a
+                                              "faces_local_to_global" correspondence
+                    in_file.ebf         ----> elements_by_faces correspondence """	
     print ('Face Enumeration')
     mesh_connectivity.face_enumeration(in_file)
     print ('\r')
