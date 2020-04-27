@@ -19,5 +19,5 @@ macro_elements type 3: tetra
 10. make tests ready to include in the installation
 11. release under a license
   1. ~~Put a license notice in each file.~~
-  2. startup notice.
+  2. ~~startup notice.~~
 12. sourceforge  
