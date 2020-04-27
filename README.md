@@ -1,5 +1,5 @@
 ## The Project
-This software implements the meshing procedure proposed in chapter five of [this work] (http://cms.dm.uba.ar/academico/carreras/doctorado/thesisJawtuschenko.pdf).
+This software implements the meshing procedure proposed in chapter five of this work: http://cms.dm.uba.ar/academico/carreras/doctorado/thesisJawtuschenko.pdf.
 
 ### Basic tutorial
 1. In an ipython3 shell:
