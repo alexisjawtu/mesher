@@ -6,7 +6,7 @@ macro_elements type 2: prisms
 macro_elements type 3: tetra
 
 ##### Prioritary Items
-1. test by hand and example with prism macroels and an example
+1. test by hand an example with prism macroels and an example
    that includes macro--elements of all types
 2. Execution flow? $ python module.py?
 3. Documentation about order and positions 

@@ -16,14 +16,16 @@ elements_by_vertices_writers    = { 0 : mesh_connectivity.write_elements_by_vert
                                     1 : mesh_connectivity.write_elements_by_vertices_tetra,
                                     2 : mesh_connectivity.write_elements_by_vertices_prisms}
 
-def load_partition (in_file):
+def load_partition (in_file, levels):
     """ in_file is a csv with:
         macroelement_type, macro_vertices, local_mu """
+    colors = [ "green", "red", "blue"]
     with open(in_file,'r') as infile:
         inlist = infile.readlines()
     pre_list = [line.strip(' \n').split(',') for line in inlist]
     pre_list = [[int(st[0])] + [float(st[k]) for k in range(1,len(st))] for st in pre_list]
-    colors = [ "green", "red", "blue"]
+    if 0 in [pre_list[i][0] for i in range(len(pre_list))]:
+        mesh_write.write_element_indices(in_file+".elem", levels)
     macro_elements = { key : 
                         { 
                           0 : pre_list[key][0],
@@ -136,8 +138,7 @@ def omega (in_file, levels):
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     physical_vertices_writers:         write vertices.txt, global list of vertices
     """
-    initial_partition = load_partition (in_file)
-    mesh_write.write_element_indices(in_file+".elem", levels)
+    initial_partition = load_partition (in_file, levels)
     init = 0
     for i, E in iter(initial_partition.items()):
         # for case E[0] == 1: the following writes contiguous indices with repetitions on 
@@ -154,4 +155,4 @@ def omega (in_file, levels):
         # the local_meshers for this case.
         init += physical_vertices_writers[E[0]](points, in_file+".ver")
     filter_repeated_faces(in_file,filter_repeated_vertices(in_file))
-    return
+    return initial_partition

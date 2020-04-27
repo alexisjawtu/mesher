@@ -7,7 +7,7 @@ def write_element_indices (file_name, levels):
 
     takes n and writes on disc:
 
-    file_name.txt
+    file_name.elem
 
     ---------------------------------------------
 
@@ -20,7 +20,7 @@ def write_element_indices (file_name, levels):
     etc...
 
     This funtion is initial in the program, for the case
-    we start with the mesh we proposed. For a general mesh, the algorithm
+    the mesh contains a hybrid macroelement. For a general mesh, the algorithm
     starts directly in the next step (with element_by_vertices.txt given 
     somehow).
 

@@ -4,13 +4,13 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     """ 
     This funtion is at the beginning in the program, for the case
     we start with the mesh we proposed. For a general mesh, the algorithm
-    starts directly in the next step (with element_by_vertices.txt given 
-    somehow).
+    starts directly in the next step (with the elements-by-vertices file 
+    partition.ebv given somehow).
 
     initial: tracks the number of vertices of the previous macro_element
 
-    Requires the file elements.txt written by
-    mesh_write.write_element_indices() to be in the same directory.
+    Requires the file f_name_out.elem, written by
+    mesh_write.write_element_indices(), to be in the same directory.
 
     n == current quantity of levels
     
