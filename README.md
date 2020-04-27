@@ -4,8 +4,8 @@ This software implements the meshing procedure proposed in chapter five of [this
 ### Basic tutorial
 1. In an ipython3 shell:
    ```
-   $ run main
-   $ omega("experiments/fichera",levels=3)
+   run main
+   omega("experiments/fichera",levels=3)
    ```
 2. Now you have the **ten mesh files** in you working directory _experiments_. This is the mesh.
 3. To _see_ the plotted mesh:
