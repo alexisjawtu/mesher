@@ -1,8 +1,27 @@
+## <one line to give the program's name and a brief idea of what it does.>
+##     Copyright (C) 2018-2020  Alexis Boris Jawtuschenko.
+## 
+## This file is part of ?????.
+## 
+## ????? is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+## 
+## ????? is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+## 
+## You should have received a copy of the GNU General Public License
+## along with ?????.  If not, see <https://www.gnu.org/licenses/>.
+
 import numpy as np
 import mesh
 import mesh_write
 import mesh_connectivity
 import time
+
 
 local_meshers                   = { 0 : mesh.macroel_hybrid, 
                                     1 : mesh.macroel_tetrahedra, 
@@ -138,6 +157,11 @@ def omega (in_file, levels):
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     physical_vertices_writers:         write vertices.txt, global list of vertices
     """
+    print("<program>  Copyright (C) 2018-2020  Alexis Boris Jawtuschenko\
+          This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\
+          This is free software, and you are welcome to redistribute it\
+          under certain conditions; type `show c' for details.")
+
     initial_partition = load_partition (in_file, levels)
     init = 0
     for i, E in iter(initial_partition.items()):
