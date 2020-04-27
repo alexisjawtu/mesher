@@ -40,6 +40,7 @@ def plot(vertices_file,connectivity_file,col=(0.5,0,0.5)):
     mlab.pipeline.surface(src,color=col)
     mlab.show()
 
+"""
 #######
 # These funtions should be moved to another file. examples.py?
 def ball(file_name,levels=3,mu=1,plotear=True):
@@ -82,7 +83,7 @@ def many_balls(_levels,_mu,folder=''):
             name = folder+'/ball_'+str(levels)+'_'+str(mu)
             ball(name,levels,mu,False)
 
-"""
+
 def ellipsoid(file_name,levels,mu,plotear=True):
     with open(file_name,'w') as inp:
         # Polo Sur
