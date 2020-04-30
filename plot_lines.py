@@ -1,5 +1,5 @@
 ## <one line to give the program's name and a brief idea of what it does.>
-##     Copyright (C) 2018-2020  Alexis Boris Jawtuschenko.
+##     Copyright (C) 2020  Ignacio Ojea.
 ## 
 ## This file is part of ?????.
 ## 
