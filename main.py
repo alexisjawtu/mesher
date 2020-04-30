@@ -157,10 +157,10 @@ def omega (in_file, levels):
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     physical_vertices_writers:         write vertices.txt, global list of vertices
     """
-    print("<program>  Copyright (C) 2018-2020  Alexis Boris Jawtuschenko\
-          This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\
-          This is free software, and you are welcome to redistribute it\
-          under certain conditions; type `show c' for details.")
+    print('<program>  Copyright (C) 2018-2020  Alexis Boris Jawtuschenko\n' +
+          'This program comes with ABSOLUTELY NO WARRANTY; for details type ????.\n' +
+          'This is free software, and you are welcome to redistribute it\n' +
+          'under certain conditions; type show c for details.')
 
     initial_partition = load_partition (in_file, levels)
     init = 0
