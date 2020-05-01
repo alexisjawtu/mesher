@@ -1,12 +1,13 @@
 #### TODOs
-* write_elements_by_vertices_tetra() has 4\*ones 
+* elements_by_vertices_tetra() has 4\*ones 
 has to be changed to: -np.ones( whatever , dtype=int) etc
 macro_elements type 1: prisms, pyrs and tetra
 macro_elements type 2: prisms
 macro_elements type 3: tetra
 
 ##### Prioritary Items
-7. cubic macroelement 0: four tetrahedral and one hybrid macroel.
+0. ~~cubic macroelement 0: four tetrahedral and one hybrid macroel.~~
+1. TEST the new cubic macroelement
 2. document what is the input
 2. Execution flow? $ python module.py?
 3. Documentation about order and positions 
@@ -22,3 +23,10 @@ macro_elements type 3: tetra
   1. ~~Put a license notice in each file.~~
   2. ~~startup notice.~~
 12. sourceforge  
+
+
+about the elements_by_vertices_[type]() functions:
+This funtion is at the beginning in the program, for the case
+    we start with the mesh we proposed. For a general mesh, the algorithm
+    starts directly in the next step (with the elements-by-vertices file 
+    partition.ebv given somehow).

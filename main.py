@@ -25,15 +25,18 @@ import time
 
 local_meshers                   = { 0 : mesh.macroel_hybrid, 
                                     1 : mesh.macroel_tetrahedra, 
-                                    2 : mesh.macroel_prisms }
+                                    2 : mesh.macroel_prisms,
+                                    3 : mesh.macroel_hybridhexa }
 
 physical_vertices_writers       = { 0 : mesh_write.vertices_macro_hybrid,
                                     1 : mesh_write.vertices_macro_tetra,
-                                    2 : mesh_write.vertices_macro_prism }
+                                    2 : mesh_write.vertices_macro_prism,
+                                    3 : mesh_write.vertices_macro_hybridhexa }
 
-elements_by_vertices_writers    = { 0 : mesh_connectivity.write_elements_by_vertices_hybrid,
-                                    1 : mesh_connectivity.write_elements_by_vertices_tetra,
-                                    2 : mesh_connectivity.write_elements_by_vertices_prisms}
+elements_by_vertices_writers    = { 0 : mesh_connectivity.elements_by_vertices_hybrid,
+                                    1 : mesh_connectivity.elements_by_vertices_tetra,
+                                    2 : mesh_connectivity.elements_by_vertices_prisms,
+                                    3 : mesh_connectivity.elements_by_vertices_hybridhexa }
 
 def load_partition (in_file, levels):
     """ in_file is a csv with:

@@ -104,3 +104,9 @@ def vertices_macro_prism (points, f_write):
     with open (f_write, 'ab') as out:
         np.savetxt(out, points, fmt = __format__)
     return len(points)
+
+def vertices_macro_hybridhexa (points, f_write):
+    """ points is a dictionary of length five of point arrays. 
+    points == { 0 : p_0, ...} """
+    return sum ([vertices_macro_hybrid (points[i], f_write) for i in range(4)])\
+     + vertices_macro_tetra (points[4], f_write)

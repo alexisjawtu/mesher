@@ -18,13 +18,8 @@
 
 import numpy as np
 
-def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
+def elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     """ 
-    This funtion is at the beginning in the program, for the case
-    we start with the mesh we proposed. For a general mesh, the algorithm
-    starts directly in the next step (with the elements-by-vertices file 
-    partition.ebv given somehow).
-
     initial: tracks the number of vertices of the previous macro_element
 
     Requires the file f_name_out.elem, written by
@@ -63,7 +58,7 @@ def write_elements_by_vertices_hybrid (f_name_out, n, lang, initial):
             np.savetxt(out,line,fmt='%d')
     return len(indices)
 
-def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
+def elements_by_vertices_tetra (f_name_out, levels, lang, init):
     """ TODO: we should write an algorithm that passes just one time per vertex
         recording every element that vertex belongs to in the correct order,
         then mark wich are the vertices in the frontier of macroelements and
@@ -82,7 +77,7 @@ def write_elements_by_vertices_tetra (f_name_out, levels, lang, init):
         np.savetxt(tgt, arr_out, fmt='%d')
     return len(arr_out)
 
-def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
+def elements_by_vertices_prisms (f_name_out, levels, lang, init):
     """ f_name_out: we append the elements represented
     by lists of six vertex indices. 
     
@@ -183,6 +178,12 @@ def write_elements_by_vertices_prisms (f_name_out, levels, lang, init):
         np.savetxt(target,local_elmnts_by_vertices.astype(int),fmt='%d')
     return levels**3 
 
+def elements_by_vertices_hybridhexa (f_name_out, levels, lang, init):
+    for i in xrange(4):
+        init += elements_by_vertices_hybrid (f_name_out, levels, lang, init)
+    elements_by_vertices_tetra (f_name_out, levels, lang, init)
+    return
+
 def vertices_by_elements (f_name, lang):
 	""" 
 	This function intends to be GENERAL. For any mesh given, not
@@ -238,7 +239,7 @@ def faces (f_name, n_elem, lang):
 
 	f_name == vertices_by_elements.txt
 
-	n_elem == sum of write_elements_by_vertices_hybrid (f,n) in this way it won't depend on the topology of the mesh.
+	n_elem == sum of elements_by_vertices_hybrid (f,n) in this way it won't depend on the topology of the mesh.
 
 	language[lang]: this is for the case starting with ones or zeroes
 

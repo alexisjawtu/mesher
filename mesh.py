@@ -205,6 +205,35 @@ def macroel_prisms (macroel_vertices, mu, levels):
                     - macroel_vertices[:,0]).T for x in range(n_vertical+1)]))
     return points
 
+def split_cube_into_tetrahedra (nodes):
+    t0 = nodes[:,[0,1,3,4]]
+    t1 = nodes[:,[2,3,1,6]]
+    t2 = nodes[:,[7,3,4,6]]
+    t3 = nodes[:,[5,4,1,6]]
+    t4 = nodes[:,[6,1,3,4]]
+    return [t0,t1,t2,t3,t4]
+
+def macroel_hybridhexa (vertices, mu, levels):
+    """ This builds and returns the points in an hexahedron divided into five
+    tetrahedral macroelements by calling the proper macroelement functions.
+    Four of these tetrahedral macroelements are hybrid and include pyramids and
+    prisms, while the fifth, 'inner', macroelement is built refined 
+    tetrahedra. If it is a cube, then the 'inner' is a regular tetrahedron. 
+    
+    vertices: a 3 x 8 matrix with the vertices of the hexahedron. The last
+    of these is the singular vertex (if any singular vertex is present in
+    this part of the mesh, and we perform the graduation towards that vertex. 
+
+    mu:       the graduation parameter
+
+    levels:   levels of refinement, that is, the number of subintervals in any
+    edge of the whole macroelement.
+    """
+    split_verts = split_cube_into_tetrahedra(vertices)
+    points      = { i : macroel_hybrid(split_verts[i], mu, levels) for i in range(4) }
+    points[4]   = macroel_tetrahedra(split_verts[4], mu, levels)
+    return points
+
 def macroel_more_flexible_tending_more_generality ():
     ## TODO
     pass
