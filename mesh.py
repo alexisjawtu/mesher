@@ -206,11 +206,46 @@ def macroel_prisms (macroel_vertices, mu, levels):
     return points
 
 def split_cube_into_tetrahedra (nodes):
-    t0 = nodes[:,[0,1,3,4]]
-    t1 = nodes[:,[2,3,1,6]]
-    t2 = nodes[:,[7,3,4,6]]
-    t3 = nodes[:,[5,4,1,6]]
-    t4 = nodes[:,[6,1,3,4]]
+    CONTINUE HERE
+    """ nodes: the array of eight vertices of an hexahedron which
+    has faces parallel to the axes. The order of the column of this input
+    array is arbitrary, as long as the first one remains _the singular vertex_
+    (if any singular vertex is present in this part of the mesh), and the 
+    program performs the local graduation towards that vertex. """
+
+    macro_el    = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
+ 
+    p_          = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
+                            [-1,  0,  0, -1, -1,  0,  0, -1],   
+                            [-1, -1,  0,  0, -1, -1,  0,  0]])
+
+
+    def octant (o, points):
+        """ takes a fixed octant [points] and affine--transforms it to the other six.
+            the last one is ones(3,1) to leave it unchanged """
+        trans = np.array([[ 0,  0, -1, -1,  1,  1, -1, -1,  1],
+                          [ 0,  0, -1,  1,  1, -1, -1,  1,  1],
+                          [ 0,  0, -1, -1, -1,  1,  1,  1,  1]])
+        return points*trans[:,o].reshape((3,1))
+
+
+
+    singular_p = nodes[:,0]
+
+    index_bits = (singular_p[0]==np.max(nodes[0,:]),\
+                  singular_p[1]==np.max(nodes[1,:]),\
+                  singular_p[2]==np.max(nodes[2,:]))
+
+    permutations = { 0 : 
+
+    }
+
+
+    t0 = nodes[:,[0,1,3,4]] # hybrid, never graded 
+    t1 = nodes[:,[2,3,1,6]] # hybrid
+    t2 = nodes[:,[7,3,4,6]] # hybrid
+    t3 = nodes[:,[5,4,1,6]] # hybrid
+    t4 = nodes[:,[6,1,3,4]] # tetra
     return [t0,t1,t2,t3,t4]
 
 def macroel_hybridhexa (vertices, mu, levels):
@@ -220,9 +255,9 @@ def macroel_hybridhexa (vertices, mu, levels):
     prisms, while the fifth, 'inner', macroelement is built refined 
     tetrahedra. If it is a cube, then the 'inner' is a regular tetrahedron. 
     
-    vertices: a 3 x 8 matrix with the vertices of the hexahedron. The last
+    vertices: a 3 x 8 matrix with the vertices of the hexahedron. The first
     of these is the singular vertex (if any singular vertex is present in
-    this part of the mesh, and we perform the graduation towards that vertex. 
+    this part of the mesh), and we perform the graduation towards that vertex. 
 
     mu:       the graduation parameter
 
