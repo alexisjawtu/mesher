@@ -206,47 +206,36 @@ def macroel_prisms (macroel_vertices, mu, levels):
     return points
 
 def split_cube_into_tetrahedra (nodes):
-    CONTINUE HERE
     """ nodes: the array of eight vertices of an hexahedron which
     has faces parallel to the axes. The order of the column of this input
     array is arbitrary, as long as the first one remains _the singular vertex_
     (if any singular vertex is present in this part of the mesh), and the 
     program performs the local graduation towards that vertex. """
-
-    macro_el    = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
- 
-    p_          = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
-                            [-1,  0,  0, -1, -1,  0,  0, -1],   
-                            [-1, -1,  0,  0, -1, -1,  0,  0]])
-
-
-    def octant (o, points):
-        """ takes a fixed octant [points] and affine--transforms it to the other six.
-            the last one is ones(3,1) to leave it unchanged """
-        trans = np.array([[ 0,  0, -1, -1,  1,  1, -1, -1,  1],
-                          [ 0,  0, -1,  1,  1, -1, -1,  1,  1],
-                          [ 0,  0, -1, -1, -1,  1,  1,  1,  1]])
-        return points*trans[:,o].reshape((3,1))
-
-
-
     singular_p = nodes[:,0]
-
+    # compare with max{x}, max{y}, max{z} to decide
+    # where is the singular vertex pointing
     index_bits = (singular_p[0]==np.max(nodes[0,:]),\
                   singular_p[1]==np.max(nodes[1,:]),\
-                  singular_p[2]==np.max(nodes[2,:]))
+                  singular_p[2]==np.max(nodes[2,:])) 
+    # {0,..,7} ---> {columns of trans}
+    permutation = { 0 : 0, 1 : 4, 2 : 3, 3 : 7, 4 : 1, 5 : 5, 6 : 2, 7 : 6 }
+    std_macro_elems = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
+    reflections = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
+                            [-1, -1,  1,  1, -1, -1,  1, 1],
+                            [-1, -1, -1, -1,  1,  1,  1, 1]])
+    perm = permutation[int(np.right_shift(np.pack_bits(index_bits),5))]
+    nodes = nodes*reflections[:,perm].reshape((3,1))
 
-    permutations = { 0 : 
+    ## REMOVE these 5 lines after tests
+    # t0 = nodes[:,std_macro_elems[0]]  
+    # t1 = nodes[:,std_macro_elems[1]]  
+    # t2 = nodes[:,std_macro_elems[2]]  
+    # t3 = nodes[:,std_macro_elems[3]]  
+    # t4 = nodes[:,std_macro_elems[4]] 
 
-    }
-
-
-    t0 = nodes[:,[0,1,3,4]] # hybrid, never graded 
-    t1 = nodes[:,[2,3,1,6]] # hybrid
-    t2 = nodes[:,[7,3,4,6]] # hybrid
-    t3 = nodes[:,[5,4,1,6]] # hybrid
-    t4 = nodes[:,[6,1,3,4]] # tetra
-    return [t0,t1,t2,t3,t4]
+    # 0. hybrid --never graded--; 1. hybrid; 2. hybrid; 3. hybrid; 4. tetra
+    tetrahedra = [nodes[:,std_macro_elems[t]] for t in range(5)]
+    return tetrahedra
 
 def macroel_hybridhexa (vertices, mu, levels):
     """ This builds and returns the points in an hexahedron divided into five
