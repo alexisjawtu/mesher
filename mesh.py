@@ -18,6 +18,17 @@
 
 import numpy as np                              
 
+# {0,..,7} ---> {columns of trans}
+permutation1     = { 0 : 0, 1 : 4, 2 : 3, 3 : 7, 4 : 1, 5 : 5, 6 : 2, 7 : 6 }
+
+#permutation2     = { 6 : 0, 7 : 1, 5 : 2, 0 : 3, 2 : 4, 1 : 5, 4 : 6, 3 : 7 }
+
+std_macro_elems = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
+
+reflections     = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
+                            [-1, -1,  1,  1, -1, -1,  1, 1],
+                            [-1, -1, -1, -1,  1,  1,  1, 1]])
+
 def lambda1 (i, j, k, n, mu):
     return float(i)/n * (float(i+j+k)/n)**((1/float(mu))-1)
 
@@ -33,7 +44,7 @@ def macroel_tetrahedra (vertices, mu, n):
         the macro--element.
 
         OBS: the graduation is, by default, towards 'P0',
-        so we have to put the corresponding permutation of vertices when 
+        so we have to put the corresponding permutation1 of vertices when 
         calling the function.
         
         TODO:  calculations of the form lambda_[0,i,j,k]*P0 could be done
@@ -211,20 +222,27 @@ def split_cube_into_tetrahedra (nodes):
     array is arbitrary, as long as the first one remains _the singular vertex_
     (if any singular vertex is present in this part of the mesh), and the 
     program performs the local graduation towards that vertex. """
-    singular_p = nodes[:,0]
+    
+    #singular_p = nodes[:,0]
+    
     # compare with max{x}, max{y}, max{z} to decide
     # where is the singular vertex pointing
-    index_bits = (singular_p[0]==np.max(nodes[0,:]),\
-                  singular_p[1]==np.max(nodes[1,:]),\
-                  singular_p[2]==np.max(nodes[2,:])) 
-    # {0,..,7} ---> {columns of trans}
-    permutation = { 0 : 0, 1 : 4, 2 : 3, 3 : 7, 4 : 1, 5 : 5, 6 : 2, 7 : 6 }
-    std_macro_elems = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
-    reflections = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
-                            [-1, -1,  1,  1, -1, -1,  1, 1],
-                            [-1, -1, -1, -1,  1,  1,  1, 1]])
-    perm = permutation[int(np.right_shift(np.packbits(index_bits),5))]
-    nodes = nodes*reflections[:,perm].reshape((3,1))
+
+
+
+
+    bit_index = np.zeros(8,dtype=int)
+    for i in range(8): # TODO transform to one line
+        bits = ( nodes[0,i]==np.max(nodes[0,:]),\
+                 nodes[1,i]==np.max(nodes[1,:]),\
+                 nodes[2,i]==np.max(nodes[2,:]) ) 
+        bit_index[i] = int(np.right_shift(np.packbits(bits),5))
+    singular_vertex_orientation = permutation1[bit_index[0]]
+    nodes = nodes*reflections[:,singular_vertex_orientation].reshape((3,1))
+
+    # CONTINUE HERE: make one beatiful permutation,
+    # once we have the hexahedron translated to the octant number 8
+    # ONLY THEN we will be able to use the std_macro_elems
 
     ## REMOVE these 5 lines after tests
     # t0 = nodes[:,std_macro_elems[0]]  
@@ -232,7 +250,6 @@ def split_cube_into_tetrahedra (nodes):
     # t2 = nodes[:,std_macro_elems[2]]  
     # t3 = nodes[:,std_macro_elems[3]]  
     # t4 = nodes[:,std_macro_elems[4]] 
-
     # 0. hybrid --never graded--; 1. hybrid; 2. hybrid; 3. hybrid; 4. tetra
     tetrahedra = [nodes[:,std_macro_elems[t]] for t in range(5)]
     return tetrahedra
