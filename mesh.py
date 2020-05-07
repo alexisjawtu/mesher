@@ -223,7 +223,7 @@ def split_cube_into_tetrahedra (nodes):
     reflections = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
                             [-1, -1,  1,  1, -1, -1,  1, 1],
                             [-1, -1, -1, -1,  1,  1,  1, 1]])
-    perm = permutation[int(np.right_shift(np.pack_bits(index_bits),5))]
+    perm = permutation[int(np.right_shift(np.packbits(index_bits),5))]
     nodes = nodes*reflections[:,perm].reshape((3,1))
 
     ## REMOVE these 5 lines after tests
@@ -254,6 +254,9 @@ def macroel_hybridhexa (vertices, mu, levels):
     edge of the whole macroelement.
     """
     split_verts = split_cube_into_tetrahedra(vertices)
+    print(split_verts)
+    # with open ('split.txt','w') as out:
+    #     out.write(split_verts)
     points      = { i : macroel_hybrid(split_verts[i], mu, levels) for i in range(4) }
     points[4]   = macroel_tetrahedra(split_verts[4], mu, levels)
     return points
