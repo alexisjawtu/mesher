@@ -18,16 +18,45 @@
 
 import numpy as np                              
 
-# {0,..,7} ---> {columns of trans}
-permutation1     = { 0 : 0, 1 : 4, 2 : 3, 3 : 7, 4 : 1, 5 : 5, 6 : 2, 7 : 6 }
+# {0,..,7} ---> {columns of reflections}
+octant_permutation = { 0 : 0,
+                       1 : 4,
+                       2 : 3,
+                       3 : 7,
+                       4 : 1,
+                       5 : 5,
+                       6 : 2,
+                       7 : 6 }
 
-#permutation2     = { 6 : 0, 7 : 1, 5 : 2, 0 : 3, 2 : 4, 1 : 5, 4 : 6, 3 : 7 }
-
+# 0. hybrid --never graded--; 1. hybrid; 2. hybrid; 3. hybrid; 4. tetra
 std_macro_elems = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
 
-reflections     = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
-                            [-1, -1,  1,  1, -1, -1,  1, 1],
-                            [-1, -1, -1, -1,  1,  1,  1, 1]])
+#reflections     = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
+#                            [-1, -1,  1,  1, -1, -1,  1, 1],
+#                            [-1, -1, -1, -1,  1,  1,  1, 1]])
+#permutation2     = { 6 : 0, 7 : 1, 5 : 2, 0 : 3, 2 : 4, 1 : 5, 4 : 6, 3 : 7 }
+
+# pi contains the vertices permutations: this are the transformed enumerations
+# of the vertices, one for each singular_vertex_orientation, so that
+# we keep the numbers in std_macro_elems. This was done with comparisons with 
+# the maximum x, y and z coordinates and the transforming from base 2 to base 10. 
+# Perhaps we can put a separate function to make these bit_packings each time.
+#         .
+#        .
+# .......
+# .     .
+# .     .
+# .......
+pi = [[7,5,4,6,3,1,0,2],
+      [3,1,0,2,7,5,4,6],
+      [1,3,2,0,5,7,6,4],
+      [5,7,6,4,1,3,2,0],
+      [6,4,5,7,2,0,1,3],
+      [2,0,1,3,6,4,5,7],
+
+      [0,2,3,1,4,6,7,5],
+      
+      [4,6,7,5,0,2,3,1]]
 
 def lambda1 (i, j, k, n, mu):
     return float(i)/n * (float(i+j+k)/n)**((1/float(mu))-1)
@@ -44,7 +73,7 @@ def macroel_tetrahedra (vertices, mu, n):
         the macro--element.
 
         OBS: the graduation is, by default, towards 'P0',
-        so we have to put the corresponding permutation1 of vertices when 
+        so we have to put the corresponding octant_permutation of vertices when 
         calling the function.
         
         TODO:  calculations of the form lambda_[0,i,j,k]*P0 could be done
@@ -228,30 +257,22 @@ def split_cube_into_tetrahedra (nodes):
     # compare with max{x}, max{y}, max{z} to decide
     # where is the singular vertex pointing
 
-
-
-
     bit_index = np.zeros(8,dtype=int)
     for i in range(8): # TODO transform to one line
         bits = ( nodes[0,i]==np.max(nodes[0,:]),\
                  nodes[1,i]==np.max(nodes[1,:]),\
                  nodes[2,i]==np.max(nodes[2,:]) ) 
-        bit_index[i] = int(np.right_shift(np.packbits(bits),5))
-    singular_vertex_orientation = permutation1[bit_index[0]]
-    nodes = nodes*reflections[:,singular_vertex_orientation].reshape((3,1))
+        bit_index[int(np.right_shift(np.packbits(bits),5))] = i
 
-    # CONTINUE HERE: make one beatiful permutation,
-    # once we have the hexahedron translated to the octant number 8
-    # ONLY THEN we will be able to use the std_macro_elems
+    singular_vertex_orientation, = octant_permutation[np.where(bit_index==0)[0]]
+    
+    #CONTINUE HERE: here I figured it out for the first macroelement
+    #make this general
+    nodes [:, pi[singular_vertex_orientation][bit_index[std_macro_elems[0,0]]] ]
+    nodes [:, pi[singular_vertex_orientation][bit_index[std_macro_elems[0,1]]] ]
+    nodes [:, pi[singular_vertex_orientation][bit_index[std_macro_elems[0,2]]] ]
+    nodes [:, pi[singular_vertex_orientation][bit_index[std_macro_elems[0,3]]] ]
 
-    ## REMOVE these 5 lines after tests
-    # t0 = nodes[:,std_macro_elems[0]]  
-    # t1 = nodes[:,std_macro_elems[1]]  
-    # t2 = nodes[:,std_macro_elems[2]]  
-    # t3 = nodes[:,std_macro_elems[3]]  
-    # t4 = nodes[:,std_macro_elems[4]] 
-    # 0. hybrid --never graded--; 1. hybrid; 2. hybrid; 3. hybrid; 4. tetra
-    tetrahedra = [nodes[:,std_macro_elems[t]] for t in range(5)]
     return tetrahedra
 
 def macroel_hybridhexa (vertices, mu, levels):
