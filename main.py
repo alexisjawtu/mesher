@@ -45,10 +45,10 @@ def load_partition (in_file, levels):
     colors = [ "green", "red", "blue", "purple"]
     with open(in_file,'r') as infile:
         inlist = infile.readlines()
-    print(inlist)
+    #print(inlist)
     pre_list = [line.strip(' \n').split(',') for line in inlist\
                                                if (line not in ['','\n','\t'])]
-    print(pre_list)
+    #print(pre_list)
     pre_list = [[int(st[0])] + [float(st[k]) for k in range(1,len(st))] for st in pre_list]
     check_list = [pre_list[i][0] for i in range(len(pre_list))]
     if (0 in check_list or 3 in check_list): 

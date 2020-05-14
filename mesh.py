@@ -19,6 +19,18 @@
 import numpy as np                              
 
 # {0,..,7} ---> {columns of reflections}
+# Meaning: we take the integer whos binary representation
+# equals the R3 coordinates of the singular vertex
+# viewed in the unitary cube and returns the octant number
+# which has the origin in that orientation:
+# for example: if the input I_0 is
+# (1,1,1)  (1,2,1)  (0,1,1)  (0,2,1)  
+# (1,1,2)  (1,2,2)  (0,1,2)  (0,2,2)
+# with singular vertex (1,2,2), then (1,2,2) is oriented
+# as the vertex (1,1,1) in the unitary cube, so it is number 7.
+# Now, octant_permutation[7] = 6,
+# then at the end we have: I_0 ---> octant number 6.
+
 octant_permutation = { 0 : 0,
                        1 : 4,
                        2 : 3,
@@ -28,35 +40,47 @@ octant_permutation = { 0 : 0,
                        6 : 2,
                        7 : 6 }
 
+p_          = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
+                        [-1,  0,  0, -1, -1,  0,  0, -1],   
+                        [-1, -1,  0,  0, -1, -1,  0,  0]])
+
 # 0. hybrid --never graded--; 1. hybrid; 2. hybrid; 3. hybrid; 4. tetra
 std_macro_elems = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
 
-#reflections     = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
-#                            [-1, -1,  1,  1, -1, -1,  1, 1],
-#                            [-1, -1, -1, -1,  1,  1,  1, 1]])
+reflections     = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
+                            [-1, -1,  1,  1, -1, -1,  1, 1],
+                            [-1, -1, -1, -1,  1,  1,  1, 1]])
+
 #permutation2     = { 6 : 0, 7 : 1, 5 : 2, 0 : 3, 2 : 4, 1 : 5, 4 : 6, 3 : 7 }
 
-# pi contains the vertices permutations: this are the transformed enumerations
-# of the vertices, one for each singular_vertex_orientation, so that
-# we keep the numbers in std_macro_elems. This was done with comparisons with 
-# the maximum x, y and z coordinates and the transforming from base 2 to base 10. 
-# Perhaps we can put a separate function to make these bit_packings each time.
-#         .
-#        .
-# .......
-# .     .
-# .     .
-# .......
-pi = [[7,5,4,6,3,1,0,2],
-      [3,1,0,2,7,5,4,6],
-      [1,3,2,0,5,7,6,4],
-      [5,7,6,4,1,3,2,0],
-      [6,4,5,7,2,0,1,3],
-      [2,0,1,3,6,4,5,7],
+def vertices_permutation(orientation):
+    """ group contains the vertices permutations: this are the transformed
+    enumerations of the vertices, one for each singular_vertex_orientation,
+    so that we keep the numbers in std_macro_elems. This was done with comparisons with 
+    the maximum x, y and z coordinates and the transforming from base 2 to base 10. 
+    Perhaps we can put a separate function to make these bit_packings each time.
 
-      [0,2,3,1,4,6,7,5],
-      
-      [4,6,7,5,0,2,3,1]]
+    TODO: i dont remeber the momentary calculation i did to obtain these key permutations
+    something with 
+
+    In [13]: run mesh
+    In [14]: a=split_cube_into_tetrahedra(p_*reflections[:,0].reshape((3,1)))
+    In [15]: a=split_cube_into_tetrahedra(p_*reflections[:,1].reshape((3,1)))
+    In [16]: a=split_cube_into_tetrahedra(p_*reflections[:,2].reshape((3,1)))
+
+    etc...
+
+    So the TODO is to make a function like that instead of the hardcoded 
+    matrix 'group' of permutations.    """
+    group = np.array([[7,5,4,6,3,1,0,2],
+                      [3,1,0,2,7,5,4,6],
+                      [1,3,2,0,5,7,6,4],
+                      [5,7,6,4,1,3,2,0],
+                      [6,4,5,7,2,0,1,3],
+                      [2,0,1,3,6,4,5,7],
+                      [0,2,3,1,4,6,7,5], 
+                      [4,6,7,5,0,2,3,1]])
+    return group[orientation,:]
 
 def lambda1 (i, j, k, n, mu):
     return float(i)/n * (float(i+j+k)/n)**((1/float(mu))-1)
@@ -252,26 +276,51 @@ def split_cube_into_tetrahedra (nodes):
     (if any singular vertex is present in this part of the mesh), and the 
     program performs the local graduation towards that vertex. """
     
-    #singular_p = nodes[:,0]
+    # singular_p = nodes[:,0]
     
     # compare with max{x}, max{y}, max{z} to decide
     # where is the singular vertex pointing
 
-    bit_index = np.zeros(8,dtype=int)
+    bit_arr = np.zeros(8,dtype=int)
     for i in range(8): # TODO transform to one line
         bits = ( nodes[0,i]==np.max(nodes[0,:]),\
                  nodes[1,i]==np.max(nodes[1,:]),\
                  nodes[2,i]==np.max(nodes[2,:]) ) 
-        bit_index[int(np.right_shift(np.packbits(bits),5))] = i
+        bit_arr[int(np.right_shift(np.packbits(bits),5))] = i
 
-    singular_vertex_orientation, = octant_permutation[np.where(bit_index==0)[0]]
+    print([bit_arr[octant_permutation[k]] for k in range(8)])
+
+    singular_vertex_orientation = octant_permutation[np.where(bit_arr==0)[0][0]]
+    pi = vertices_permutation (singular_vertex_orientation)
+    tetrahedra = {}
+    for m in range (5):
+        select = np.take(pi,np.take(bit_arr,std_macro_elems[m]))
+        tetrahedra[m] = nodes[:,select]
+    #print(tetrahedra)
     
-    #CONTINUE HERE: here I figured it out for the first macroelement
-    #make this general
-    nodes [:, pi[singular_vertex_orientation][bit_index[std_macro_elems[0,0]]] ]
-    nodes [:, pi[singular_vertex_orientation][bit_index[std_macro_elems[0,1]]] ]
-    nodes [:, pi[singular_vertex_orientation][bit_index[std_macro_elems[0,2]]] ]
-    nodes [:, pi[singular_vertex_orientation][bit_index[std_macro_elems[0,3]]] ]
+    # CONTINUE HERE, draw the following example output and confront with the
+    # split cube: get this working and leave the writing of 
+    # vertices_permutation() to sometime after
+    
+    #    [-1.,  0., -1., -1.]
+    #    [ 0.,  0., -1., -1.]
+    #    [ 0.,  0.,  0.,  1.]
+    #    
+    #    [-1., -1.,  0.,  0.]
+    #    [ 0., -1.,  0., -1.]
+    #    [ 1.,  0.,  0.,  0.]
+    #    
+    #    [ 0., -1., -1.,  0.]
+    #    [ 0., -1., -1., -1.]
+    #    [ 1.,  0.,  1.,  0.]
+    #    
+    #    [ 0., -1.,  0.,  0.]
+    #    [-1., -1.,  0., -1.]
+    #    [ 1.,  1.,  0.,  0.]
+    #    
+    #    [ 0.,  0., -1., -1.]
+    #    [-1.,  0., -1., -1.]
+    #    [ 0.,  0.,  0.,  1.]
 
     return tetrahedra
 
