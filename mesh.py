@@ -15,6 +15,7 @@
 ## 
 ## You should have received a copy of the GNU General Public License
 ## along with ?????.  If not, see <https://www.gnu.org/licenses/>.
+## permutation2     = { 6 : 0, 7 : 1, 5 : 2, 0 : 3, 2 : 4, 1 : 5, 4 : 6, 3 : 7 }
 
 import numpy as np                              
 
@@ -28,10 +29,10 @@ import numpy as np
 # (1,1,2)  (1,2,2)  (0,1,2)  (0,2,2)
 # with singular vertex (1,2,2), then (1,2,2) is oriented
 # as the vertex (1,1,1) in the unitary cube, so it is number 7.
-# Now, octant_permutation[7] = 6,
+# Now, octant_encoding[7] = 6,
 # then at the end we have: I_0 ---> octant number 6.
 
-octant_permutation = { 0 : 0,
+octant_encoding = { 0 : 0,
                        1 : 4,
                        2 : 3,
                        3 : 7,
@@ -40,9 +41,18 @@ octant_permutation = { 0 : 0,
                        6 : 2,
                        7 : 6 }
 
-p_          = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
-                        [-1,  0,  0, -1, -1,  0,  0, -1],   
-                        [-1, -1,  0,  0, -1, -1,  0,  0]])
+group = np.array([[6,5,7,4,2,1,3,0],  ## these are the succesive output arrays in
+                  [2,1,3,0,6,5,7,4],  ## reference_permutations()
+                  [3,0,2,1,7,4,6,5],  ## we leave them just because
+                  [7,4,6,5,3,0,2,1],
+                  [5,6,4,7,1,2,0,3],
+                  [1,2,0,3,5,6,4,7],
+                  [0,3,1,2,4,7,5,6], 
+                  [4,7,5,6,0,3,1,2]])
+
+p_ = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
+               [-1,  0,  0, -1, -1,  0,  0, -1],   
+               [-1, -1,  0,  0, -1, -1,  0,  0]])
 
 # 0. hybrid --never graded--; 1. hybrid; 2. hybrid; 3. hybrid; 4. tetra
 std_macro_elems = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
@@ -51,11 +61,23 @@ reflections     = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
                             [-1, -1,  1,  1, -1, -1,  1, 1],
                             [-1, -1, -1, -1,  1,  1,  1, 1]])
 
-#permutation2     = { 6 : 0, 7 : 1, 5 : 2, 0 : 3, 2 : 4, 1 : 5, 4 : 6, 3 : 7 }
 
-def vertices_permutation(orientation):
+
+def bit_arrays (nodes):
+    bit_arr = np.zeros(8,dtype=int)
+    for i in range(8): # TODO transform to one line
+        bits = ( nodes[0,i]==np.max(nodes[0,:]),\
+                 nodes[1,i]==np.max(nodes[1,:]),\
+                 nodes[2,i]==np.max(nodes[2,:]) )
+        #print(bits)
+        bit_arr[int(np.right_shift(np.packbits(bits),5))] = i
+    #print('bit_arr -> ',bit_arr)
+    return bit_arr
+
+
+def reference_permutations(orientation):
     """ group contains the vertices permutations: this are the transformed
-    enumerations of the vertices, one for each singular_vertex_orientation,
+    enumerations of the vertices, one for each singular_vertex_position,
     so that we keep the numbers in std_macro_elems. This was done with comparisons with 
     the maximum x, y and z coordinates and the transforming from base 2 to base 10. 
     Perhaps we can put a separate function to make these bit_packings each time.
@@ -72,15 +94,8 @@ def vertices_permutation(orientation):
 
     So the TODO is to make a function like that instead of the hardcoded 
     matrix 'group' of permutations.    """
-    group = np.array([[7,5,4,6,3,1,0,2],
-                      [3,1,0,2,7,5,4,6],
-                      [1,3,2,0,5,7,6,4],
-                      [5,7,6,4,1,3,2,0],
-                      [6,4,5,7,2,0,1,3],
-                      [2,0,1,3,6,4,5,7],
-                      [0,2,3,1,4,6,7,5], 
-                      [4,6,7,5,0,2,3,1]])
-    return group[orientation,:]
+    nodes = p_*reflections[:,orientation].reshape((3,1))
+    return bit_arrays (nodes)
 
 def lambda1 (i, j, k, n, mu):
     return float(i)/n * (float(i+j+k)/n)**((1/float(mu))-1)
@@ -97,7 +112,7 @@ def macroel_tetrahedra (vertices, mu, n):
         the macro--element.
 
         OBS: the graduation is, by default, towards 'P0',
-        so we have to put the corresponding octant_permutation of vertices when 
+        so we have to put the corresponding octant_encoding of vertices when 
         calling the function.
         
         TODO:  calculations of the form lambda_[0,i,j,k]*P0 could be done
@@ -281,47 +296,40 @@ def split_cube_into_tetrahedra (nodes):
     # compare with max{x}, max{y}, max{z} to decide
     # where is the singular vertex pointing
 
-    bit_arr = np.zeros(8,dtype=int)
-    for i in range(8): # TODO transform to one line
-        bits = ( nodes[0,i]==np.max(nodes[0,:]),\
-                 nodes[1,i]==np.max(nodes[1,:]),\
-                 nodes[2,i]==np.max(nodes[2,:]) ) 
-        bit_arr[int(np.right_shift(np.packbits(bits),5))] = i
+    ## CONTINUE HERE DRAW THIS and continue debugging
+    ##     0 [5 1 4 0]
+    ## [[-1.  0. -1.  0.]
+    ##  [ 0. -1.  0.  0.]
+    ##  [ 1.  0.  0.  0.]]
+    ## 1 [7 4 1 3]
+    ## [[-1. -1.  0. -1.]
+    ##  [-1.  0. -1. -1.]
+    ##  [ 0.  0.  0.  1.]]
+    ## 2 [2 4 0 3]
+    ## [[ 0. -1.  0. -1.]
+    ##  [ 0.  0.  0. -1.]
+    ##  [ 1.  0.  0.  1.]]
+    ## 3 [6 0 1 3]
+    ## [[ 0.  0.  0. -1.]
+    ##  [-1.  0. -1. -1.]
+    ##  [ 1.  0.  0.  1.]]
+    ## 4 [3 1 4 0]
+    ## [[-1.  0. -1.  0.]
+    ##  [-1. -1.  0.  0.]
+    ##  [ 1.  0.  0.  0.]]
 
-    print([bit_arr[octant_permutation[k]] for k in range(8)])
 
-    singular_vertex_orientation = octant_permutation[np.where(bit_arr==0)[0][0]]
-    pi = vertices_permutation (singular_vertex_orientation)
+
+
+    positions_encoding       = bit_arrays(nodes)
+    singular_vertex_position = octant_encoding[np.where(positions_encoding==0)[0][0]]
+    pi                       = reference_permutations (singular_vertex_position)
     tetrahedra = {}
     for m in range (5):
-        select = np.take(pi,np.take(bit_arr,std_macro_elems[m]))
+        select = np.take(pi,np.take(positions_encoding,std_macro_elems[m]))
+        print(m, select)
         tetrahedra[m] = nodes[:,select]
-    #print(tetrahedra)
-    
-    # CONTINUE HERE, draw the following example output and confront with the
-    # split cube: get this working and leave the writing of 
-    # vertices_permutation() to sometime after
-    
-    #    [-1.,  0., -1., -1.]
-    #    [ 0.,  0., -1., -1.]
-    #    [ 0.,  0.,  0.,  1.]
-    #    
-    #    [-1., -1.,  0.,  0.]
-    #    [ 0., -1.,  0., -1.]
-    #    [ 1.,  0.,  0.,  0.]
-    #    
-    #    [ 0., -1., -1.,  0.]
-    #    [ 0., -1., -1., -1.]
-    #    [ 1.,  0.,  1.,  0.]
-    #    
-    #    [ 0., -1.,  0.,  0.]
-    #    [-1., -1.,  0., -1.]
-    #    [ 1.,  1.,  0.,  0.]
-    #    
-    #    [ 0.,  0., -1., -1.]
-    #    [-1.,  0., -1., -1.]
-    #    [ 0.,  0.,  0.,  1.]
-
+        print(tetrahedra[m])
     return tetrahedra
 
 def macroel_hybridhexa (vertices, mu, levels):
@@ -341,7 +349,7 @@ def macroel_hybridhexa (vertices, mu, levels):
     edge of the whole macroelement.
     """
     split_verts = split_cube_into_tetrahedra(vertices)
-    print(split_verts)
+    #print(split_verts)
     # with open ('split.txt','w') as out:
     #     out.write(split_verts)
     points      = { i : macroel_hybrid(split_verts[i], mu, levels) for i in range(4) }
