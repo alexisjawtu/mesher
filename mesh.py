@@ -40,6 +40,33 @@ import numpy as np
 #                   [0,3,1,2,4,7,5,6], 
 #                   [4,7,5,6,0,3,1,2]])
 
+#    """ This builds and returns the points in an hexahedron divided into five
+#    tetrahedral macroelements by calling the proper macroelement functions.
+#    Four of these tetrahedral macroelements are hybrid and include pyramids and
+#    prisms, while the fifth, 'inner', macroelement is built refined 
+#    tetrahedra. If it is a cube, then the 'inner' is a regular tetrahedron. 
+#    
+#    vertices: a 3 x 8 matrix with the vertices of the hexahedron. The first
+#    of these is the singular vertex (if any singular vertex is present in
+#    this part of the mesh), and we perform the graduation towards that vertex. 
+#
+#    mu:       the graduation parameter
+#
+#    levels:   levels of refinement, that is, the number of subintervals in any
+#    edge of the whole macroelement.
+#
+#    positions_encoding ->  
+#    dato en lugar                  [7 3 4 5 1 6 0 2] 
+#                                    | | | | | | | |
+#    "en base 2 vale"                | | | | | | | |   
+#                                    | | | | | | | | 
+#                                    v v v v v v v v
+#                                    0 1 2 3 4 5 6 7 
+#                                    | | | | | | | |   
+#                                    v v v v v v v v
+#    que en perm. ref oc=2 es:      [3,0,2,1,7,4,6,5] == group[2] == reference_permutations (2)
+#    """
+
 octant_encoding = { 0 : 0, 1 : 4, 2 : 3, 3 : 7, 4 : 1, 5 : 5, 6 : 2, 7 : 6 }
 p_              = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
                             [-1,  0,  0, -1, -1,  0,  0, -1],   
@@ -71,6 +98,18 @@ def reference_permutations(orientation):
         permutation[bit_arrays(nodes)[i]] = i
     return permutation
 
+def convex_coef (i, ijk, n, mu):
+    """ 
+    CONTINUE HERE TEST THIS NEW THING WITH THE "Dropbox/pruebas"
+    folder. Then test the following:
+    convex_coef : lambda i, ijk, n, mu : float(ijk[i])/n * (float(sum(ijk))/n)**((1/float(mu))-1)
+    
+    ijk is the list [i,j,k] in the standard notation for this
+    grading technique 
+    TODO: in python 3 I can remove the float() calls
+    """
+    return float(ijk[i-1])/n * (float(sum(ijk))/n)**((1/float(mu))-1)
+    
 def lambda1 (i, j, k, n, mu):
     return float(i)/n * (float(i+j+k)/n)**((1/float(mu))-1)
 
@@ -114,9 +153,9 @@ def macroel_tetrahedra (vertices, mu, n):
     for k in range(n+1):
         for j in range(n+1):
             for i in range(n+1):
-                lambda_[1,i,j,k] = lambda1(i,j,k,n,mu)
-                lambda_[2,i,j,k] = lambda2(i,j,k,n,mu)
-                lambda_[3,i,j,k] = lambda3(i,j,k,n,mu)
+                lambda_[1,i,j,k] = convex_coef(1, [i,j,k], n, mu)
+                lambda_[2,i,j,k] = convex_coef(2, [i,j,k], n, mu)
+                lambda_[3,i,j,k] = convex_coef(3, [i,j,k], n, mu)
                 lambda_[0,i,j,k] = 1 - lambda_[1,i,j,k] \
                                    - lambda_[2,i,j,k] - lambda_[3,i,j,k]
 
@@ -213,7 +252,7 @@ def macroel_hybrid (macroel_vertices, mu, n):
         for i in range(n-k+1):
             for j in range(n-k-i+1):
                 # it can be done with much lesser calls to these lambda
-                coef = (lambda1 (i,j,0,n,mu), lambda2 (i,j,0,n,mu))
+                coef = (convex_coef (1, [i,j,0], n, mu), convex_coef (2, [i,j,0], n, mu))
                 # the sub-mesh is just the following two lines
                 points[k,i,:,j] = coef[0]*(macroel_vertices[:,1]-macroel_vertices[:,0]) \
                                   + coef[1]*(macroel_vertices[:,2]-macroel_vertices[:,0])
@@ -249,7 +288,7 @@ def macroel_prisms (macroel_vertices, mu, levels):
     top_layer   = []
     for y in range(levels+1):
         for z in range(levels+1-y):
-            lambda_1, lambda_2 = lambda1 (y,z,0,levels,mu), lambda2 (y,z,0,levels,mu)
+            lambda_1, lambda_2 = convex_coef (1, [y,z,0], levels, mu), convex_coef (2, [y,z,0], levels, mu)
             convex_sum         = lambda_1*(macroel_vertices[:,1] - macroel_vertices[:,0]) \
                                  + lambda_2*(macroel_vertices[:,2] - macroel_vertices[:,0])
             top_layer         += [convex_sum + macroel_vertices[:,0]]
@@ -258,7 +297,7 @@ def macroel_prisms (macroel_vertices, mu, levels):
                     - macroel_vertices[:,0]).T for x in range(n_vertical+1)]))
     return points
 
-def split_cube_into_tetrahedra (nodes):
+def split_cube_into_tetrahedra (macroel_raw):
     """ nodes: the array of eight vertices of an hexahedron which
     has faces parallel to the axes. The columns of this input
     array may be in any order, as long as the first one remains as
@@ -266,38 +305,19 @@ def split_cube_into_tetrahedra (nodes):
     part of the mesh), and the program performs the local graduation towards
     that vertex. Compare with max{x}, max{y}, max{z} to decide where is the
     singular vertex pointing to """
+    nodes = np.array(macroel_raw[1:-1]).reshape(3,(len(macroel_raw)-2)//3,order='F')
     positions_encoding       = bit_arrays(nodes)
     singular_vertex_position = octant_encoding[np.where(positions_encoding==0)[0][0]]
     pi                       = reference_permutations (singular_vertex_position)
-    tetrahedra = {}
+    tetrahedra    = []
+    types_in_cube = [0,0,0,0,1]
+    grads_in_cube = [1] + [macroel_raw[-1]]*4
     for t in range (5):
-        tetrahedra[t] = np.array([nodes[:,positions_encoding[pi[std_macro_elems[t][j]]]]\
-            for j in range(4)]).T
+        tetrahedra += [ { 0 : types_in_cube[t],
+         1 : np.array([nodes[:,positions_encoding[pi[std_macro_elems[t][j]]]]\
+                       for j in range(4)]).T,
+         2 :  grads_in_cube[t] } ]
     return tetrahedra
-
-def macroel_hybridhexa (vertices, mu, levels):
-    """ This builds and returns the points in an hexahedron divided into five
-    tetrahedral macroelements by calling the proper macroelement functions.
-    Four of these tetrahedral macroelements are hybrid and include pyramids and
-    prisms, while the fifth, 'inner', macroelement is built refined 
-    tetrahedra. If it is a cube, then the 'inner' is a regular tetrahedron. 
-    
-    vertices: a 3 x 8 matrix with the vertices of the hexahedron. The first
-    of these is the singular vertex (if any singular vertex is present in
-    this part of the mesh), and we perform the graduation towards that vertex. 
-
-    mu:       the graduation parameter
-
-    levels:   levels of refinement, that is, the number of subintervals in any
-    edge of the whole macroelement.
-    """
-    split_verts = split_cube_into_tetrahedra(vertices)
-    print(split_verts)
-    # with open ('split.txt','w') as out:
-    #     out.write(split_verts)
-    points      = { i : macroel_hybrid(split_verts[i], mu, levels) for i in range(4) }
-    points[4]   = macroel_tetrahedra(split_verts[4], mu, levels)
-    return points
 
 def macroel_more_flexible_tending_more_generality ():
     ## TODO

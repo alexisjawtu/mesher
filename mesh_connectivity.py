@@ -178,12 +178,6 @@ def elements_by_vertices_prisms (f_name_out, levels, lang, init):
         np.savetxt(target,local_elmnts_by_vertices.astype(int),fmt='%d')
     return levels**3 
 
-def elements_by_vertices_hybridhexa (f_name_out, levels, lang, init):
-    for i in range(4):
-        init += elements_by_vertices_hybrid (f_name_out, levels, lang, init)
-    elements_by_vertices_tetra (f_name_out, levels, lang, init)
-    return
-
 def vertices_by_elements (f_name, lang):
 	""" 
 	This function intends to be GENERAL. For any mesh given, not

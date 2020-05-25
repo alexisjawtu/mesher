@@ -22,45 +22,45 @@ import mesh_write
 import mesh_connectivity
 import time
 
+parsers                         = { 3: mesh.split_cube_into_tetrahedra }
+#                                   7: lshape
+
 elements_by_vertices_writers    = { 0 : mesh_connectivity.elements_by_vertices_hybrid,
                                     1 : mesh_connectivity.elements_by_vertices_tetra,
-                                    2 : mesh_connectivity.elements_by_vertices_prisms,
-                                    3 : mesh_connectivity.elements_by_vertices_hybridhexa }
+                                    2 : mesh_connectivity.elements_by_vertices_prisms }
+                                    # 3 : mesh_connectivity.elements_by_vertices_hybridhexa }
 
-#                                   7: lshape
 
 local_meshers                   = { 0 : mesh.macroel_hybrid, 
                                     1 : mesh.macroel_tetrahedra, 
-                                    2 : mesh.macroel_prisms,
-                                    3 : mesh.macroel_hybridhexa }
+                                    2 : mesh.macroel_prisms }
+                                    # 3 : mesh.macroel_hybridhexa }
 
 physical_vertices_writers       = { 0 : mesh_write.vertices_macro_hybrid,
                                     1 : mesh_write.vertices_macro_tetra,
-                                    2 : mesh_write.vertices_macro_prism,
-                                    3 : mesh_write.vertices_macro_hybridhexa }
+                                    2 : mesh_write.vertices_macro_prism } 
+                                    # 3 : mesh_write.vertices_macro_hybridhexa }
+
 
 def load_partition (in_file, levels):
     """ in_file is a csv with:
         macroelement_type, macro_vertices, local_mu """
-    colors = [ "green", "red", "blue", "purple"]
+    #    colors = [ "green", "red", "blue", "purple"]
     with open(in_file,'r') as infile:
         inlist = infile.readlines()
-    #print(inlist)
     pre_list = [line.strip(' \n').split(',') for line in inlist\
                                                if (line not in ['','\n','\t'])]
-    #print(pre_list)
     pre_list = [[int(st[0])] + [float(st[k]) for k in range(1,len(st))] for st in pre_list]
-    check_list = [pre_list[i][0] for i in range(len(pre_list))]
-    if (0 in check_list or 3 in check_list): 
+    macro_elements = []
+    for macro in pre_list:
+        macro_elements += parsers.get(macro[0], lambda l: [{\
+                                  0 : l[0],
+                                  1 : np.array(l[1:-1]).reshape(3,(len(l)-2)//3,order='F'),
+                                  2 : l[-1] }])(macro)
+    ## TODO: learn how to do a singleton for this:
+    if (0 in [e[0] for e in macro_elements]):
         mesh_write.write_element_indices(in_file+".elem", levels)
-    macro_elements = { key : 
-                        { 
-                          0 : pre_list[key][0],
-                          1 : np.array(pre_list[key][1:-1]).reshape(3,(len(pre_list[key])-2)//3,order='F'),
-                          2 : pre_list[key][-1], 
-                          3 : colors[pre_list[key][0]]
-                         } 
-                       for key in range(len(pre_list)) }
+    print(macro_elements)
     return macro_elements
 
 def filter_repeated_vertices (in_file,n_vert_prism = 6):
@@ -172,7 +172,7 @@ def omega (in_file, levels):
 
     initial_partition = load_partition (in_file, levels)
     init = 0
-    for i, E in iter(initial_partition.items()):
+    for E in initial_partition:
         # for case E[0] == 1: the following writes contiguous indices with repetitions on 
         # shared faces.
         elements_by_vertices_writers[E[0]](in_file, levels, "Octave", init)
