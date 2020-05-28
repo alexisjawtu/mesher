@@ -60,7 +60,6 @@ def load_partition (in_file, levels):
     ## TODO: learn how to do a singleton for this:
     if (0 in [e[0] for e in macro_elements]):
         mesh_write.write_element_indices(in_file+".elem", levels)
-    print(macro_elements)
     return macro_elements
 
 def filter_repeated_vertices (in_file,n_vert_prism = 6):
