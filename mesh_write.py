@@ -48,30 +48,30 @@ def write_element_indices (file_name, levels):
     for level in range(n-1):
         for i in range(n-level-1): # prisms
             for j in range(n-level-i-1):  
-                nodos = [6,level,i,j,level,i+1,j,level,i,j+1,level+1,i,j,
+                nodes = [6,level,i,j,level,i+1,j,level,i,j+1,level+1,i,j,
                         level+1,i+1,j,level+1,i,j+1]
-                string += ' '.join([str(r) for r in nodos]) +'\n'
+                string += ' '.join([str(r) for r in nodes]) +'\n'
         for i in range(n-level-2):
             for j in range(n-level-i-2):
-                nodos = [6,level,i+1,j,level,i+1,j+1,level,i,j+1,
+                nodes = [6,level,i+1,j,level,i+1,j+1,level,i,j+1,
                         level+1,i+1,j,level+1,i+1,j+1,level+1,i,j+1]
-                string += ' '.join([str(r) for r in nodos]) +'\n'
+                string += ' '.join([str(r) for r in nodes]) +'\n'
         for i in range(n - level): # tetra
-            nodos = [4,
+            nodes = [4,
                     level, i, n-level-i-1,
                     level, i+1, n-level-i-1,
                     level, i, n-level-i,
                     level+1, i, n-level-i-1]
-            string += ' '.join([str(r) for r in nodos]) + '\n'
+            string += ' '.join([str(r) for r in nodes]) + '\n'
         for i in range(n - level - 1): # pyramids: invariant: level+i+j == n-1
-            nodos = [5, level,   i,   n-i-1-level,
+            nodes = [5, level,   i,   n-i-1-level,
                         level,   i+1, n-i-2-level,
                         level+1, i+1, n-i-2-level,
                         level+1, i,   n-i-1-level,
                         level,   i+1, n-i-1-level]
-            string += ' '.join([str(r) for r in nodos]) + '\n'
-    nodos = [4,n-1,0,0,n-1,1,0,n-1,0,1,n,0,0] # singular tetra 
-    string += ' '.join([str(r) for r in nodos])
+            string += ' '.join([str(r) for r in nodes]) + '\n'
+    nodes = [4,n-1,0,0,n-1,1,0,n-1,0,1,n,0,0] # singular tetra 
+    string += ' '.join([str(r) for r in nodes])
     with open(file_name, 'w') as elements:
         elements.write(string)
     return

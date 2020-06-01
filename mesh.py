@@ -99,26 +99,12 @@ def reference_permutations(orientation):
     return permutation
 
 def convex_coef (i, ijk, n, mu):
-    """ 
-    CONTINUE HERE TEST THIS NEW THING WITH THE "Dropbox/pruebas"
-    folder. Then test the following:
-    convex_coef : lambda i, ijk, n, mu : float(ijk[i])/n * (float(sum(ijk))/n)**((1/float(mu))-1)
-    
-    ijk is the list [i,j,k] in the standard notation for this
+    """ ijk is the list [i,j,k] in the standard notation for this
     grading technique 
     TODO: in python 3 I can remove the float() calls
     """
-    return float(ijk[i-1])/n * (float(sum(ijk))/n)**((1/float(mu))-1)
+    return ijk[i-1]/n * (sum(ijk)/n)**(1/mu-1)
     
-def lambda1 (i, j, k, n, mu):
-    return float(i)/n * (float(i+j+k)/n)**((1/float(mu))-1)
-
-def lambda2 (i, j, k, n, mu):
-    return float(j)/n * (float(i+j+k)/n)**((1/float(mu))-1)
-
-def lambda3 (i, j, k, n, mu):
-    return float(k)/n * (float(i+j+k)/n)**((1/float(mu))-1)
-
 def macroel_tetrahedra (vertices, mu, n):
     """ 
         n == number of levels, i.e. n + 1 == number of nodes per edge of 
@@ -235,7 +221,6 @@ def macroel_tetrahedra (vertices, mu, n):
                      + lambda_[2,i+1,j+1,k+1]*P2 + lambda_[3,i+1,j+1,k+1]*P3
 
                 points = np.vstack((points,q0,q1,q2,q3))
-                ## TODO sefuir aca continuo 
 
     points = np.delete(points, 0, 0)
     return points
@@ -297,7 +282,17 @@ def macroel_prisms (macroel_vertices, mu, levels):
                     - macroel_vertices[:,0]).T for x in range(n_vertical+1)]))
     return points
 
-def split_cube_into_tetrahedra (macroel_raw):
+def split_brick_into_prisms (macroel_raw):
+    pass
+
+def split_lshape_into_prisms (macroel_raw):
+    pass
+
+def reorder_prism_vertices (macroel_raw):
+    ## TODO
+    pass
+
+def split_brick_into_tetrahedra (macroel_raw):
     """ nodes: the array of eight vertices of an hexahedron which
     has faces parallel to the axes. The columns of this input
     array may be in any order, as long as the first one remains as

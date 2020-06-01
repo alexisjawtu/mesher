@@ -17,8 +17,9 @@
 ## along with ?????.  If not, see <https://www.gnu.org/licenses/>.
 
 import numpy as np
-from mayavi import mlab
 import main
+import os
+from mayavi import mlab
 #import ellipse
 
 def plot(vertices_file,connectivity_file,col=(0.5,0,0.5)):
@@ -57,6 +58,7 @@ def plot(vertices_file,connectivity_file,col=(0.5,0,0.5)):
     src.update()
     mlab.pipeline.surface(src,color=col)
     mlab.show()
+    return
 
 """
 #######
