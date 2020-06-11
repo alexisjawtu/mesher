@@ -33,6 +33,6 @@ cubes whose union is the meshed domain.
 2. The leading number _3_
 indicates each row is a graded hexahedral macroelement, one for
 each octant in the euclidean three--dimensional space. 
-3. The trailing numer _0.65_ is the grading parameter 
+3. The trailing number _0.65_ is the grading parameter 
 defined within the theory of meshing procedures.
 4. The same applies to the rest of input files.
