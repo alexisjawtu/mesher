@@ -11,8 +11,11 @@ This software implements the meshing procedure proposed in chapter five of this 
 2. That's it.
 
 #### To _see_ the plotted mesh:
-Now that have the **ten mesh files** in you working directory _experiments_ built in the 
-upper paragraph. This is the mesh. To visualize the mesh, in an ipython3 shell:
+The present paragraph is for the case you comment 
+the plotting line in main.omega() and want to know how to
+plot after. Observe that now you have the **ten mesh files** in 
+you working directory _experiments/_. This is the mesh, 
+built as in the upper paragraph. To visualize the mesh, in an ipython3 shell:
    ```
    run plot_lines.py
    plot("experiments/fichera.ver","experiments/fichera.ebv")`
