@@ -23,7 +23,7 @@ import mesh_connectivity
 import time
 import plot_lines
 
-parsers                         = { 2 : mesh.reorder_prism_vertices
+parsers                         = { 2 : mesh.reorder_prism_vertices,
                                     3 : mesh.split_brick_into_tetrahedra,
                                     4 : mesh.split_brick_into_prisms,
                                     5 : mesh.split_lshape_into_prisms }

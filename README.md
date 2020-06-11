@@ -19,4 +19,17 @@ upper paragraph. This is the mesh. To visualize the mesh, in an ipython3 shell:
    ```
 That's it.
 
-Repeat with any of the example domain files in _experiments/_, or with any initial partition you write for the polihedral domain you want, as long as you write your csv using the same convention as in the included examples, and with the levels of refinement you want.
+Repeat with any of the example domain files in _experiments/_, or with any initial 
+partition you write for the polihedral domain you want, as long as you write your csv 
+using the same convention as in the included examples, and with the levels of 
+refinement you want.
+
+#### The input file _fichera_
+1. The rows are just the lists of vertices of the seven 
+cubes whose union is the meshed domain. 
+2. The leading number _3_
+indicates each row is a graded hexahedral macroelement, one for
+each octant in the euclidean three--dimensional space. 
+3. The trailing numer _0.65_ is the grading parameter 
+defined within the theory of meshing procedures.
+4. The same applies to the rest of input files.
