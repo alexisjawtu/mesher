@@ -15,12 +15,13 @@ The present paragraph is for the case you comment
 the plotting line in main.omega() and want to know how to
 plot after. Observe that now you have the **ten mesh files** in 
 you working directory _experiments/_. This is the mesh, 
-built as in the upper paragraph. To visualize the mesh, in an ipython3 shell:
+built as in the upper paragraph.
+1. To visualize the mesh, in an ipython3 shell:
    ```
    run plot_lines.py
    plot("experiments/fichera.ver","experiments/fichera.ebv")`
    ```
-That's it.
+2. That's it.
 
 Repeat with any of the example domain files in _experiments/_, or with any initial 
 partition you write for the polihedral domain you want, as long as you write your csv 
