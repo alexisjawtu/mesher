@@ -78,12 +78,21 @@ reflections     = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
                             [-1, -1, -1, -1,  1,  1,  1, 1]])
 
 def bit_arrays (nodes):
+    """
+    This is to play with permutations to determine the orientation of the brick with respect
+    to some singular vertex.
+
+    Warning: this packbits only work for bricks with faces parallel to the coordinate planes!
+    """
+
     bit_arr = np.zeros(8,dtype=int)
     for i in range(8): # TODO transform to one line
         bits = ( nodes[0,i]==np.max(nodes[0,:]),\
                  nodes[1,i]==np.max(nodes[1,:]),\
                  nodes[2,i]==np.max(nodes[2,:]) )
+        print(bits)
         bit_arr[int(np.right_shift(np.packbits(bits),5))] = i
+        print(bit_arr)
     return bit_arr 
 
 def reference_permutations(orientation):

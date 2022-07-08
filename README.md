@@ -1,6 +1,14 @@
 ## The Project
 This software implements the meshing procedure proposed in chapter five of this work: http://cms.dm.uba.ar/academico/carreras/doctorado/thesisJawtuschenko.pdf.
 
+### Some package requirements
+   ```
+   numpy
+   mayavi
+   python3-pyqt5
+   python3-pyqt5.qtsvg
+   ```
+
 ### Basic tutorial
 #### To build the anisotropic hybrid mesh for _the Fichera domain_
 1. In an ipython3 shell:
@@ -18,8 +26,8 @@ you working directory _experiments/_. This is the mesh,
 built as in the upper paragraph.
 1. To visualize the mesh, in an ipython3 shell:
    ```
-   run plot_lines.py
-   plot("experiments/fichera.ver","experiments/fichera.ebv")`
+   run mesh_graphics.py
+   plot_lines("experiments/fichera.ver","experiments/fichera.ebv")`
    ```
 2. That's it.
 

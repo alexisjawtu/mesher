@@ -16,15 +16,18 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ?????.  If not, see <https://www.gnu.org/licenses/>.
 
-import numpy as np
-import main
 import os
-from mayavi import mlab
-#import ellipse
+import numpy as np
 
-def plot(vertices_file,connectivity_file,col=(0.5,0,0.5)):
+from mayavi import mlab
+
+# import main
+# import ellipse
+
+
+def plot_lines(vertices_file, connectivity_file, vert_delim=None, colors=(0.5,0,0.5)):
     # Reads .ver and .ebv files. col is a color definition. 
-    p = np.loadtxt(vertices_file)
+    p = np.loadtxt(vertices_file, delimiter=vert_delim)
     with open(connectivity_file,'r') as infile:
         inlist = infile.readlines()
     con_list = [line.strip(' \n').split(' ') for line in inlist]
@@ -33,8 +36,8 @@ def plot(vertices_file,connectivity_file,col=(0.5,0,0.5)):
     y = p[:,1]
     z = p[:,2]
     #s could be modified in order to give different colors to different elements. 
-    s = np.ones(len(x),dtype="float64")
-    cant_edges = {6:9,5:8,4:6} #dictionary: #nodes:#edges
+    s = np.ones(len(x), dtype="float64")
+    cant_edges = {6:9, 5:8, 4:6} #dictionary {n_nodes: n_edges}
     n_con = 0
     for i in range(len(con_list)):
         n_con = n_con + cant_edges[con_list[i][0]]
@@ -44,7 +47,7 @@ def plot(vertices_file,connectivity_file,col=(0.5,0,0.5)):
     connections_tetra = np.array([[0,1,2,3,0,1],[1,2,3,0,2,3]]).T
     connections_pyrad = np.array([[0,1,2,3,0,1,2,3],[1,2,3,0,4,4,4,4]]).T
     # dictionary
-    new_connections = {6:connections_prism,5:connections_pyrad,4:connections_tetra}
+    new_connections = {6:connections_prism, 5:connections_pyrad, 4:connections_tetra}
     last = 0
     for i in range(len(con_list)):
         row = np.array(con_list[i])
@@ -56,7 +59,7 @@ def plot(vertices_file,connectivity_file,col=(0.5,0,0.5)):
     src = mlab.pipeline.scalar_scatter(x, y, z)
     src.mlab_source.dataset.lines = connections 
     src.update()
-    mlab.pipeline.surface(src,color=col)
+    mlab.pipeline.surface(src,color=colors)
     mlab.show()
     return
 
@@ -95,7 +98,7 @@ def ball(file_name,levels=3,mu=1,plotear=True):
     p[nz,:] = p[nz,:]*((oct1*s1+oct2*s2+oct3*s3+oct4*s4)/norma).reshape((p[nz,:].shape[0],1))
     np.savetxt(file_name+'.ver',p)
     if plotear:
-        plot(file_name+'.ver',file_name+'.ebv')
+        plot_lines(file_name+'.ver',file_name+'.ebv')
 
 def many_balls(_levels,_mu,folder=''):
     for levels in _levels:
@@ -153,5 +156,5 @@ def ellipsoid(file_name,levels,mu,plotear=True):
     #q = np.vstack((q,np.zeros(q.shape[1])))
     np.savetxt(file_name+'.ver',q.T)
     if plotear:
-        plot(file_name+'.ver',file_name+'.ebv')
+        plot_lines(file_name+'.ver',file_name+'.ebv')
 """

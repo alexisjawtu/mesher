@@ -21,12 +21,16 @@ import mesh
 import mesh_write
 import mesh_connectivity
 import time
-import plot_lines
+import mesh_graphics
 
+
+# TODO: the parsers indices should be disjoint with respect to the plain macro_elements indices.
+# For example, '2' should be left for the prism macroel. 
 parsers                         = { 2 : mesh.reorder_prism_vertices,
-                                    3 : mesh.split_brick_into_tetrahedra,
+                                    3 : mesh.split_brick_into_tetrahedra,  # Only for bricks parallel to the coordinates!
                                     4 : mesh.split_brick_into_prisms,
                                     5 : mesh.split_lshape_into_prisms }
+
 ## CONTINUE HERE: split_brick_into_tetrahedra works fine if the edges of the
 ## brick are paralell to the x,y,z axes. Research for an algorithm that allows
 ## to put the vertices in any order even for oblique hexahedra.
@@ -48,8 +52,14 @@ physical_vertices_writers       = { 0 : mesh_write.vertices_macro_hybrid,
 
 def load_partition (in_file, levels):
     """ in_file is a csv with:
-        macroelement_type, macro_vertices, local_mu """
-    #    colors = [ "green", "red", "blue", "purple"]
+    macroelement_type, macro_vertices, local_mu 
+
+    The returned macro_elements list is built with parsers
+    or with a default lambda function for the case we put
+    any of our original macro--elements directly.
+    
+    colors = [ "green", "red", "blue", "purple"]
+    """
     with open(in_file,'r') as infile:
         inlist = infile.readlines()
     pre_list = [line.strip(' \n').split(',') for line in inlist\
@@ -168,7 +178,7 @@ def omega (in_file, levels):
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
     physical_vertices_writers:         write vertices.txt, global list of vertices
     """
-    print('<program>  Copyright (C) 2018-2020  Alexis Boris Jawtuschenko\n' +
+    print('<program>  Copyright (C) 2018-2022  Alexis Boris Jawtuschenko\n' +
           'This program comes with ABSOLUTELY NO WARRANTY; for details type ????.\n' +
           'This is free software, and you are welcome to redistribute it\n' +
           'under certain conditions; type show c for details.')
@@ -190,5 +200,5 @@ def omega (in_file, levels):
         # the local_meshers for this case.
         init += physical_vertices_writers[E[0]](points, in_file+".ver")
     filter_repeated_faces(in_file,filter_repeated_vertices(in_file))
-    plot_lines.plot(in_file+".ver",in_file+".ebv")
+    mesh_graphics.plot_lines(in_file + ".ver", in_file + ".ebv")
     return
