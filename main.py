@@ -24,17 +24,28 @@ import time
 import mesh_graphics
 
 
-# TODO: the parsers indices should be disjoint with respect to the plain macro_elements indices.
-# For example, '2' should be left for the prism macroel. 
-parsers                         = { 2 : mesh.reorder_prism_vertices,
-                                    3 : mesh.split_brick_into_tetrahedra,  # Only for bricks parallel to the coordinates!
-                                    4 : mesh.split_brick_into_prisms,
-                                    5 : mesh.split_lshape_into_prisms }
+"""
+The dictionary of parsers works like a switch with three default cases:
 
-## CONTINUE HERE: split_brick_into_tetrahedra works fine if the edges of the
+default 0: macroel_hybrid
+default 1: macroel_tetrahedra
+default 2: macroel_prisms
+
+"""
+
+parsers                         = { 3 : mesh.split_brick_into_tetrahedra,  # Only for bricks parallel to the coordinates!
+                                    4 : mesh.split_brick_into_prisms,
+                                    5 : mesh.split_lshape_into_prisms,
+                                    6 : mesh.reorder_prism_vertices }
+
+# CONTINUE HERE: make a handy way of typing the initial partition,
+# perhaps a class with functions like "tau_zero.translate(x=x0, y=y0, z=z0)"
+
+
+## TODO: split_brick_into_tetrahedra works fine if the edges of the
 ## brick are paralell to the x,y,z axes. Research for an algorithm that allows
 ## to put the vertices in any order even for oblique hexahedra.
-## Then, continue with parsers 2, 3, 4 and 5.
+## Then, continue with parsers 3, 4, 5 and 6.
 ## ## after finishing all that, make cute examples to put
 ## in .md file and document or go to mesh.macroel_tetrahedra
 
@@ -72,6 +83,7 @@ def load_partition (in_file, levels):
                                   1 : np.array(l[1:-1]).reshape(3,(len(l)-2)//3,order='F'),
                                   2 : l[-1] }])(macro)
     ## TODO: learn how to do a singleton for this:
+    # If our initial partition contains an hybrid element, write the graph topology.
     if (0 in [e[0] for e in macro_elements]):
         mesh_write.write_element_indices(in_file+".elem", levels)
     return macro_elements
@@ -183,7 +195,7 @@ def omega (in_file, levels):
           'This is free software, and you are welcome to redistribute it\n' +
           'under certain conditions; type show c for details.')
 
-    initial_partition = load_partition (in_file, levels)
+    initial_partition = load_partition(in_file, levels)
     init = 0
     for E in initial_partition:
         # for case E[0] == 1: the following writes contiguous indices with repetitions on 

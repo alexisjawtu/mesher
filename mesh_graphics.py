@@ -23,6 +23,8 @@ from mayavi import mlab
 
 # import main
 # import ellipse
+# np.cos(np.pi/6) = 0.8660254037844387
+# np.cos(np.pi/3) = 0.5000000000000001
 
 
 def plot_lines(vertices_file, connectivity_file, vert_delim=None, colors=(0.5,0,0.5)):
@@ -43,9 +45,9 @@ def plot_lines(vertices_file, connectivity_file, vert_delim=None, colors=(0.5,0,
         n_con = n_con + cant_edges[con_list[i][0]]
     connections = np.zeros((n_con,2))
     # List of connections for each type of element
-    connections_prism = np.array([[0,1,2,0,3,4,5,1,2],[1,2,0,3,4,5,3,4,5]]).T
-    connections_tetra = np.array([[0,1,2,3,0,1],[1,2,3,0,2,3]]).T
-    connections_pyrad = np.array([[0,1,2,3,0,1,2,3],[1,2,3,0,4,4,4,4]]).T
+    connections_prism = np.array([[0,1,2,0,3,4,5,1,2], [1,2,0,3,4,5,3,4,5]]).T
+    connections_tetra = np.array([[0,1,2,3,0,1], [1,2,3,0,2,3]]).T
+    connections_pyrad = np.array([[0,1,2,3,0,1,2,3], [1,2,3,0,4,4,4,4]]).T
     # dictionary
     new_connections = {6:connections_prism, 5:connections_pyrad, 4:connections_tetra}
     last = 0
@@ -59,7 +61,8 @@ def plot_lines(vertices_file, connectivity_file, vert_delim=None, colors=(0.5,0,
     src = mlab.pipeline.scalar_scatter(x, y, z)
     src.mlab_source.dataset.lines = connections 
     src.update()
-    mlab.pipeline.surface(src,color=colors)
+    mlab.pipeline.surface(src, color=colors)
+    mlab.points3d([0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1], scale_factor=.1, color=(0, 1, 0))
     mlab.show()
     return
 

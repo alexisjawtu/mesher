@@ -298,7 +298,6 @@ def split_lshape_into_prisms (macroel_raw):
     pass
 
 def reorder_prism_vertices (macroel_raw):
-    ## TODO
     pass
 
 def split_brick_into_tetrahedra (macroel_raw):

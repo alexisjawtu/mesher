@@ -18,7 +18,7 @@
 
 import numpy as np
 
-__format__ = '%8.5f'
+__format__ = "%8.5f"
 
 def write_element_indices (file_name, levels):
     """ Depends only on n. Not on which macroelement or octant is. 
