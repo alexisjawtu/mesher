@@ -33,19 +33,20 @@ default 2: macroel_prisms
 
 """
 
-parsers                         = { 3 : mesh.split_brick_into_tetrahedra,  # Only for bricks parallel to the coordinates!
-                                    4 : mesh.split_brick_into_prisms,
-                                    5 : mesh.split_lshape_into_prisms,
-                                    6 : mesh.reorder_prism_vertices }
+parsers                         = { 3 : mesh.split_parallel_brick_into_tetrahedra,  # Only for bricks parallel to the coordinates!
+                                    4 : mesh.split_preordered_hexahedron_into_tetrahedra,
+                                    5 : mesh.split_brick_into_prisms,
+                                    6 : mesh.split_lshape_into_prisms,
+                                    7 : mesh.reorder_prism_vertices }
 
 # CONTINUE HERE: make a handy way of typing the initial partition,
 # perhaps a class with functions like "tau_zero.translate(x=x0, y=y0, z=z0)"
 
 
-## TODO: split_brick_into_tetrahedra works fine if the edges of the
+## TODO: split_parallel_brick_into_tetrahedra works fine if the edges of the
 ## brick are paralell to the x,y,z axes. Research for an algorithm that allows
 ## to put the vertices in any order even for oblique hexahedra.
-## Then, continue with parsers 3, 4, 5 and 6.
+## Then, continue with parsers 5 and 6.
 ## ## after finishing all that, make cute examples to put
 ## in .md file and document or go to mesh.macroel_tetrahedra
 
@@ -75,7 +76,7 @@ def load_partition (in_file, levels):
         inlist = infile.readlines()
     pre_list = [line.strip(' \n').split(',') for line in inlist\
                                                if (line not in ['','\n','\t'])]
-    pre_list = [[int(st[0])] + [float(st[k]) for k in range(1,len(st))] for st in pre_list]
+    pre_list = [[int(float(st[0]))] + [float(st[k]) for k in range(1,len(st))] for st in pre_list]
     macro_elements = []
     for macro in pre_list:
         macro_elements += parsers.get(macro[0], lambda l: [{\

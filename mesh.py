@@ -16,7 +16,11 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ?????.  If not, see <https://www.gnu.org/licenses/>.
 
-import numpy as np                              
+
+import numpy as np
+
+from typing import List
+
 
 # {0,..,7} ---> {columns of reflections}
 # Meaning: we take the integer whos binary representation
@@ -71,7 +75,11 @@ octant_encoding = { 0 : 0, 1 : 4, 2 : 3, 3 : 7, 4 : 1, 5 : 5, 6 : 2, 7 : 6 }
 p_              = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
                             [-1,  0,  0, -1, -1,  0,  0, -1],   
                             [-1, -1,  0,  0, -1, -1,  0,  0]])
-# 0. hybrid --never graded--; 1. hybrid; 2. hybrid; 3. hybrid; 4. tetra
+# 0. hybrid --never graded--;
+# 1. hybrid;
+# 2. hybrid;
+# 3. hybrid;
+# 4. tetra;
 std_macro_elems = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
 reflections     = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
                             [-1, -1,  1,  1, -1, -1,  1, 1],
@@ -90,9 +98,7 @@ def bit_arrays (nodes):
         bits = ( nodes[0,i]==np.max(nodes[0,:]),\
                  nodes[1,i]==np.max(nodes[1,:]),\
                  nodes[2,i]==np.max(nodes[2,:]) )
-        print(bits)
         bit_arr[int(np.right_shift(np.packbits(bits),5))] = i
-        print(bit_arr)
     return bit_arr 
 
 def reference_permutations(orientation):
@@ -291,6 +297,26 @@ def macroel_prisms (macroel_vertices, mu, levels):
                     - macroel_vertices[:,0]).T for x in range(n_vertical+1)]))
     return points
 
+def split_preordered_hexahedron_into_tetrahedra(eight_hexahedron_vertices: List[float]) -> List:
+    """
+    Requieres the eight points in eight_hexahedron_vertices to be ordered according to the
+    standard macro--elements defined in main.py. 
+    If this ordering is correct, then the hexaedron doesn't need to have faces parallel to
+    the coordinates.
+    """
+    nodes = np.array(eight_hexahedron_vertices[1:-1]).reshape(3,(len(eight_hexahedron_vertices)-2)//3,order='F')
+    tetrahedra    = []
+    types_in_cube = [0,0,0,0,1]
+    grads_in_cube = [1] + [eight_hexahedron_vertices[-1]]*4
+    
+    for t in range (5):
+        tetrahedra += [ { 0 : types_in_cube[t],
+         1 : np.array([nodes[:,std_macro_elems[t][j]] for j in range(4)]).T,
+         2 : grads_in_cube[t] } ]
+
+    return tetrahedra
+
+
 def split_brick_into_prisms (macroel_raw):
     pass
 
@@ -300,7 +326,7 @@ def split_lshape_into_prisms (macroel_raw):
 def reorder_prism_vertices (macroel_raw):
     pass
 
-def split_brick_into_tetrahedra (macroel_raw):
+def split_parallel_brick_into_tetrahedra (macroel_raw):
     """ nodes: the array of eight vertices of an hexahedron which
     has faces parallel to the axes. The columns of this input
     array may be in any order, as long as the first one remains as
@@ -323,5 +349,4 @@ def split_brick_into_tetrahedra (macroel_raw):
     return tetrahedra
 
 def macroel_more_flexible_tending_more_generality ():
-    ## TODO
     pass
