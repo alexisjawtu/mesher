@@ -1,0 +1,9 @@
+{
+    "read_to_selma_transform": "",
+    "write_after_selma_transform": "",
+
+    // Files to feed the functions of mesh_graphics module.
+    "vertices_file": "",
+    "connectivity_file": "",
+    "isolated_points": "",
+}

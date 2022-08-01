@@ -10,6 +10,8 @@ macro_elements type 3: tetra
 1. TEST the new cubic macroelement
 2. document what is the input
 2. Execution flow? $ python module.py?
+    1. the input: a cute dictionary with things like "file_with_isolated_points_to_mark"
+       taking the style from the sublime_settings model.
 3. Documentation about order and positions 
    of the vertices in each element? For example, in a pyramid is it the top always
    the _last_?

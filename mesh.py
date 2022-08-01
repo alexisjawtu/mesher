@@ -16,12 +16,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ?????.  If not, see <https://www.gnu.org/licenses/>.
 
-
-import numpy as np
-
-from typing import List
-
-
 # {0,..,7} ---> {columns of reflections}
 # Meaning: we take the integer whos binary representation
 # equals the R3 coordinates of the singular vertex
@@ -71,21 +65,47 @@ from typing import List
 #    que en perm. ref oc=2 es:      [3,0,2,1,7,4,6,5] == group[2] == reference_permutations (2)
 #    """
 
-octant_encoding = { 0 : 0, 1 : 4, 2 : 3, 3 : 7, 4 : 1, 5 : 5, 6 : 2, 7 : 6 }
+
+import numpy as np
+
+from typing import List
+
+
+octant_encoding = {0: 0,
+                   1: 4,
+                   2: 3,
+                   3: 7,
+                   4: 1,
+                   5: 5,
+                   6: 2,
+                   7: 6}
+
+"""
+
+    p_ is like "the last octant" in the usual order.
+    Eigth octant, i.e.: 
+
+                    x > 0, 
+                    y < 0, 
+                    z < 0.
+
+"""
 p_              = np.array([[ 1,  1,  1,  1,  0,  0,  0,  0],   
                             [-1,  0,  0, -1, -1,  0,  0, -1],   
                             [-1, -1,  0,  0, -1, -1,  0,  0]])
+
 # 0. hybrid --never graded--;
 # 1. hybrid;
 # 2. hybrid;
 # 3. hybrid;
 # 4. tetra;
 std_macro_elems = np.array([[0,1,3,4],[2,3,1,6],[7,3,4,6],[5,4,1,6],[6,1,3,4]])
+
 reflections     = np.array([[ 1, -1, -1,  1,  1, -1, -1, 1],
                             [-1, -1,  1,  1, -1, -1,  1, 1],
                             [-1, -1, -1, -1,  1,  1,  1, 1]])
 
-def bit_arrays (nodes):
+def bit_arrays(nodes):
     """
     This is to play with permutations to determine the orientation of the brick with respect
     to some singular vertex.
@@ -93,12 +113,13 @@ def bit_arrays (nodes):
     Warning: this packbits only work for bricks with faces parallel to the coordinate planes!
     """
 
-    bit_arr = np.zeros(8,dtype=int)
+    bit_arr = np.zeros(8, dtype=int)
     for i in range(8): # TODO transform to one line
-        bits = ( nodes[0,i]==np.max(nodes[0,:]),\
-                 nodes[1,i]==np.max(nodes[1,:]),\
-                 nodes[2,i]==np.max(nodes[2,:]) )
+        bits = (nodes[0,i] == np.max(nodes[0,:]),
+                nodes[1,i] == np.max(nodes[1,:]),
+                nodes[2,i] == np.max(nodes[2,:]))
         bit_arr[int(np.right_shift(np.packbits(bits),5))] = i
+
     return bit_arr 
 
 def reference_permutations(orientation):
@@ -113,14 +134,14 @@ def reference_permutations(orientation):
         permutation[bit_arrays(nodes)[i]] = i
     return permutation
 
-def convex_coef (i, ijk, n, mu):
+def convex_coef(i, ijk, n, mu):
     """ ijk is the list [i,j,k] in the standard notation for this
     grading technique 
     TODO: in python 3 I can remove the float() calls
     """
     return ijk[i-1]/n * (sum(ijk)/n)**(1/mu-1)
     
-def macroel_tetrahedra (vertices, mu, n):
+def macroel_tetrahedra(vertices, mu, n):
     """ 
         n == number of levels, i.e. n + 1 == number of nodes per edge of 
         the macro--element.
@@ -240,7 +261,7 @@ def macroel_tetrahedra (vertices, mu, n):
     points = np.delete(points, 0, 0)
     return points
 
-def macroel_hybrid (macroel_vertices, mu, n):
+def macroel_hybrid(macroel_vertices, mu, n):
     """ 
         vertices = ( local_origin | base_vrtx_1 | base_vrtx_2 | sing_vrtx )
         singular edge the one which is parallel to v = (sing_vrtx - local_origin)
@@ -260,7 +281,7 @@ def macroel_hybrid (macroel_vertices, mu, n):
                                   + macroel_vertices[:,0]
     return points
 
-def macroel_prisms (macroel_vertices, mu, levels):
+def macroel_prisms(macroel_vertices, mu, levels):
     """ 
     levels := number of subintervals betweeen nodes of each horizontal edge of the
     macroelement
@@ -297,14 +318,45 @@ def macroel_prisms (macroel_vertices, mu, levels):
                     - macroel_vertices[:,0]).T for x in range(n_vertical+1)]))
     return points
 
+def split_parallel_brick_into_tetrahedra(macroel_raw):
+    """ nodes: the array of eight vertices of an hexahedron which
+    has faces parallel to the axes. The columns of this input
+    array may be in any order, as long as the first one remains as
+    _the singular vertex_ (if any singular vertex is present in this
+    part of the mesh), and the program performs the local graduation towards
+    that vertex. Compare with max{x}, max{y}, max{z} to decide where is the
+    singular vertex pointing to """
+    nodes = np.array(macroel_raw[1:-1]).reshape(3,(len(macroel_raw)-2)//3, order='F')  # <-- ALWAYS 8 COLUMNS?
+    positions_encoding       = bit_arrays(nodes)
+    singular_vertex_position = octant_encoding[np.where(positions_encoding == 0)[0][0]]
+    pi                       = reference_permutations(singular_vertex_position)
+    tetrahedra    = []
+    types_in_cube = [0, 0, 0, 0, 1]
+    grads_in_cube = [1] + [macroel_raw[-1]]*4
+    for t in range (5):
+        tetrahedra += [ { 0 : types_in_cube[t],
+         1 : np.array([nodes[:,positions_encoding[pi[std_macro_elems[t][j]]]]
+                       for j in range(4)]).T,
+         2 :  grads_in_cube[t] } ]
+    return tetrahedra
+
 def split_preordered_hexahedron_into_tetrahedra(eight_hexahedron_vertices: List[float]) -> List:
     """
-    Requieres the eight points in eight_hexahedron_vertices to be ordered according to the
-    standard macro--elements defined in main.py. 
-    If this ordering is correct, then the hexaedron doesn't need to have faces parallel to
-    the coordinates.
+    Requieres the eight points in eight_hexahedron_vertices to be ordered according to 
+    this example of the unitary cube, viewed columnwise:
+
+                                    |1, 1, 1, 1, 0, 0, 0, 0|
+                                    |1, 0, 0, 1, 1, 0, 0, 1|
+                                    |1, 1, 0, 0, 1, 1, 0, 0|
+
+    in words, we have to have the eight columns organized as "front face and rear face",
+    and then in each face the columns ordered counterclockwise. 
+
+    The hexaedron doesn't need to have faces parallel to the coordinates.
     """
-    nodes = np.array(eight_hexahedron_vertices[1:-1]).reshape(3,(len(eight_hexahedron_vertices)-2)//3,order='F')
+
+    number_of_r3_points = 8
+    nodes = np.array(eight_hexahedron_vertices[1:-1]).reshape(3, number_of_r3_points, order='F')
     tetrahedra    = []
     types_in_cube = [0,0,0,0,1]
     grads_in_cube = [1] + [eight_hexahedron_vertices[-1]]*4
@@ -316,37 +368,22 @@ def split_preordered_hexahedron_into_tetrahedra(eight_hexahedron_vertices: List[
 
     return tetrahedra
 
-
-def split_brick_into_prisms (macroel_raw):
+def morph_flexible_polyhedron_with_control_points():
+    """
+    See: purple notebook.
+    Codename: morph_flexible_polyhedron. Think a name.
+    
+    Triangular faces: like an hexahedron, with one extra point interior to a face,
+                      and movable within a neighborhood.
+    """
     pass
 
-def split_lshape_into_prisms (macroel_raw):
+def split_brick_into_prisms(macroel_raw):
     pass
 
-def reorder_prism_vertices (macroel_raw):
+def split_lshape_into_prisms(macroel_raw):
     pass
 
-def split_parallel_brick_into_tetrahedra (macroel_raw):
-    """ nodes: the array of eight vertices of an hexahedron which
-    has faces parallel to the axes. The columns of this input
-    array may be in any order, as long as the first one remains as
-    _the singular vertex_ (if any singular vertex is present in this
-    part of the mesh), and the program performs the local graduation towards
-    that vertex. Compare with max{x}, max{y}, max{z} to decide where is the
-    singular vertex pointing to """
-    nodes = np.array(macroel_raw[1:-1]).reshape(3,(len(macroel_raw)-2)//3,order='F')
-    positions_encoding       = bit_arrays(nodes)
-    singular_vertex_position = octant_encoding[np.where(positions_encoding==0)[0][0]]
-    pi                       = reference_permutations (singular_vertex_position)
-    tetrahedra    = []
-    types_in_cube = [0,0,0,0,1]
-    grads_in_cube = [1] + [macroel_raw[-1]]*4
-    for t in range (5):
-        tetrahedra += [ { 0 : types_in_cube[t],
-         1 : np.array([nodes[:,positions_encoding[pi[std_macro_elems[t][j]]]]\
-                       for j in range(4)]).T,
-         2 :  grads_in_cube[t] } ]
-    return tetrahedra
-
-def macroel_more_flexible_tending_more_generality ():
+def reorder_prism_vertices(macroel_raw):
     pass
+

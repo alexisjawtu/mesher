@@ -27,7 +27,7 @@ from mayavi import mlab
 # np.cos(np.pi/3) = 0.5000000000000001
 
 
-def plot_lines(vertices_file, connectivity_file, vert_delim=None, colors=(0.5,0,0.5)):
+def plot_lines(vertices_file, connectivity_file, isolated_points=None, vert_delim=None, colors=(.8,.8,.8)):
     # Reads .ver and .ebv files. col is a color definition. 
     p = np.loadtxt(vertices_file, delimiter=vert_delim)
     with open(connectivity_file,'r') as infile:
@@ -37,9 +37,9 @@ def plot_lines(vertices_file, connectivity_file, vert_delim=None, colors=(0.5,0,
     x = p[:,0]
     y = p[:,1]
     z = p[:,2]
-    #s could be modified in order to give different colors to different elements. 
+    # s could be modified in order to give different colors to different elements. 
     s = np.ones(len(x), dtype="float64")
-    cant_edges = {6:9, 5:8, 4:6} #dictionary {n_nodes: n_edges}
+    cant_edges = {6:9, 5:8, 4:6}  # dictionary {n_nodes: n_edges}
     n_con = 0
     for i in range(len(con_list)):
         n_con = n_con + cant_edges[con_list[i][0]]
@@ -49,11 +49,13 @@ def plot_lines(vertices_file, connectivity_file, vert_delim=None, colors=(0.5,0,
     connections_tetra = np.array([[0,1,2,3,0,1], [1,2,3,0,2,3]]).T
     connections_pyrad = np.array([[0,1,2,3,0,1,2,3], [1,2,3,0,4,4,4,4]]).T
     # dictionary
-    new_connections = {6:connections_prism, 5:connections_pyrad, 4:connections_tetra}
+    new_connections = {6: connections_prism, 5: connections_pyrad, 4: connections_tetra}
     last = 0
     for i in range(len(con_list)):
         row = np.array(con_list[i])
         #add connections depending on the type of elelement
+
+        # TODO: this [[]+1]-1 at the end of the line should be depending of lang = C/Octave
         connections[last:last+cant_edges[row[0]],:] = row[new_connections[row[0]]+1]-1
         last = last + cant_edges[row[0]]
     #plot:
@@ -62,7 +64,22 @@ def plot_lines(vertices_file, connectivity_file, vert_delim=None, colors=(0.5,0,
     src.mlab_source.dataset.lines = connections 
     src.update()
     mlab.pipeline.surface(src, color=colors)
-    mlab.points3d([0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1], scale_factor=.1, color=(0, 1, 0))
+
+    # Put some balls to visualize the axes
+    mlab.points3d([0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1], scale_factor=.06, color=(.5, 1, .5))
+
+    if isolated_points:
+        isolated_points = np.loadtxt(isolated_points, delimiter=vert_delim)
+        
+        mlab.points3d(
+            isolated_points[:,0],
+            isolated_points[:,1],
+            isolated_points[:,2], 
+            np.linspace(.001, .3, len(isolated_points)),
+            scale_factor=1, 
+            color=(1, 0, 0)
+        )
+
     mlab.show()
     return
 

@@ -33,11 +33,12 @@ default 2: macroel_prisms
 
 """
 
-parsers                         = { 3 : mesh.split_parallel_brick_into_tetrahedra,  # Only for bricks parallel to the coordinates!
-                                    4 : mesh.split_preordered_hexahedron_into_tetrahedra,
-                                    5 : mesh.split_brick_into_prisms,
-                                    6 : mesh.split_lshape_into_prisms,
-                                    7 : mesh.reorder_prism_vertices }
+parsers                         = { 3: mesh.split_parallel_brick_into_tetrahedra,  # Only for bricks parallel to the coordinates!
+                                    4: mesh.split_preordered_hexahedron_into_tetrahedra,
+                                    5: mesh.split_brick_into_prisms,
+                                    6: mesh.split_lshape_into_prisms,
+                                    7: mesh.reorder_prism_vertices,
+                                    8: mesh.morph_flexible_polyhedron_with_control_points }
 
 # CONTINUE HERE: make a handy way of typing the initial partition,
 # perhaps a class with functions like "tau_zero.translate(x=x0, y=y0, z=z0)"
@@ -50,17 +51,17 @@ parsers                         = { 3 : mesh.split_parallel_brick_into_tetrahedr
 ## ## after finishing all that, make cute examples to put
 ## in .md file and document or go to mesh.macroel_tetrahedra
 
-elements_by_vertices_writers    = { 0 : mesh_connectivity.elements_by_vertices_hybrid,
-                                    1 : mesh_connectivity.elements_by_vertices_tetra,
-                                    2 : mesh_connectivity.elements_by_vertices_prisms }
+elements_by_vertices_writers    = { 0: mesh_connectivity.elements_by_vertices_hybrid,
+                                    1: mesh_connectivity.elements_by_vertices_tetra,
+                                    2: mesh_connectivity.elements_by_vertices_prisms }
 
-local_meshers                   = { 0 : mesh.macroel_hybrid, 
-                                    1 : mesh.macroel_tetrahedra, 
-                                    2 : mesh.macroel_prisms }
+local_meshers                   = { 0: mesh.macroel_hybrid, 
+                                    1: mesh.macroel_tetrahedra, 
+                                    2: mesh.macroel_prisms }
 
-physical_vertices_writers       = { 0 : mesh_write.vertices_macro_hybrid,
-                                    1 : mesh_write.vertices_macro_tetra,
-                                    2 : mesh_write.vertices_macro_prism } 
+physical_vertices_writers       = { 0: mesh_write.vertices_macro_hybrid,
+                                    1: mesh_write.vertices_macro_tetra,
+                                    2: mesh_write.vertices_macro_prism } 
 
 def load_partition (in_file, levels):
     """ in_file is a csv with:
@@ -185,7 +186,7 @@ def filter_repeated_faces (in_file,n_elem):
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
     return 
 
-def omega (in_file, levels):
+def mesh_domain(in_file, levels=1):
     """
     1st: set levels (if levels == 1, then only macro--elements).
     elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
@@ -212,6 +213,6 @@ def omega (in_file, levels):
         # Maybe we can overlap nicely the elements_by_vertices_writers and 
         # the local_meshers for this case.
         init += physical_vertices_writers[E[0]](points, in_file+".ver")
-    filter_repeated_faces(in_file,filter_repeated_vertices(in_file))
+    filter_repeated_faces(in_file, filter_repeated_vertices(in_file))
     mesh_graphics.plot_lines(in_file + ".ver", in_file + ".ebv")
     return
