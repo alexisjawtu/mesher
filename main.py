@@ -216,3 +216,18 @@ def mesh_domain(in_file, levels=1):
     filter_repeated_faces(in_file, filter_repeated_vertices(in_file))
     mesh_graphics.plot_lines(in_file + ".ver", in_file + ".ebv")
     return
+
+
+def preordered_hexahedron_with_tetrahedra(in_file: str) -> None:
+
+    initial_partition = np.loadtxt(in_file, delimiter=",")
+    init = 0
+
+    for E in initial_partition:
+ 
+        elements_by_vertices_writers[1](in_file, 1, "Octave", init)
+        points = local_meshers[1](E, 1, 1)
+        init += physical_vertices_writers[1](points, in_file + ".ver")
+
+    filter_repeated_faces(in_file, filter_repeated_vertices(in_file))
+    mesh_graphics.plot_lines(in_file + ".ver", in_file + ".ebv")

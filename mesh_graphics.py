@@ -19,6 +19,7 @@
 import os
 import numpy as np
 
+from typing import Tuple
 from mayavi import mlab
 
 # import main
@@ -27,18 +28,22 @@ from mayavi import mlab
 # np.cos(np.pi/3) = 0.5000000000000001
 
 
-def plot_lines(vertices_file, connectivity_file, isolated_points=None, vert_delim=None, colors=(.8,.8,.8)):
+def plot_lines(
+    vertices_file: str,
+    connectivity_file: str,
+    nodes: str=None,
+    elements: str=None,
+    isolated_points: str=None,
+    vert_delim: str=None,
+    colors: Tuple=(.8,.8,.8)
+):
     # Reads .ver and .ebv files. col is a color definition. 
-    p = np.loadtxt(vertices_file, delimiter=vert_delim)
     with open(connectivity_file,'r') as infile:
         inlist = infile.readlines()
     con_list = [line.strip(' \n').split(' ') for line in inlist]
     con_list = [[int(st[k]) for k in range(len(st))] for st in con_list]
-    x = p[:,0]
-    y = p[:,1]
-    z = p[:,2]
-    # s could be modified in order to give different colors to different elements. 
-    s = np.ones(len(x), dtype="float64")
+    
+
     cant_edges = {6:9, 5:8, 4:6}  # dictionary {n_nodes: n_edges}
     n_con = 0
     for i in range(len(con_list)):
@@ -60,6 +65,19 @@ def plot_lines(vertices_file, connectivity_file, isolated_points=None, vert_deli
         last = last + cant_edges[row[0]]
     #plot:
     fig = mlab.figure(1, size=(400, 400), bgcolor=(1, 1, 1))
+
+    p = np.loadtxt(vertices_file, delimiter=vert_delim)
+
+    CONTINUE HERE: probar concatenar los puntos de los bricks nuevos
+                   a continuacion de 'p' y correr los indices de '.ebv'
+                   en len(x) y dibujar. 
+
+    x = p[:,0]
+    y = p[:,1]
+    z = p[:,2]
+
+    del p
+
     src = mlab.pipeline.scalar_scatter(x, y, z)
     src.mlab_source.dataset.lines = connections 
     src.update()
