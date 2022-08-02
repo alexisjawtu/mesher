@@ -16,43 +16,62 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ?????.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
+"""
+plot_all_tetrahedra("experiments/wafer30jul22/nodes.dat",
+                    "experiments/wafer30jul22/elements.dat",
+                    "experiments/wafer30jul22/bricks.txt.ver",
+                    "experiments/wafer30jul22/bricks.txt.ebv",
+                    vert_delim=",")  
+"""
+
+import sys
+
 import numpy as np
 
 from typing import Tuple
 from mayavi import mlab
 
-# import main
-# import ellipse
-# np.cos(np.pi/6) = 0.8660254037844387
-# np.cos(np.pi/3) = 0.5000000000000001
-
 
 def plot_lines(
-    vertices_file: str,
-    connectivity_file: str,
-    nodes: str=None,
-    elements: str=None,
-    isolated_points: str=None,
-    vert_delim: str=None,
-    colors: Tuple=(.8,.8,.8)
-):
+        vertices_file: str, 
+        connectivity_file: str, 
+        isolated_points: str = None,
+        vert_delim: str = None, 
+        colors: Tuple = (.8,.8,.8)) -> None:
+
     # Reads .ver and .ebv files. col is a color definition. 
+    p = np.loadtxt(vertices_file, delimiter=vert_delim)
     with open(connectivity_file,'r') as infile:
         inlist = infile.readlines()
     con_list = [line.strip(' \n').split(' ') for line in inlist]
     con_list = [[int(st[k]) for k in range(len(st))] for st in con_list]
-    
-
+    x = p[:,0]
+    y = p[:,1]
+    z = p[:,2]
+    # s could be modified in order to give different colors to different elements. 
+    s = np.ones(len(x), dtype="float64")
     cant_edges = {6:9, 5:8, 4:6}  # dictionary {n_nodes: n_edges}
     n_con = 0
     for i in range(len(con_list)):
         n_con = n_con + cant_edges[con_list[i][0]]
     connections = np.zeros((n_con,2))
-    # List of connections for each type of element
-    connections_prism = np.array([[0,1,2,0,3,4,5,1,2], [1,2,0,3,4,5,3,4,5]]).T
-    connections_tetra = np.array([[0,1,2,3,0,1], [1,2,3,0,2,3]]).T
-    connections_pyrad = np.array([[0,1,2,3,0,1,2,3], [1,2,3,0,4,4,4,4]]).T
+    
+    # Connections for each type of element
+    connections_prism = np.array([
+        [0,1,2,0,3,4,5,1,2], 
+        [1,2,0,3,4,5,3,4,5]
+    ]).T
+    
+    connections_tetra = np.array([
+        [0,1,2,3,0,1],
+        [1,2,3,0,2,3]
+    ]).T
+    
+    connections_pyrad = np.array([
+        [0,1,2,3,0,1,2,3],
+        [1,2,3,0,4,4,4,4]
+    ]).T
+
     # dictionary
     new_connections = {6: connections_prism, 5: connections_pyrad, 4: connections_tetra}
     last = 0
@@ -65,19 +84,6 @@ def plot_lines(
         last = last + cant_edges[row[0]]
     #plot:
     fig = mlab.figure(1, size=(400, 400), bgcolor=(1, 1, 1))
-
-    p = np.loadtxt(vertices_file, delimiter=vert_delim)
-
-    CONTINUE HERE: probar concatenar los puntos de los bricks nuevos
-                   a continuacion de 'p' y correr los indices de '.ebv'
-                   en len(x) y dibujar. 
-
-    x = p[:,0]
-    y = p[:,1]
-    z = p[:,2]
-
-    del p
-
     src = mlab.pipeline.scalar_scatter(x, y, z)
     src.mlab_source.dataset.lines = connections 
     src.update()
@@ -99,100 +105,101 @@ def plot_lines(
         )
 
     mlab.show()
-    return
-
-"""
-#######
-# These funtions should be moved to another file. examples.py?
-def ball(file_name,levels=3,mu=1,plotear=True):
-    # Creates a ball (centered at the origin, and with radious 1), from scratch. It is graded toward the center.
-    with open(file_name,'w') as inp:
-        # Create the partition file, with 8 tetrahedra.
-        inp.write('1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 0, 0, 1, 0,-1, 0, 0, 0, 0, 1, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 0,-1, 0, 0, 0,-1, 0, 0, 0, 1, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 0, 1, 0, 0, 0,-1, 0, 0, 0, 1, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0,-1, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 0, 0, 1, 0,-1, 0, 0, 0, 0,-1, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 0,-1, 0, 0, 0,-1, 0, 0, 0,-1, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 0, 1, 0, 0, 0,-1, 0, 0, 0,-1, '+str(mu)+'\n')
-    # Compute mesh:
-    main.omega(file_name,levels)
-    # Push nodes to the the edge: 
-    p = np.loadtxt(file_name+'.ver')
-    nz = np.where(np.any(p!=0,axis=1))[0] # nodes different from (0,0,0)
-    # First 4 octants ant its oposites are marked with 1 and -1, respectively. 
-    oct1 = 1*((p[nz,0]>=0)*(p[nz,1]>=0)*(p[nz,2]>=0))-1*((p[nz,0]<=0)*(p[nz,1]<=0)*(p[nz,2]<0))
-    oct2 = 1*((p[nz,0]<0)*(p[nz,1]>=0)*(p[nz,2]>=0))-1*((p[nz,0]>0)*(p[nz,1]<=0)*(p[nz,2]<0))
-    oct3 = 1*((p[nz,0]<=0)*(p[nz,1]<0)*(p[nz,2]>=0))-1*((p[nz,0]>=0)*(p[nz,1]>0)*(p[nz,2]<0))
-    oct4 = 1*((p[nz,0]>0)*(p[nz,1]<0)*(p[nz,2]>=0))-1*((p[nz,0]<0)*(p[nz,1]>0)*(p[nz,2]<0))
-    norma = np.sqrt(np.sum(p[nz,:]**2,1))
-    # Value of the constants that defines the planes where each node lie. 
-    s1 = np.sum(p[nz,:],1)
-    s2 = -p[nz,0]+p[nz,1]+p[nz,2]
-    s3 = -p[nz,0]-p[nz,1]+p[nz,2]
-    s4 = p[nz,0]-p[nz,1]+p[nz,2]
-    # Correct nodes possitions:
-    p[nz,:] = p[nz,:]*((oct1*s1+oct2*s2+oct3*s3+oct4*s4)/norma).reshape((p[nz,:].shape[0],1))
-    np.savetxt(file_name+'.ver',p)
-    if plotear:
-        plot_lines(file_name+'.ver',file_name+'.ebv')
-
-def many_balls(_levels,_mu,folder=''):
-    for levels in _levels:
-        for mu in _mu:
-            name = folder+'/ball_'+str(levels)+'_'+str(mu)
-            ball(name,levels,mu,False)
 
 
-def ellipsoid(file_name,levels,mu,plotear=True):
-    with open(file_name,'w') as inp:
-        # Polo Sur
-        inp.write('1, 0, 0, -1, 1.5, 0, -1, 0, 1.5, -1, 0, 0, -2, '+str(mu)+'\n')
-        inp.write('1, 0, 0, -1, 0, 1.5, -1,-1.5, 0, -1, 0, 0, -2, '+str(mu)+'\n')
-        inp.write('1, 0, 0, -1,-1.5, 0, -1, 0,-1.5, -1, 0, 0, -2, '+str(mu)+'\n')
-        inp.write('1, 0, 0, -1, 0,-1.5, -1, 1.5, 0, -1, 0, 0, -2, '+str(mu)+'\n')
-        # Polo Norte
-        inp.write('1, 0, 0, 1, 1.5, 0, 1, 0, 1.5, 1, 0, 0, 2, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 1, 0, 1.5, 1,-1.5, 0, 1, 0, 0, 2, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 1,-1.5, 0, 1, 0,-1.5, 1, 0, 0, 2, '+str(mu)+'\n')
-        inp.write('1, 0, 0, 1, 0,-1.5, 1, 1.5, 0, 1, 0, 0, 2, '+str(mu)+'\n') 
-        # Cilindro inferior:
-        inp.write('0, 0, 0, 0, 1.5,    0,  0,    0, 1.5,  0,   0,    0, -1, '+str(mu)+'\n')
-        inp.write('1, 0, 0,-1, 1.5,    0, -1,    0, 1.5, -1, 1.5,    0,  0, '+str(mu)+'\n')
-        inp.write('1, 0, 0,-1,   0,  1.5, -1,    0, 1.5,  0, 1.5,    0,  0, '+str(mu)+'\n')
-        inp.write('0, 0, 0, 0,   0,  1.5,  0, -1.5,   0,  0,   0,    0, -1, '+str(mu)+'\n')
-        inp.write('1, 0, 0,-1,   0,  1.5, -1, -1.5,   0, -1,   0,  1.5,  0, '+str(mu)+'\n')
-        inp.write('1, 0, 0,-1,   0,  1.5,  0, -1.5,   0,  0,-1.5,    0, -1, '+str(mu)+'\n')
-        inp.write('0, 0, 0, 0,   0, -1.5,  0, -1.5,   0,  0,   0,    0, -1, '+str(mu)+'\n')
-        inp.write('1, 0, 0,-1,   0, -1.5, -1, -1.5,   0, -1,   0, -1.5,  0, '+str(mu)+'\n')
-        inp.write('1, 0, 0,-1,   0, -1.5,  0, -1.5,   0,  0,   0,    0,  0, '+str(mu)+'\n')
-        inp.write('0, 0, 0, 0,   0, -1.5,  0,  1.5,   0,  0,   0,    0, -1, '+str(mu)+'\n')
-        inp.write('1, 0, 0,-1,   0, -1.5, -1,  1.5,   0, -1,   0, -1.5,  0, '+str(mu)+'\n')
-        inp.write('1, 0, 0,-1,   0, -1.5,  0,  1.5,   0,  0,   0,    0,  0, '+str(mu)+'\n')
-        # Cilindro superior
-        ## inp.write('0, 0, 0, 0, 1.5,    0,  0,    0, 1.5,  0,   0,    0,  1, '+str(mu)+'\n')
-        ## inp.write('1, 0, 0, 1, 1.5,    0,  1,    0, 1.5,  1, 1.5,    0,  0, '+str(mu)+'\n')
-        ## inp.write('1, 0, 0, 1,   0,  1.5,  1,    0, 1.5,  0, 1.5,    0,  0, '+str(mu)+'\n')
-        ## inp.write('0, 0, 0, 0,   0,  1.5,  0, -1.5,   0,  0,   0,    0,  1, '+str(mu)+'\n')
-        ## inp.write('1, 0, 0, 1,   0,  1.5,  1, -1.5,   0,  1,   0,  1.5,  0, '+str(mu)+'\n')
-        ## inp.write('1, 0, 0, 1,   0,  1.5,  0, -1.5,   0,  0,-1.5,    0,  1, '+str(mu)+'\n')
-        ## inp.write('0, 0, 0, 0,   0, -1.5,  0, -1.5,   0,  0,   0,    0,  1, '+str(mu)+'\n')
-        ## inp.write('1, 0, 0, 1,   0, -1.5,  1, -1.5,   0,  1,   0, -1.5,  0, '+str(mu)+'\n')
-        ## inp.write('1, 0, 0, 1,   0, -1.5,  0, -1.5,   0,  0,   0,    0,  0, '+str(mu)+'\n')
-        ## inp.write('0, 0, 0, 0,   0, -1.5,  0,  1.5,   0,  0,   0,    0,  1, '+str(mu)+'\n')
-        ## inp.write('1, 0, 0, 1,   0, -1.5,  1,  1.5,   0,  1,   0, -1.5,  0, '+str(mu)+'\n')
-        ## inp.write('1, 0, 0, 1,   0, -1.5,  0,  1.5,   0,  0,   0,    0,  0, '+str(mu)+'\n')
+def plot_all_tetrahedra(
+        vertices_file: str,
+        connectivity_file: str,
+        nodes: str = None,
+        elements_file: str = None,
+        isolated_points: str = None,
+        vert_delim: str = None,
+        nodes_delim: str = None,
+        colors: Tuple = (.8,.8,.8)) -> None:
+
+
+CONTINUE HERE:
+    1- poner el brick faltante
+    2- hacer una layer más
+    3- enviar a Liu la propuesta de input con upper_z, delta_xy, etc.
+    4- pedir una parte del dinero.
+
+    pair: Tuple = (
+        np.loadtxt(vertices_file, delimiter=vert_delim),
+        np.loadtxt(nodes, delimiter=nodes_delim)
+    )
+
+    vertices: np.array = np.vstack(pair)
+
+    x = vertices[:, 0]
+    y = vertices[:, 1]
+    z = vertices[:, 2]
+
+    del vertices
+    
+    connectivity: np.array = np.loadtxt(connectivity_file)
+    elements: np.array = np.loadtxt(elements_file)
+
+    # Translate indices to have all in the same picture.
+    elements[:, 1:] += len(pair[0])
+
+    all_elements: np.array = np.vstack((connectivity, elements))
+
+    # Here we have all 6s.
+    cant_edges = {4: 6}  # dictionary {n_nodes: n_edges}
+    n_con = 0
+    for e in all_elements:
+        n_con = n_con + cant_edges[e[0]]
+
+    connections = np.zeros((n_con,2))
+
+    connections_tetra = np.array([
+        [0,1,2,3,0,1],
+        [1,2,3,0,2,3]
+    ]).T
+
+    new_connections = {4: connections_tetra}
+
+    last = 0
+
+    for i in range(len(all_elements)):
+        row = np.array(all_elements[i])
+        #add connections depending on the type of elelement
+
+        # TODO: this [[]+1]-1 at the end of the line should be depending of lang = C/Octave
+        connections[last: last + cant_edges[row[0]], :] = row[new_connections[row[0]] + 1] - 1
+        last = last + cant_edges[row[0]]
+
+    #plot:
+    fig = mlab.figure(1, size=(400, 400), bgcolor=(1, 1, 1))
+
+    src = mlab.pipeline.scalar_scatter(x, y, z)
+    
+    src.mlab_source.dataset.lines = connections 
+
+    mlab.pipeline.surface(src, color=colors)
+
+    src.update()
+
+    # Put some balls to visualize the axes
+    mlab.points3d(
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1],
+        scale_factor=.06,
+        color=(.5, 1, .5)
+    )
+
+    if isolated_points:
+        isolated_points = np.loadtxt(isolated_points, delimiter=vert_delim)
         
+        mlab.points3d(
+            isolated_points[:,0],
+            isolated_points[:,1],
+            isolated_points[:,2], 
+            np.linspace(.001, .3, len(isolated_points)),
+            scale_factor=1, 
+            color=(1, 0, 0)
+        )
 
-    main.omega(file_name,levels)
-    p = np.loadtxt(file_name+'.ver') 
-    p = p.T  
-    q,coeff,height,classification = ellipse.project_and_scale(p)
-    q = ellipse.stereo_projection(q)
-    q = ellipse.scale_ellipse(q,coeff,height,classification)
-    #q = np.vstack((q,np.zeros(q.shape[1])))
-    np.savetxt(file_name+'.ver',q.T)
-    if plotear:
-        plot_lines(file_name+'.ver',file_name+'.ebv')
-"""
+    mlab.show()
