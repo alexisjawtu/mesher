@@ -265,15 +265,15 @@ def macroel_hybrid(macroel_vertices, mu, n):
     """ 
         vertices = ( local_origin | base_vrtx_1 | base_vrtx_2 | sing_vrtx )
         singular edge the one which is parallel to v = (sing_vrtx - local_origin)
-        n  == levels
         mu == grading param
+        n  == levels
     """
     points = np.zeros((n+1, n+1, 3, n+1))  # level, i, coordinate, j
     for k in range(n+1):
         for i in range(n-k+1):
             for j in range(n-k-i+1):
                 # it can be done with much lesser calls to these lambda
-                coef = (convex_coef (1, [i,j,0], n, mu), convex_coef (2, [i,j,0], n, mu))
+                coef = (convex_coef(1, [i,j,0], n, mu), convex_coef(2, [i,j,0], n, mu))
                 # the sub-mesh is just the following two lines
                 points[k,i,:,j] = coef[0]*(macroel_vertices[:,1]-macroel_vertices[:,0]) \
                                   + coef[1]*(macroel_vertices[:,2]-macroel_vertices[:,0])
@@ -361,7 +361,7 @@ def split_preordered_hexahedron_into_tetrahedra(eight_hexahedron_vertices: List[
     types_in_cube = [0,0,0,0,1]
     grads_in_cube = [1] + [eight_hexahedron_vertices[-1]]*4
     
-    for t in range (5):
+    for t in range(5):
         tetrahedra += [ { 0 : types_in_cube[t],
          1 : np.array([nodes[:,std_macro_elems[t][j]] for j in range(4)]).T,
          2 : grads_in_cube[t] } ]

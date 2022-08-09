@@ -18,6 +18,9 @@
 
 import numpy as np
 
+from typing import Dict, List
+
+
 def elements_by_vertices_hybrid (f_name_out, n, lang, initial):
     """ 
     initial: tracks the number of vertices of the previous macro_element
@@ -178,7 +181,7 @@ def elements_by_vertices_prisms (f_name_out, levels, lang, init):
         np.savetxt(target,local_elmnts_by_vertices.astype(int),fmt='%d')
     return levels**3 
 
-def vertices_by_elements (f_name, lang):
+def vertices_by_elements(f_name, lang) -> int:
 	""" 
 	This function intends to be GENERAL. For any mesh given, not
 	only our mesh. 
@@ -221,7 +224,7 @@ def vertices_by_elements (f_name, lang):
 			#out.write(' '.join([str(r) for r in elem_vert[vertex]]) + '\n')
 	return len(elem_vert)
 
-def faces (f_name, n_elem, lang):
+def faces(f_name, n_elem, lang):
 	""" 
 	returns shared_faces.txt as:
 	--------------------------------------------------
@@ -242,9 +245,10 @@ def faces (f_name, n_elem, lang):
 
 	For now: tested against macroelement with both singularities
 	"""
-	language  = {'C' : 0, 'Octave' : 1}
-	d = {}
-	with open (f_name+".elem",'r') as inp:	
+	language: Dict = {"C": 0, "Octave": 1}
+	d: Dict = {}
+
+	with open (f_name + ".elem",'r') as inp:	
 		lines = inp.readlines()
 	n_lines = len(lines)
 	
@@ -253,7 +257,7 @@ def faces (f_name, n_elem, lang):
 		d[chars[0]]  = dict(zip(range(len(chars)-1), [int(c) for c in chars[1:]]))
 	## TODO: see if this can be done without the list values()
 	
-	s = ''
+	s: str = ""
 	for n in range(language[lang], n_elem + language[lang]):
 		for m in range(language[lang], n):
 			count = 0
@@ -303,10 +307,10 @@ def face_enumeration (file_name):
 	nr_faces 	= {6 : 5, 5 : 5, 4 : 4}
 	face_index 	= 1
 	
-	global_string 			= ''
-	local_to_global_string 	= ''
+	global_string: str 			= ""
+	local_to_global_string: str	= ""
 
-	with open (file_name+".ebv", 'r') as data:
+	with open (file_name + ".ebv", 'r') as data:
 		elem_by_vert = data.readlines()
 	n_el = len(elem_by_vert)
 	
@@ -318,14 +322,14 @@ def face_enumeration (file_name):
 		global_string 			+= writers[vertices[0]](vertices)
 		face_index 				+= nr_face
 
-	with open (file_name+'.faces_rep', 'w') as out_global:
+	with open (file_name + '.faces_rep', 'w') as out_global:
 		out_global.write(global_string)
-	with open (file_name+'.fltg', 'w') as out_loc_to_global:
+	with open (file_name + '.fltg', 'w') as out_loc_to_global:
 		out_loc_to_global.write(local_to_global_string)
 	return
 
 
-def kill_repeated (vertices_file_name):
+def kill_repeated (vertices_file_name: str) -> Dict:
 	""" 
 		searches: 		repeated vertices
 
@@ -335,12 +339,13 @@ def kill_repeated (vertices_file_name):
 		obs:            now we don't delete the entries on vertices.txt. We simply
 						don't request them.
 	""" 
-	counter = 1
-	vertices = np.loadtxt(vertices_file_name)
-	d_out 	 = {}
-	Nv 		 = vertices.shape[0]
+	counter: int 	   = 1
+	vertices: np.array = np.loadtxt(vertices_file_name)
+	d_out: Dict 	   = {}
+	Nv: int 		   = vertices.shape[0]
+
 	for v in range(Nv):
-		print ('progress: {0}/{1}\r'.format(counter,Nv), sep = ' ', end = '', flush=True)
+		print('progress: {0}/{1}\r'.format(counter, Nv), sep = ' ', end = '', flush=True)
 		counter += 1
 		for w in range(v + 1, Nv):
 			if np.all(np.equal(vertices[v], vertices[w])):

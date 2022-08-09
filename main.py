@@ -16,11 +16,14 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ?????.  If not, see <https://www.gnu.org/licenses/>.
 
+import time
 import numpy as np
+
+from typing import List, Dict
+
 import mesh
 import mesh_write
 import mesh_connectivity
-import time
 import mesh_graphics
 
 
@@ -31,9 +34,10 @@ default 0: macroel_hybrid
 default 1: macroel_tetrahedra
 default 2: macroel_prisms
 
+case 3: Only for bricks parallel to the coordinates!
 """
 
-parsers                         = { 3: mesh.split_parallel_brick_into_tetrahedra,  # Only for bricks parallel to the coordinates!
+parsers                         = { 3: mesh.split_parallel_brick_into_tetrahedra,
                                     4: mesh.split_preordered_hexahedron_into_tetrahedra,
                                     5: mesh.split_brick_into_prisms,
                                     6: mesh.split_lshape_into_prisms,
@@ -90,34 +94,41 @@ def load_partition (in_file, levels):
         mesh_write.write_element_indices(in_file+".elem", levels)
     return macro_elements
 
-def filter_repeated_vertices (in_file,n_vert_prism = 6):
+def filter_repeated_vertices (in_file: str, max_number_of_vertices: int = 6) -> int:
     """	look for repetitions of vertices.
     at this point the program is already general:
-    this 'inverts' the table of elements_by_vertices.txt
-    writes on disc: vertices_by_elements.txt
-    mesh_connectivity.vertices_by_elements('elements_by_vertices.txt', 'Octave')
-    """
-    with open(in_file+'.ebvr','r') as inp:
-        things = inp.readlines()
-    
-    n_elem = len(things)
-    
-    elem_vert_repeated = np.zeros((n_elem,n_vert_prism+1),dtype=int)
+    this inverts the table of elements_by_vertices.txt
 
-    for k in range(len(things)):
-        ele                     = np.fromstring(things[k],dtype=int,sep=' ')
-        elem_vert_repeated[k]   = np.concatenate((ele,np.zeros((n_vert_prism+1-len(ele)),dtype=int)))
+    max_number_of_vertices: the number of vertices of the type of element with maximum number
+                            of vertices. For example, in a mesh with tetrahedra, prisms and 
+                            pyramids, it is a six.
+    """
+
+    with open(in_file + ".ebvr", 'r') as inp:
+        things: List = inp.readlines()
     
-    print ('mesh_connectivity.kill_repeated()')
+    n_elem: int = len(things)  # number of elements with repetition of vertices.
+    
+    elem_vert_repeated: np.array = np.zeros((n_elem, max_number_of_vertices + 1), dtype=int)
+
+    for k in range(n_elem):
+        ele: np.array            = np.fromstring(things[k], dtype=int, sep=" ")
+        trailing_zeros: np.array = np.zeros(max_number_of_vertices + 1 - len(ele), dtype=int)
+        elem_vert_repeated[k]    = np.concatenate((ele, trailing_zeros))
+        # TODO:                    ^ change this to elem_vert_repeated[k, 0:len(ele)],
+        #                            eliminate each trailing_zeros array and test :)
+
+    print("mesh_connectivity.kill_repeated()")
     t0 = time.time()
-    replace_verts = mesh_connectivity.kill_repeated(in_file+'.ver')  ## repetitions in vertices.txt leave a dictionary
-    print (time.time() - t0)
-    print ('\n')
+    ## repetitions in vertices.txt leave a dictionary
+    replace_verts = mesh_connectivity.kill_repeated(in_file + ".ver")
+    print(time.time() - t0)
+    print("\n")
     
-    print ('vertices replacement loop version 2')
+    print("vertices replacement loop version 2")
     t0      = time.time()
     counter = 1
-    elem_vert_dscnt_indcs = np.copy(elem_vert_repeated[:,1:]).reshape(n_elem*6)
+    elem_vert_dscnt_indcs = np.copy(elem_vert_repeated[:, 1:]).reshape(n_elem * 6)
     for key in replace_verts:
         print('progress: {}/{}\r'.format(counter,len(replace_verts)),sep=' ',\
                 end='',flush=True)
@@ -135,12 +146,13 @@ def filter_repeated_vertices (in_file,n_vert_prism = 6):
     with open(in_file+'.ebv','wb') as out:
         for e in elem_vert_dscnt_indcs:
             np.savetxt(out, e[0:e[0]+1].reshape((1,e[0]+1)), fmt='%d')
+
     return n_elem
 
-def filter_repeated_faces (in_file,n_elem):
+
+def filter_repeated_faces(in_file, n_elem) -> None:
     """ Takes the output of mesh_connectivity.vertices_by_elements().
-    writes on disc: in_file.nf          ----> number of faces
-                    in_file.faces_rep 	----> faces indices with repetitions
+    writes on disc: in_file.faces_rep 	----> faces indices with repetitions
                     in_file.fltg        ----> fltg stands for a
                                               "faces_local_to_global" correspondence
                     in_file.ebf         ----> elements_by_faces correspondence """	
@@ -159,8 +171,6 @@ def filter_repeated_faces (in_file,n_elem):
     print('Killing repeated faces')
     replace_faces, indices, num_faces = mesh_connectivity.kill_repeated_faces(in_file)  
     print( '\r')
-    with open (in_file+'.nf','w') as n_of_faces:
-        n_of_faces.write(str(num_faces))
     #### uniquifying faces:
     print('Face replacements loop version 2.')
     counter = 1
@@ -168,7 +178,12 @@ def filter_repeated_faces (in_file,n_elem):
     elem_faces = np.copy(elem_faces_repeated[:,1:]).reshape(n_elem*5)
     first_col = elem_faces_repeated[:,0].reshape(elem_faces_repeated.shape[0],1)
     for key in replace_faces:
-        print('progress: {0}/{1}\r'.format(counter,len(replace_faces)), sep = ' ', end = '', flush = True)
+        print(
+            'progress: {0}/{1}\r'.format(counter,len(replace_faces)),
+            sep = ' ',
+            end = '',
+            flush = True
+        )
         counter += 1
         for r in replace_faces[key]:
             elem_faces[elem_faces==r] = key
@@ -180,17 +195,18 @@ def filter_repeated_faces (in_file,n_elem):
     for i in range(len(indices)):
         elem_faces[elem_faces==indices[i]] = i+1
     print ('\r')
-    elem_faces = np.hstack((first_col,elem_faces.reshape(n_elem,5)))
-    with open(in_file+'.ebf','ab') as ex:
+    elem_faces: np.array = np.hstack((first_col,elem_faces.reshape(n_elem,5)))
+    with open(in_file + '.ebf', 'ab') as ex:
         for elem in elem_faces:
             np.savetxt(ex, elem.reshape((1,6)),fmt='%d')
-    return 
+
 
 def mesh_domain(in_file, levels=1):
     """
     1st: set levels (if levels == 1, then only macro--elements).
-    elements_by_vertices_writers:    write elements_by_vertices_repeated.txt, GLOBAL INDICES per element
-    physical_vertices_writers:         write vertices.txt, global list of vertices
+    elements_by_vertices_writers: write elements_by_vertices_repeated.txt,
+                                  GLOBAL INDICES per element
+    physical_vertices_writers:    write vertices.txt, global list of vertices
     """
     print('<program>  Copyright (C) 2018-2022  Alexis Boris Jawtuschenko\n' +
           'This program comes with ABSOLUTELY NO WARRANTY; for details type ????.\n' +
@@ -212,22 +228,6 @@ def mesh_domain(in_file, levels=1):
         # faces, with the backtracking for tetrahedra. 
         # Maybe we can overlap nicely the elements_by_vertices_writers and 
         # the local_meshers for this case.
-        init += physical_vertices_writers[E[0]](points, in_file+".ver")
-    filter_repeated_faces(in_file, filter_repeated_vertices(in_file))
-    mesh_graphics.plot_lines(in_file + ".ver", in_file + ".ebv")
-    return
-
-
-def preordered_hexahedron_with_tetrahedra(in_file: str) -> None:
-
-    initial_partition = np.loadtxt(in_file, delimiter=",")
-    init = 0
-
-    for E in initial_partition:
- 
-        elements_by_vertices_writers[1](in_file, 1, "Octave", init)
-        points = local_meshers[1](E, 1, 1)
-        init += physical_vertices_writers[1](points, in_file + ".ver")
-
+        init += physical_vertices_writers[E[0]](points, in_file + ".ver")
     filter_repeated_faces(in_file, filter_repeated_vertices(in_file))
     mesh_graphics.plot_lines(in_file + ".ver", in_file + ".ebv")

@@ -21,7 +21,7 @@ plot_all_tetrahedra("experiments/wafer30jul22/nodes.dat",
                     "experiments/wafer30jul22/elements.dat",
                     "experiments/wafer30jul22/bricks.txt.ver",
                     "experiments/wafer30jul22/bricks.txt.ebv",
-                    vert_delim=",")  
+                    vert_delim=",")
 """
 
 import sys
@@ -118,11 +118,11 @@ def plot_all_tetrahedra(
         colors: Tuple = (.8,.8,.8)) -> None:
 
 
-CONTINUE HERE:
-    1- poner el brick faltante
-    2- hacer una layer más
-    3- enviar a Liu la propuesta de input con upper_z, delta_xy, etc.
-    4- pedir una parte del dinero.
+    # CONTINUE HERE:
+    # ** 1- poner el brick faltante
+    # 2- hacer una layer más
+    # ** 3- enviar a Liu la propuesta de input con upper_z, delta_xy, etc.
+    # 4- pedir una parte del dinero.
 
     pair: Tuple = (
         np.loadtxt(vertices_file, delimiter=vert_delim),
