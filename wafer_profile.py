@@ -308,6 +308,10 @@ CONTINUE HERE:
                             *elements_by_vertices_hybrid
                             *macroel_hybrid
                             *vertices_macro_hybrid
+
+                            *elements_by_vertices_tetra
+                            *macroel_tetra
+                            *vertices_macro_tetra
                         y lo mismo para las referentes a tetra
 
                 3. eliminar el "4" y el "1" en las puntas de cada fila de los bricks
@@ -379,6 +383,48 @@ def filter_repeated_vertices(in_file: str, max_number_of_vertices: int = 6) -> i
     return n_elem
 
 
+def elements_by_vertices_hybrid (f_name_out, initial):
+    """ 
+    initial: tracks the number of vertices of the previous macro_element
+
+    Requires the file f_name_out.elem, written by
+    mesh_write.write_element_indices(), to be in the same directory.
+    
+    Writes GLOBAL INDICES per element appending in the file f_name_out
+    """
+    OCTAVE_LANG_INI: int = 1
+
+    with open (f_name_out + ".elem", 'r') as inp:
+        indices = inp.readlines()
+
+    with open (f_name_out + ".ebvr", 'ab') as out:
+        
+        l = [int(c) for c in indices[0].rstrip().split(' ')] <--- es siempre igual
+
+        line = np.zeros((1, 4), dtype=int)
+
+        for i in range(1, 5):
+            # positions in the graph of the macro--element
+
+            CONTINUE: hacer las cuentas a mano para i in [1, 5)
+
+                      ademas: initial deberia ser const 4
+
+                      VER EL TEMA DE EMPEZAR CON 1 O CON 0 EN MESH_GRAPHICS
+
+            h = l[3 * (i - 1) + 1]  # height  
+            d = l[3 * (i - 1) + 2]  # depth   
+            w = l[3 * (i - 1) + 3]  # width    
+
+            calc = int( (6*h + h * (h - 1) * (2 * h - 1)/6 - 5*h * (h - 1)/2) /2 + w + d * (1 - h - d/2 + 3/2) )
+
+            line[0,i] =  initial + calc + OCTAVE_LANG_INI
+
+        np.savetxt(out, line, fmt="%d")
+
+    return len(indices)
+
+
 initial_partition: np.array = np.loadtxt("bricks.txt", levels=1)
 
 tetrahedra_inside_bricks: List = []
@@ -389,23 +435,23 @@ for brick in initial_partition:
 
 init: int = 0
 for s in tetrahedra_inside_bricks:
-    mesh_connectivity.elements_by_vertices_hybrid("wafer_profile", 1, "Octave", init) # type 0
+    mesh_connectivity.elements_by_vertices_hybrid("wafer_profile", init) # type 0
     points = mesh.macroel_hybrid(s[0][1], 1, 1)
     init += mesh_write.vertices_macro_hybrid(points, "wafer_profile_vertices.txt")
 
-    mesh_connectivity.elements_by_vertices_hybrid("wafer_profile", 1, "Octave", init) # type 0
+    mesh_connectivity.elements_by_vertices_hybrid("wafer_profile", init) # type 0
     points = mesh.macroel_hybrid(s[1][1], 1, 1)
     init += mesh_write.vertices_macro_hybrid(points, "wafer_profile_vertices.txt")
 
-    mesh_connectivity.elements_by_vertices_hybrid("wafer_profile", 1, "Octave", init) # type 0
+    mesh_connectivity.elements_by_vertices_hybrid("wafer_profile", init) # type 0
     points = mesh.macroel_hybrid(s[2][1], 1, 1)
     init += mesh_write.vertices_macro_hybrid(points, "wafer_profile_vertices.txt")
     
-    mesh_connectivity.elements_by_vertices_hybrid("wafer_profile", 1, "Octave", init) # type 0
+    mesh_connectivity.elements_by_vertices_hybrid("wafer_profile", init) # type 0
     points = mesh.macroel_hybrid(s[3][1], 1, 1)
     init += mesh_write.vertices_macro_hybrid(points, "wafer_profile_vertices.txt")
     
-    mesh_connectivity.elements_by_vertices_tetra("wafer_profile", 1, "Octave", init)  # type 1
+    mesh_connectivity.elements_by_vertices_tetra("wafer_profile", init)  # type 1
     points = mesh.macroel_tetrahedra(s[4][1], 1, 1)
     init += mesh_write.vertices_macro_tetra(points, "wafer_profile_vertices.txt")
 
