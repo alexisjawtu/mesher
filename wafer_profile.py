@@ -392,6 +392,8 @@ def elements_by_vertices_hybrid (f_name_out, initial):
     
     Writes GLOBAL INDICES per element appending in the file f_name_out
     """
+    
+    initial = 4*k + 1 (k >= 0)
     OCTAVE_LANG_INI: int = 1
 
     with open (f_name_out + ".elem", 'r') as inp:
@@ -399,16 +401,15 @@ def elements_by_vertices_hybrid (f_name_out, initial):
 
     with open (f_name_out + ".ebvr", 'ab') as out:
         
-        l = [int(c) for c in indices[0].rstrip().split(' ')] <--- es siempre igual
+        l: List = [4, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0]
 
-        line = np.zeros((1, 4), dtype=int)
+        line: np.array = np.array([[0, 0, 0, 0]])
 
         for i in range(1, 5):
             # positions in the graph of the macro--element
 
             CONTINUE: hacer las cuentas a mano para i in [1, 5)
 
-                      ademas: initial deberia ser const 4
 
                       VER EL TEMA DE EMPEZAR CON 1 O CON 0 EN MESH_GRAPHICS
 
