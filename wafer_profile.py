@@ -121,6 +121,7 @@ wafer cases:
 
 """
 
+import time
 import sys
 import numpy as np
 
@@ -181,11 +182,6 @@ def wafer_profile_generated_by_regular_polygon(n: int, o: np.array) -> None:
             p[l] = np.dot(rotation_matrix, p[l])
             rotated_points[l][j] = p[l].copy()
             j = j + 1
-
-################################################################################################
-################################################################################################
-################################################################################################
-################################################################################################
 
 """
 surround_layers = 3  # sys.argv[*]
@@ -300,7 +296,7 @@ def layered_mesh(
 Now the classic mesher enters the game.
 """
 
-def kill_repeated(physical_vertices: str) -> Dict:
+def kill_repeated(physical_vertices: np.array) -> Dict:
     """ 
         searches:       repeated vertices
                         It is merely an iterative cuadratic exploration.
@@ -313,7 +309,7 @@ def kill_repeated(physical_vertices: str) -> Dict:
     """ 
 
     counter: int       = 1
-    vertices: np.array = np.loadtxt(physical_vertices)
+    vertices: np.array = physical_vertices
     d_out: Dict        = {}
     Nv: int            = vertices.shape[0]
 
@@ -332,7 +328,7 @@ def split_preordered_hexahedron_into_tetrahedra(eight_hexahedron_vertices: List[
         one by one, the five tetrahedra.
     """
     number_of_r3_points = 8
-    nodes               = np.array(eight_hexahedron_vertices[1:-1]).reshape(3, number_of_r3_points, order='F')
+    nodes               = np.array(eight_hexahedron_vertices).reshape(3, number_of_r3_points, order='F')
     tetrahedra          = []
 
     for t in range(5):
@@ -358,10 +354,10 @@ def elements_by_vertices_hybrid(corners: List, initial: int) -> None:
     corners is passed in by reference, we mutate it with the calls.
 
     Writes GLOBAL INDICES per element appending in the list corners.
-    """
-    
+
     def current_initial(k: int) -> int:
         return 4 * k + 1
+    """
         
     line: List = [0, 0, 0, 0]
 
@@ -370,38 +366,23 @@ def elements_by_vertices_hybrid(corners: List, initial: int) -> None:
         #                                   ^ OCTAVE_LANG_INI: int = 1
     corners.append(line)
 
-def filter_repeated_vertices(elem_vert_repeated: np.array, in_file: str) -> int:
-
+def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) -> int:
+    """
     CONTINUE HERE:
 
-                1. Revisar todo el flujo y eliminar las escrituras intermedias de archivos y poner pasajes
-                   de contenedores.
-
-                    1.1. eliminar el "4" y el "1" en las puntas de cada fila de los bricks
-                
-                        1.1.1. controlar si comienzo indices en 0 o 1, de acuerdo a Liu
+                1.1.1. controlar si comienzo indices en 0 o 1, de acuerdo a Liu
 
                 1.2. el uso de kill_repeated() puede ser ciclando desde el min index de sorted_surrounding_nodes
                      o bien trayendo la indexation de inner_mesh
 
                 2. correr tests de esta escritura para ver si no pierdo nada.
+                    2.1 Test de surrounding contra la version usando todo el mallador
+                    2.2 Test de combinacion con la malla interna y graficar
             
                 3. Hacer el ejemplo para enviar
-                
-                4. resumir e integrar las implementaciones de 
-                        *elements_by_vertices_hybrid
+    """
 
-                        *elements_by_vertices_tetra
-                        *macroel_tetra
-                        *vertices_macro_tetra
-                    y lo mismo para las referentes a tetra
-
-
-
-    n_elem: int = len(elem_vert_repeated)  # number of elements with repetition of vertices indices.
-
-    replace_verts: Dict = kill_repeated(in_file + ".ver")
-    
+    n_elem: int = len(elem_vert_repeated)
     counter: int = 1
     
     # elem_vert_dscnt_indcs = np.copy(elem_vert_repeated[:, 1:]).reshape(n_elem * 6)
@@ -415,56 +396,56 @@ def filter_repeated_vertices(elem_vert_repeated: np.array, in_file: str) -> int:
             elem_vert_repeated[elem_vert_repeated == r + 1] = (key + 1)
 
     # whithout repetitions
-    np.savetxt("wafer_profile_elements.dat", elem_vert_repeated.reshape((n_elem, 4)), fmt="%d")
+    np.savetxt("wafer_profile_elements_%s.dat" % stamp, elem_vert_repeated.reshape((n_elem, 4)), fmt="%d")
 
     return n_elem
 
+# def macroel_hybrid(macroel_vertices):
+#     """ vertices = ( local_origin | base_vrtx_1 | base_vrtx_2 | sing_vrtx )
+#         TODO: el input de macroel_hybrid, macroel_vertices, deberian ser exactamente los points a retornar! :D """
+#     points = np.zeros((2, 2, 3, 2))  # level, i, coordinate, j
+#     for k in range(2):
+#         for i in range(2 - k):
+#             for j in range(2 - k - i):
+# 
+#                 points[k,i,:,j] = i * (macroel_vertices[:, 1] - macroel_vertices[:, 0]) \
+#                                   + j * (macroel_vertices[:, 2] - macroel_vertices[:, 0])
+# 
+#                 points[k,i,:,j] += k * (macroel_vertices[:, 3] - macroel_vertices[:, 0]) + macroel_vertices[:, 0]
+#     # This always returns (V0, V2, V1, V3)
+#     return points
 
 
-def macroel_hybrid(macroel_vertices):
-    """ vertices = ( local_origin | base_vrtx_1 | base_vrtx_2 | sing_vrtx )
-        TODO: el input de macroel_hybrid, macroel_vertices, deberian ser exactamente los points a retornar! :D """
-    points = np.zeros((2, 2, 3, 2))  # level, i, coordinate, j
-    for k in range(2):
-        for i in range(2 - k):
-            for j in range(2 - k - i):
+# def vertices_macro_hybrid(points, f_write):
+#     """ The file being constructed has the repeated physical vertices. This is just an enumeration of the points to write """
+#     with open (f_write, 'ab') as out:
+#         for l in range(2):
+#             for i in range(2 - l):
+#                 for j in range(2 - l - i):
+#                     np.savetxt(out, points[l, i, :, j].reshape((1, 3)), fmt = "%8.5f")
+#     return 4
 
-                points[k,i,:,j] = i * (macroel_vertices[:, 1] - macroel_vertices[:, 0]) \
-                                  + j * (macroel_vertices[:, 2] - macroel_vertices[:, 0])
-
-                points[k,i,:,j] += k * (macroel_vertices[:, 3] - macroel_vertices[:, 0]) + macroel_vertices[:, 0]
-    # This always returns (V0, V2, V1, V3)
-    return points
-
-
-def vertices_macro_hybrid(points, f_write):
-    """ The file being constructed has the repeated physical vertices. This is just an enumeration of the points to write """
-    with open (f_write, 'ab') as out:
-        for l in range(2):
-            for i in range(2 - l):
-                for j in range(2 - l - i):
-                    np.savetxt(out, points[l, i, :, j].reshape((1, 3)), fmt = "%8.5f")
-    return 4
-
-
+"""
 def macroel_tetrahedra(vertices) -> np.array:
     # TODO: don't let this as function
     return vertices.T
+"""
 
+# def vertices_macro_tetra(points, f_write):
+#     with open(f_write, 'ab') as out:
+#         np.savetxt(out, points, fmt = "%8.5f")
+# 
+#     return len(points)
 
-def vertices_macro_tetra(points, f_write):
-    with open(f_write, 'ab') as out:
-        np.savetxt(out, points, fmt = "%8.5f")
-
-    return len(points)
+stamp: str = str(time.time()).replace(".", "")
 
 physical_vertices_repeated: List        = []
 all_elements_by_vertices_repeated: List = []
 const_calc: Tuple                       = (0, 2, 1, 3)
 
 initial_partition: np.array = np.loadtxt("bricks.txt")
-
 partitioned_bricks: List = []
+
 
 for brick in initial_partition:
     split: List = split_preordered_hexahedron_into_tetrahedra(brick)
@@ -492,21 +473,16 @@ for s in partitioned_bricks:
         physical_vertices_repeated.append(v[j,:])
     init += 4
 
-
     """
     elements_by_vertices_hybrid(all_elements_by_vertices_repeated, init)
     init += vertices_macro_hybrid(macroel_hybrid(s[1][1]), "wafer_profile_vertices.txt")
-
-
-    
     elements_by_vertices_hybrid(all_elements_by_vertices_repeated, init)
     init += vertices_macro_hybrid(macroel_hybrid(s[2][1]), "wafer_profile_vertices.txt")
-
-    
-    
     elements_by_vertices_hybrid(all_elements_by_vertices_repeated, init)
     init += vertices_macro_hybrid(macroel_hybrid(s[3][1]), "wafer_profile_vertices.txt")
     """    
 
-# Here we filter repetitions
-number_of_elements: int = filter_repeated_vertices(all_elements_by_vertices_repeated)
+# Here we filter repetitions and write files
+np.savetxt("physical_vertices_%s.dat" % stamp, physical_vertices_repeated, delimiter=",", fmt="%5.2f")
+replace_verts: Dict     = kill_repeated(np.array(physical_vertices_repeated))
+number_of_elements: int = filter_repeated_vertices(np.array(all_elements_by_vertices_repeated), replace_verts)
