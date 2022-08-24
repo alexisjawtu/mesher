@@ -145,8 +145,8 @@ def plot_all_tetrahedra(
 
     all_elements: np.array = np.vstack((connectivity, elements))
 
-    # Here we have all 6s.
-    cant_edges = {4: 6}  # dictionary {n_nodes: n_edges}
+    # Here we have all tetrahedra, which have 6 edges.
+    cant_edges = {4: 6}
     n_con = 0
     for e in all_elements:
         n_con = n_con + cant_edges[e[0]]
