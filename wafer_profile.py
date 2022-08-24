@@ -3,13 +3,12 @@ To run:
 
 In [i]: run wafer_profile.py n file_in
 
-
 ----------------------------------------------------------------------------------------------------
 Ex. of the previous experiments run:
 
 initial file, one line per node layer
 
-#1              0,  -1,-.85,  0,   0,  -1,    0,   0,   0,  0,-1,  -.15
+#1              0,-1   ,-.85,  0,   0,  -1,    0,   0,   0,  0,-1,  -.15
 
 #2              0,-1.3,-.67,  0,  -1,-.85,    0,  -1,-.15,  0,-1.3,-.33
 
@@ -322,7 +321,6 @@ def kill_repeated(physical_vertices: np.array) -> Dict:
 
     return d_out
 
-
 def split_preordered_hexahedron_into_tetrahedra(eight_hexahedron_vertices: List[float]) -> List:
     """ Here we pick subsequences of the vertices of the hexahedron to determine,
         one by one, the five tetrahedra.
@@ -342,7 +340,8 @@ def elements_by_vertices_tetra(elements: List, init: int) -> None:
         directly from the four 'corner tetrahedra'
     """ 
     n_vert_repeated = 4
-    arr_out = np.array(range(init + 1, init + n_vert_repeated + 1)).reshape((1, 4))
+    # arr_out = np.array(range(init + 1, init + n_vert_repeated + 1)).reshape((1, 4))
+    arr_out = list(range(init + 1, init + n_vert_repeated + 1))
 
     elements.append(arr_out)
     
@@ -367,8 +366,7 @@ def elements_by_vertices_hybrid(corners: List, initial: int) -> None:
     corners.append(line)
 
 def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) -> int:
-    """
-    CONTINUE HERE:
+    """ CONTINUE HERE:
 
                 1.1.1. controlar si comienzo indices en 0 o 1, de acuerdo a Liu
 
@@ -377,12 +375,17 @@ def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) 
 
                 2. correr tests de esta escritura para ver si no pierdo nada.
                     2.1 Test de surrounding contra la version usando todo el mallador
+                        
+                        * OK la lista de coordenadas en R3 de nodos dio igual (physical vertices)
+
+                        * falta ver elementos
+                    
                     2.2 Test de combinacion con la malla interna y graficar
             
                 3. Hacer el ejemplo para enviar
     """
 
-    n_elem: int = len(elem_vert_repeated)
+    n_elem: int  = len(elem_vert_repeated)
     counter: int = 1
     
     # elem_vert_dscnt_indcs = np.copy(elem_vert_repeated[:, 1:]).reshape(n_elem * 6)
@@ -396,7 +399,7 @@ def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) 
             elem_vert_repeated[elem_vert_repeated == r + 1] = (key + 1)
 
     # whithout repetitions
-    np.savetxt("wafer_profile_elements_%s.dat" % stamp, elem_vert_repeated.reshape((n_elem, 4)), fmt="%d")
+    np.savetxt("%s/wafer_profile_elements_%s.dat" % (folder, stamp), elem_vert_repeated.reshape((n_elem, 4)), fmt="%d")
 
     return n_elem
 
@@ -414,7 +417,6 @@ def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) 
 #                 points[k,i,:,j] += k * (macroel_vertices[:, 3] - macroel_vertices[:, 0]) + macroel_vertices[:, 0]
 #     # This always returns (V0, V2, V1, V3)
 #     return points
-
 
 # def vertices_macro_hybrid(points, f_write):
 #     """ The file being constructed has the repeated physical vertices. This is just an enumeration of the points to write """
@@ -437,13 +439,13 @@ def macroel_tetrahedra(vertices) -> np.array:
 # 
 #     return len(points)
 
-stamp: str = str(time.time()).replace(".", "")
-
+stamp: str  = str(time.time()).replace(".", "")
+folder: str = "experiments/wafer24ago22"
 physical_vertices_repeated: List        = []
 all_elements_by_vertices_repeated: List = []
 const_calc: Tuple                       = (0, 2, 1, 3)
 
-initial_partition: np.array = np.loadtxt("bricks.txt")
+initial_partition: np.array = np.loadtxt("%s/bricks.txt" % folder, delimiter=",")
 partitioned_bricks: List = []
 
 
@@ -483,6 +485,9 @@ for s in partitioned_bricks:
     """    
 
 # Here we filter repetitions and write files
-np.savetxt("physical_vertices_%s.dat" % stamp, physical_vertices_repeated, delimiter=",", fmt="%5.2f")
+np.savetxt("%s/physical_vertices_%s.dat" % (folder, stamp), physical_vertices_repeated, delimiter=",", fmt="%5.2f")
 replace_verts: Dict     = kill_repeated(np.array(physical_vertices_repeated))
+
+np.savetxt("%s/all_repeated_%s.txt" % (folder, stamp), np.array(all_elements_by_vertices_repeated), fmt="%d")
+
 number_of_elements: int = filter_repeated_vertices(np.array(all_elements_by_vertices_repeated), replace_verts)
