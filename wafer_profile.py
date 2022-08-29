@@ -208,6 +208,11 @@ def layered_mesh(
     ) -> None:
 
     """
+    sorted_surrounding_nodes: a list of coordinates in R3 for which it holds
+        1. it is the concatenation of the surrounding points with z = z_MAX
+           and the surrounding points with z = z_min.
+        2. each of the concatenated point lists are sorted counterclockwise.
+
     Documenting example:
 
     Take the following
@@ -223,10 +228,10 @@ def layered_mesh(
     
     >>> p[[0, 3], 2] = upper_z                                                                      
     >>> p[[1, 2], 2] = lower_z   
-    >>> p[0, 0:2]   += (delta_over_plane_xy/np.linalg.norm(p[0, 0:2]))*p[0, 0:2]                      
-    >>> p[1, 0:2]   += (delta_over_plane_xy/np.linalg.norm(p[1, 0:2]))*p[1, 0:2]                      
-    >>> p[2, 0:2]   += (delta_over_plane_xy/np.linalg.norm(p[2, 0:2]))*p[2, 0:2]                      
-    >>> p[3, 0:2]   += (delta_over_plane_xy/np.linalg.norm(p[3, 0:2]))*p[3, 0:2]                      
+    >>> p[0, 0:2]   += (delta_over_plane_xy/np.linalg.norm(p[0, 0:2])) * p[0, 0:2]                      
+    >>> p[1, 0:2]   += (delta_over_plane_xy/np.linalg.norm(p[1, 0:2])) * p[1, 0:2]                      
+    >>> p[2, 0:2]   += (delta_over_plane_xy/np.linalg.norm(p[2, 0:2])) * p[2, 0:2]                      
+    >>> p[3, 0:2]   += (delta_over_plane_xy/np.linalg.norm(p[3, 0:2])) * p[3, 0:2]                      
 
     and the points in the second layer should be
 
@@ -295,32 +300,6 @@ def layered_mesh(
 Now the classic mesher enters the game.
 """
 
-def kill_repeated(physical_vertices: np.array) -> Dict:
-    """ 
-        searches:       repeated vertices
-                        It is merely an iterative cuadratic exploration.
-
-        return value:   dictionary of the vertices that have to be re-numbered in file
-                        elements_by_vertices.txt
-
-        obs:            now we don't delete the entries on vertices.txt. We simply
-                        don't request them.
-    """ 
-
-    counter: int       = 1
-    vertices: np.array = physical_vertices
-    d_out: Dict        = {}
-    Nv: int            = vertices.shape[0]
-
-    for v in range(Nv):
-        counter += 1
-        for w in range(v + 1, Nv):
-            if np.all(np.equal(vertices[v], vertices[w])):
-                d_out[v] = d_out.get(v, [])
-                d_out[v].append(w)
-
-    return d_out
-
 def split_preordered_hexahedron_into_tetrahedra(eight_hexahedron_vertices: List[float]) -> List:
     """ Here we pick subsequences of the vertices of the hexahedron to determine,
         one by one, the five tetrahedra.
@@ -365,6 +344,34 @@ def elements_by_vertices_hybrid(corners: List, initial: int) -> None:
         #                                   ^ OCTAVE_LANG_INI: int = 1
     corners.append(line)
 
+
+def kill_repeated(physical_vertices: np.array) -> Dict:
+    """ 
+        searches:       repeated vertices
+                        It is merely an iterative cuadratic exploration.
+
+        return value:   dictionary of the vertices that have to be re-numbered in file
+                        elements_by_vertices.txt
+
+        obs:            now we don't delete the entries on vertices.txt. We simply
+                        don't request them.
+    """ 
+
+    counter: int       = 1
+    vertices: np.array = physical_vertices
+    d_out: Dict        = {}
+    Nv: int            = vertices.shape[0]
+
+    for v in range(Nv):
+        counter += 1
+        for w in range(v + 1, Nv):
+            if np.all(np.equal(vertices[v], vertices[w])):
+                d_out[v] = d_out.get(v, [])
+                d_out[v].append(w)
+
+    return d_out
+
+
 def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) -> int:
     """ CONTINUE HERE:
 
@@ -379,14 +386,20 @@ def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) 
                         * OK 1er test de la lista de coordenadas en R3 de nodos dio igual (physical vertices)
                         
                         * otros tests de la lista de coordenadas en R3
+                            - hago la tercera layer de nodos y controlo las dos franjas de ladrillos
+
                         * falta ver elementos
                     
                     2.2 Test de combinacion con la malla interna y graficar
+
+                        * OK un test 29 de ago
             
                 3. Hacer el ejemplo para enviar
     """
-
-    n_elem: int  = len(elem_vert_repeated)
+    
+    stamp:   str = time.asctime().replace(":", "").replace(" ", "_")
+    folder:  str = "."
+    n_elem:  int = len(elem_vert_repeated)
     counter: int = 1
     
     elem_vert_repeated = elem_vert_repeated.reshape(4 * n_elem)
@@ -398,50 +411,68 @@ def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) 
             elem_vert_repeated[elem_vert_repeated == r + 1] = (key + 1)
 
     # whithout repetitions
-    np.savetxt("%s/wafer_profile_elements_%s.dat" % (folder, stamp), elem_vert_repeated.reshape((n_elem, 4)), fmt="%d")
+    np.savetxt(
+        "%s/inner_and_outer_elements_%s.dat" % (folder, stamp),
+        elem_vert_repeated.reshape((n_elem, 4)),
+        fmt="%d"
+    )
 
     return n_elem
 
-stamp: str  = str(time.time()).replace(".", "")
-folder: str = "experiments/wafer24ago22"
-physical_vertices_repeated: List        = []
-all_elements_by_vertices_repeated: List = []
-const_calc: Tuple                       = (0, 2, 1, 3)
 
-initial_partition: np.array = np.loadtxt("%s/bricks.txt" % folder, delimiter=",")
-partitioned_bricks: List = []
+def general():
+    stamp: str  = str(time.time()).replace(".", "")
+    folder: str = "experiments/wafer24ago22"
+    physical_vertices_repeated: List        = []
+    all_elements_by_vertices_repeated: List = []
+    const_calc: Tuple                       = (0, 2, 1, 3)
+
+    initial_partition: np.array = np.loadtxt("%s/bricks.txt" % folder, delimiter=",")
+    partitioned_bricks: List = []
 
 
-for brick in initial_partition:
-    split: List = split_preordered_hexahedron_into_tetrahedra(brick)
-    partitioned_bricks.append(split)
+    for brick in initial_partition:
+        split: List = split_preordered_hexahedron_into_tetrahedra(brick)
+        partitioned_bricks.append(split)
 
-# Next loop is for building individual tetrahedra (with repeated nodes)
-init: int = 0  # tracks the number of vertices
-               # init should be number_of_vertices_inner_mesh
-for s in partitioned_bricks:
-    # Each s is a list with five dictionaries
-    
-    for t in range(4):
-        # corner tetrahedra
-        elements_by_vertices_hybrid(all_elements_by_vertices_repeated, init)
-        v = s[t][1]
-        for j in const_calc:
-            # vertices_macro_hybrid(macroel_hybrid(v)) === hstack((v[0],v[2],v[1],v[3]))
-            physical_vertices_repeated.append(v[j,:])
-        init += 4
+    # Next loop is for building individual tetrahedra (with repeated nodes)
+    init: int = 0  # tracks the number of vertices
+                   # init should be number_of_vertices_inner_mesh
+    for s in partitioned_bricks:
+        # Each s is a list with five dictionaries
         
-    # inner tetrahedron
-    elements_by_vertices_tetra(all_elements_by_vertices_repeated, init) 
-    v = s[4][1]
-    for j in range(4):
-        physical_vertices_repeated.append(v[j,:])
-    init += 4    
+        for t in range(4):
+            # corner tetrahedra
+            elements_by_vertices_hybrid(all_elements_by_vertices_repeated, init)
+            v = s[t][1]
+            for j in const_calc:
+                # vertices_macro_hybrid(macroel_hybrid(v)) === hstack((v[0],v[2],v[1],v[3]))
+                physical_vertices_repeated.append(v[j,:])
+            init += 4
+            
+        # inner tetrahedron
+        elements_by_vertices_tetra(all_elements_by_vertices_repeated, init) 
+        v = s[4][1]
+        for j in range(4):
+            physical_vertices_repeated.append(v[j,:])
+        init += 4    
 
-# Here we filter repetitions and write files
-np.savetxt("%s/physical_vertices_%s.dat" % (folder, stamp), physical_vertices_repeated, delimiter=",", fmt="%5.2f")
-replace_verts: Dict     = kill_repeated(np.array(physical_vertices_repeated))
+    # np.savetxt("%s/all_repeated_%s.txt" % (folder, stamp), np.array(all_elements_by_vertices_repeated), fmt="%d")
 
-np.savetxt("%s/all_repeated_%s.txt" % (folder, stamp), np.array(all_elements_by_vertices_repeated), fmt="%d")
+    # Here we filter repetitions and write files
+    replace_verts: Dict     = kill_repeated(np.array(physical_vertices_repeated))
+    number_of_elements: int = filter_repeated_vertices(np.array(all_elements_by_vertices_repeated), replace_verts)
 
-number_of_elements: int = filter_repeated_vertices(np.array(all_elements_by_vertices_repeated), replace_verts)
+    # Observe that this file preservs the unused vertices!
+    np.savetxt("%s/physical_vertices_%s.dat" % (folder, stamp), physical_vertices_repeated, delimiter=",", fmt="%5.2f")
+
+
+def algorithm():
+
+    m = inner_elements_by_vertices.max().max() == len(inner_nodes)
+
+    outer_elements_by_vertices += m
+    inner_and_outer_elements = stack(inner_elements_by_vertices, outer_elements_by_vertices)
+
+    replace_verts: Dict     = kill_repeated(physical_vertices_repeated)
+    filter_repeated_vertices(inner_and_outer_elements, replace_verts)
