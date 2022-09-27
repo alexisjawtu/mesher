@@ -37,7 +37,8 @@ def plot_lines(
         connectivity_file: str, 
         isolated_points: str = None,
         vert_delim: str = None, 
-        colors: Tuple = (.8,.8,.8)) -> None:
+        colors: Tuple = (.8,.8,.8)
+    ) -> None:
 
     # Reads .ver and .ebv files. col is a color definition. 
     p = np.loadtxt(vertices_file, delimiter=vert_delim)
@@ -111,7 +112,9 @@ def plot_all_tetrahedra(
         vertices_file: str,
         connectivity_file: str,
         isolated_points: str = None,
+        number_of_isolated_points_to_draw: int = 3,
         vert_delim: str = ",",
+        elem_delim: str = ",",
         colors: Tuple = (.2,.3,.4)
     ) -> None:
 
@@ -123,7 +126,7 @@ def plot_all_tetrahedra(
 
     del vertices
     
-    all_elements: np.array = np.loadtxt(connectivity_file)
+    all_elements: np.array = np.loadtxt(connectivity_file, delimiter=elem_delim)
 
     # Here we have all tetrahedra, which have 6 edges.
     n_con = 0
@@ -142,17 +145,21 @@ def plot_all_tetrahedra(
     try:
         for i in range(len(all_elements)):
             row = np.array(all_elements[i])
+            if i < 3:
+                print(row[links])
             # TODO: this [[]+1]-1 at the end of the line should be depending of lang = C/Octave
-            connections[last: last + 6, :] = row[links] - 1
+            connections[last: last + 6, :] = row[links]
             last = last + 6
+
     except IndexError:
         print(i, row)
         input()
+
     except KeyError:
         print(i, row)
         input()
 
-    #plot:
+    # plot:
     fig = mlab.figure(1, size=(400, 400), bgcolor=(1, 1, 1))
 
     src = mlab.pipeline.scalar_scatter(x, y, z)
@@ -173,13 +180,13 @@ def plot_all_tetrahedra(
     )
 
     if isolated_points:
-        isolated_points = np.loadtxt(isolated_points, delimiter=vert_delim)
+        isolated_points = np.loadtxt(isolated_points, delimiter=vert_delim)[0:number_of_isolated_points_to_draw,:]
         
         mlab.points3d(
             isolated_points[:,0],
             isolated_points[:,1],
             isolated_points[:,2], 
-            np.linspace(.001, .3, len(isolated_points)),
+            np.linspace(.01, .03, len(isolated_points)),
             scale_factor=1, 
             color=(1, 0, 0)
         )
@@ -216,7 +223,7 @@ def plot_separate(
 
     del vertices_inner
     
-    elements_inner: np.array = np.loadtxt(elements_file_inner)
+    elements_inner: np.array = np.loadtxt(elements_file_inner, delimiter=",")
 
     # all_elements: np.array = np.vstack((elements_inner, elements))
 
@@ -226,9 +233,9 @@ def plot_separate(
     for e in elements_inner:
         n_con = n_con + 6
 
-    connections = np.zeros((n_con,2))
+    connections: np.array = np.zeros((n_con, 2))
 
-    connections_tetra = np.array([
+    connections_tetra: np.array = np.array([
         [0,1,2,3,0,1],
         [1,2,3,0,2,3]
     ]).T

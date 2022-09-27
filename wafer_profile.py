@@ -8,7 +8,7 @@ Ex. of the previous experiments run:
 
 initial file, one line per node layer
 
-#1              0,-1   ,-.85,  0,   0,  -1,    0,   0,   0,  0,-1,  -.15
+#1              0,-1  ,-.85,  0,   0,  -1,    0,   0,   0,  0,-1  ,-.15
 
 #2              0,-1.3,-.67,  0,  -1,-.85,    0,  -1,-.15,  0,-1.3,-.33
 
@@ -111,13 +111,6 @@ Perhaps some small dictionary to select the parsers, for example:
                                                          0, 1, 0]
                                   }]
 
-wafer cases:
-                "edge_a"
-                "edge_bc"
-                "orientation_flat_a"
-                "orientation_flat_b"
-                "notch"
-
 """
 
 import time
@@ -199,18 +192,22 @@ std_tetrahedra_inside_a_cube = np.array([[0, 1, 3, 4],
                                          [5, 4, 1, 6], 
                                          [6, 1, 3, 4]])
 
+const_calc: Tuple                       = (0, 2, 1, 3)
 
 def layered_mesh(
         sorted_surrounding_nodes: str, 
-        upper_z: float = .4,
-        lower_z: float = .1,
+        upper_z: float = .07,
+        lower_z: float = .03,
         delta_over_plane_xy: float = .8
     ) -> None:
 
     """
     sorted_surrounding_nodes: a list of coordinates in R3 for which it holds
-        1. it is the concatenation of the surrounding points with z = z_MAX
-           and the surrounding points with z = z_min.
+        1. it is the concatenation of 
+                
+                surrounding points with z = z_MAX
+                surrounding points with z = z_min.
+
         2. each of the concatenated point lists are sorted counterclockwise.
 
     Documenting example:
@@ -247,6 +244,7 @@ def layered_mesh(
 
     quantity_of_squares_per_layer: int = sorted_surrounding_nodes.shape[0]//2
 
+
     def construct_second_layer(fst: np.array) -> np.array:
         second_layer: np.array  = fst.copy()
         second_layer[[0, 3], 2] = upper_z                                                                      
@@ -267,9 +265,9 @@ def layered_mesh(
     this_brick: np.array
 
     for s in range(quantity_of_squares_per_layer - 1):
-        # TODO: still the last square missing, wrapping around.
+        # This loop doesn't have the last square, wrapping around.
         first_layer = sorted_surrounding_nodes[[
-                                    s + 0, 
+                                    s, 
                                     s + quantity_of_squares_per_layer,
                                     s + quantity_of_squares_per_layer + 1,
                                     s + 1
@@ -277,7 +275,7 @@ def layered_mesh(
 
         # The flip is just the horizontal stacking here:
         second_layer = construct_second_layer(first_layer) 
-        this_brick = np.hstack((4, first_layer.flatten(), second_layer.flatten(), 1))
+        this_brick = np.hstack((first_layer.flatten(), second_layer.flatten()))
         stack.append(this_brick)
 
     del this_brick
@@ -291,14 +289,14 @@ def layered_mesh(
                   ]]
 
     second_layer = construct_second_layer(first_layer)
-    last_brick: np.array = np.hstack((4, first_layer.flatten(), second_layer.flatten(), 1))
+    last_brick: np.array = np.hstack((first_layer.flatten(), second_layer.flatten()))
     stack.append(last_brick)
-
-    np.savetxt("bricks.txt", np.array(stack), delimiter=",", fmt="%5.2f")
+    np.savetxt("bricks.txt", np.vstack(stack), delimiter=",", fmt="%5.2f")
 
 """
 Now the classic mesher enters the game.
 """
+
 
 def split_preordered_hexahedron_into_tetrahedra(eight_hexahedron_vertices: List[float]) -> List:
     """ Here we pick subsequences of the vertices of the hexahedron to determine,
@@ -313,6 +311,7 @@ def split_preordered_hexahedron_into_tetrahedra(eight_hexahedron_vertices: List[
         tetrahedra += [{1: np.array([nodes[:, std_tetrahedra_inside_a_cube[t][j]] for j in range(4)])}]
 
     return tetrahedra
+
 
 def elements_by_vertices_tetra(elements: List, init: int) -> None:
     """ TODO: we should write an algorithm that passes just one time per vertex
@@ -372,33 +371,9 @@ def kill_repeated(physical_vertices: np.array) -> Dict:
     return d_out
 
 
-def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) -> int:
-    """ CONTINUE HERE:
-
-                1.1.1. controlar si comienzo indices en 0 o 1, de acuerdo a Liu
-
-                1.2. el uso de kill_repeated() puede ser ciclando desde el min index de sorted_surrounding_nodes
-                     o bien trayendo la indexation de inner_mesh
-
-                2. correr tests de esta escritura para ver si no pierdo nada.
-                    2.1 Test de surrounding contra la version usando todo el mallador
-                        
-                        * OK 1er test de la lista de coordenadas en R3 de nodos dio igual (physical vertices)
-                        
-                        * otros tests de la lista de coordenadas en R3
-                            - hago la tercera layer de nodos y controlo las dos franjas de ladrillos
-
-                        * falta ver elementos
-                    
-                    2.2 Test de combinacion con la malla interna y graficar
-
-                        * OK un test 29 de ago
-            
-                3. Hacer el ejemplo para enviar
-    """
-    
+def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) -> int:    
     stamp:   str = time.asctime().replace(":", "").replace(" ", "_")
-    folder:  str = "."
+    folder: str = "experiments/wafer26sep22"
     n_elem:  int = len(elem_vert_repeated)
     counter: int = 1
     
@@ -422,14 +397,14 @@ def filter_repeated_vertices(elem_vert_repeated: np.array, replace_verts: Dict) 
 
 def general():
     stamp: str  = str(time.time()).replace(".", "")
-    folder: str = "experiments/wafer24ago22"
+    folder: str = "experiments/wafer26sep22"
     physical_vertices_repeated: List        = []
     all_elements_by_vertices_repeated: List = []
-    const_calc: Tuple                       = (0, 2, 1, 3)
 
-    initial_partition: np.array = np.loadtxt("%s/bricks.txt" % folder, delimiter=",")
+    print("Using " + "%s/bricks2.dat" % folder + "as initial_partition.")
+
+    initial_partition: np.array = np.loadtxt("%s/bricks2.dat" % folder, delimiter=",").reshape(1, 24)
     partitioned_bricks: List = []
-
 
     for brick in initial_partition:
         split: List = split_preordered_hexahedron_into_tetrahedra(brick)
@@ -468,7 +443,7 @@ def general():
 
 
 def algorithm():
-
+    """
     m = inner_elements_by_vertices.max().max() == len(inner_nodes)
 
     outer_elements_by_vertices += m
@@ -476,3 +451,5 @@ def algorithm():
 
     replace_verts: Dict     = kill_repeated(physical_vertices_repeated)
     filter_repeated_vertices(inner_and_outer_elements, replace_verts)
+    """
+    pass
