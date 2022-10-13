@@ -32,6 +32,8 @@ from typing import Tuple
 from mayavi import mlab
 
 
+correction = {"C" : 0, "Octave" : 1}
+
 def plot_lines(
         vertices_file: str, 
         connectivity_file: str, 
@@ -81,12 +83,14 @@ def plot_lines(
         #add connections depending on the type of elelement
 
         # TODO: this [[]+1]-1 at the end of the line should be depending of lang = C/Octave
-        connections[last:last+cant_edges[row[0]],:] = row[new_connections[row[0]]+1]-1
+        connections[last:last+cant_edges[row[0]],:] = row[new_connections[row[0]] + 1] - 1
         last = last + cant_edges[row[0]]
     #plot:
     fig = mlab.figure(1, size=(400, 400), bgcolor=(1, 1, 1))
     src = mlab.pipeline.scalar_scatter(x, y, z)
-    src.mlab_source.dataset.lines = connections 
+    src.mlab_source.dataset.lines = connections
+    print("connections:")
+    print(connections)
     src.update()
     mlab.pipeline.surface(src, color=colors)
 
@@ -145,9 +149,6 @@ def plot_all_tetrahedra(
     try:
         for i in range(len(all_elements)):
             row = np.array(all_elements[i])
-            if i < 3:
-                print(row[links])
-            # TODO: this [[]+1]-1 at the end of the line should be depending of lang = C/Octave
             connections[last: last + 6, :] = row[links]
             last = last + 6
 
