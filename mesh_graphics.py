@@ -38,8 +38,8 @@ def plot_lines(
         vertices_file: str, 
         connectivity_file: str, 
         isolated_points: str = None,
-        vert_delim: str = None, 
-        colors: Tuple = (.8,.8,.8)
+        vert_delim: str = ",", 
+        colors: Tuple = (.2,.3,.4)
     ) -> None:
 
     # Reads .ver and .ebv files. col is a color definition. 
@@ -86,7 +86,7 @@ def plot_lines(
         connections[last:last+cant_edges[row[0]],:] = row[new_connections[row[0]] + 1] - 1
         last = last + cant_edges[row[0]]
     #plot:
-    fig = mlab.figure(1, size=(400, 400), bgcolor=(1, 1, 1))
+    fig = mlab.figure(1, size=(700, 900), bgcolor=(1, 1, 1))
     src = mlab.pipeline.scalar_scatter(x, y, z)
     src.mlab_source.dataset.lines = connections
     print("connections:")
